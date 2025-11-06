@@ -1,12 +1,27 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
-  "redirects": [
-    { "source": "/", "destination": "/html/", "permanent": false },
-    { "source": "/html", "destination": "/html/", "permanent": false }
-  ],
   "rewrites": [
-    { "source": "/:page", "destination": "/html/:page.html" }
+    { "source": "/", "destination": "/html/index.html" },
+    { "source": "/login", "destination": "/html/login.html" },
+    { "source": "/signup", "destination": "/html/signup.html" },
+    { "source": "/jobs", "destination": "/html/jobs.html" },
+    { "source": "/places", "destination": "/html/places.html" },
+    { "source": "/customize", "destination": "/html/customize.html" },
+    { "source": "/restaurant", "destination": "/html/restaurant.html" },
+    { "source": "/admin-dashboard", "destination": "/html/admin-dashboard.html" },
+    { "source": "/user-dashboard", "destination": "/html/user-dashboard.html" },
+    { "source": "/restaurant-owner-dashboard", "destination": "/html/restaurant-owner-dashboard.html" },
+    { "source": "/job-applications", "destination": "/html/job-applications.html" },
+    { "source": "/user-job-applications", "destination": "/html/user-job-applications.html" },
+    { "source": "/admin-jobs", "destination": "/html/admin-jobs.html" },
+    { "source": "/admin-job-applications", "destination": "/html/admin-job-applications.html" },
+    { "source": "/admin-menu-requests", "destination": "/html/admin-menu-requests.html" },
+    { "source": "/admin-uniform-requests", "destination": "/html/admin-uniform-requests.html" },
+    { "source": "/admin-uniform-styles", "destination": "/html/admin-uniform-styles.html" },
+    { "source": "/admin-menu-styles", "destination": "/html/admin-menu-styles.html" },
+    { "source": "/restaurant-owner-jobs", "destination": "/html/restaurant-owner-jobs.html" },
+    { "source": "/restaurant-owner-uniform-requests", "destination": "/html/restaurant-owner-uniform-requests.html" }
   ],
   "headers": [
     {
