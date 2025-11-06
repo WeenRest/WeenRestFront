@@ -331,11 +331,11 @@
                     
                     // Set dashboard link based on user role
                     if (user.role === 'admin') {
-                        dashboardLink.href = 'admin-dashboard.html';
+                        dashboardLink.href = '/html/admin-dashboard.html';
                     } else if (user.role === 'stakeholder') {
-                        dashboardLink.href = 'restaurant-owner-dashboard.html';
+                        dashboardLink.href = '/html/restaurant-owner-dashboard.html';
                     } else {
-                        dashboardLink.href = 'user-dashboard.html';
+                        dashboardLink.href = '/html/user-dashboard.html';
                     }
 
                     // Hide restaurant-specific buttons for admin and regular users
