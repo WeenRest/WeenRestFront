@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeenRest - استكشف الأماكن</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-gray-900 to-black shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4 space-x-reverse">
+                    <div class="w-12 h-12 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
+                        <i class="fas fa-utensils text-white text-xl"></i>
+                    </div>
+                    <a href="index.html" class="text-white text-2xl font-bold">WeenRest</a>
+                </div>
+                <nav class="hidden md:flex items-center space-x-8 space-x-reverse">
+                    <a href="index.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">الرئيسية</a>
+                </nav>
+                <div class="md:hidden text-white text-2xl" id="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+            <div class="md:hidden mt-4 hidden" id="mobile-menu">
+                <div class="flex flex-col space-y-4">
+                    <a href="index.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">الرئيسية</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumbs & Title -->
+    <section class="bg-white border-b border-gray-100">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 id="page-title" class="text-2xl md:text-3xl font-bold text-gray-900">استكشف الأماكن</h2>
+                    <p id="page-subtitle" class="text-gray-600 mt-1 text-sm">اختر قسماً للبدء</p>
+                </div>
+                <nav id="breadcrumb" class="hidden md:flex items-center text-sm text-gray-500">
+                    <button id="bc-home" class="flex items-center hover:text-amber-700">
+                        <i class="fas fa-home ml-1"></i> الرئيسية
+                    </button>
+                    <span class="mx-2">/</span>
+                    <span class="text-gray-800">الأماكن</span>
+                </nav>
+            </div>
+            <div id="breadcrumb-mobile" class="mt-3 md:hidden text-sm text-gray-500"></div>
+        </div>
+    </section>
+
+    <!-- Content Grid -->
+    <main class="py-8">
+        <div class="container mx-auto px-4">
+            <!-- Filters Row -->
+            <div id="filters-row" class="flex flex-wrap items-center gap-3 mb-6">
+                <div class="relative">
+                    <input id="search-input" type="text" placeholder="ابحث..." class="w-64 max-w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600" />
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                </div>
+                <button id="back-btn" class="hidden inline-flex items-center px-4 py-2.5 rounded-lg text-sm border border-gray-200 bg-white hover:bg-gray-50">
+                    <i class="fas fa-arrow-right ml-2"></i> رجوع
+                </button>
+            </div>
+
+            <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                <!-- Cards injected by JS -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-white rounded-lg shadow-2xl border border-gray-200 p-4 hidden z-50 max-w-sm transform transition-all duration-300">
+        <div class="flex items-center space-x-3 space-x-reverse">
+            <div id="toastIcon" class="flex-shrink-0"></div>
+            <p id="toastMessage" class="text-sm font-semibold text-gray-800"></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toastIcon');
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            toastIcon.innerHTML = '';
+            if (type === 'success') {
+                toast.className = 'fixed bottom-4 right-4 bg-green-50 border-green-300 rounded-lg shadow-2xl border p-4 z-50 max-w-sm transform transition-all duration-300';
+                toastIcon.innerHTML = '<i class="fas fa-check-circle text-green-500 text-xl"></i>';
+                toastMessage.className = 'text-sm font-semibold text-green-800';
+            } else if (type === 'error') {
+                toast.className = 'fixed bottom-4 right-4 bg-red-50 border-red-300 rounded-lg shadow-2xl border p-4 z-50 max-w-sm transform transition-all duration-300';
+                toastIcon.innerHTML = '<i class="fas fa-exclamation-circle text-red-500 text-xl"></i>';
+                toastMessage.className = 'text-sm font-semibold text-red-800';
+            } else {
+                toast.className = 'fixed bottom-4 right-4 bg-blue-50 border-blue-300 rounded-lg shadow-2xl border p-4 z-50 max-w-sm transform transition-all duration-300';
+                toastIcon.innerHTML = '<i class="fas fa-info-circle text-blue-500 text-xl"></i>';
+                toastMessage.className = 'text-sm font-semibold text-blue-800';
+            }
+            toast.classList.remove('hidden');
+            setTimeout(() => { toast.classList.add('hidden'); }, 2500);
+        }
+    </script>
+    <script src="../js/places.js"></script>
+</body>
+</html>
+
+

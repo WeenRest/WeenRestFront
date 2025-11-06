@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>طلبات التقديم - لوحة التحكم</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+	<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-[Cairo]">
+	<header class="bg-white border-b">
+		<div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+			<h1 class="text-xl font-bold">طلبات التقديم</h1>
+			<nav class="flex items-center gap-4 text-sm">
+				<a href="admin-dashboard.html" class="text-blue-600 hover:underline">لوحة التحكم</a>
+				<a href="admin-jobs.html" class="text-blue-600 hover:underline">إدارة الوظائف</a>
+			</nav>
+		</div>
+	</header>
+
+	<main class="max-w-7xl mx-auto px-4 py-6">
+		<section class="bg-white border rounded-lg shadow-sm p-4">
+			<h2 class="font-semibold mb-3">إضافة / تعديل طلب تقديم</h2>
+			<form id="appForm" class="grid md:grid-cols-3 gap-3">
+				<input type="hidden" id="appId" />
+				<input id="applicantName" type="text" placeholder="اسم المتقدم" class="border rounded-md px-3 py-2" required />
+				<input id="phoneNumber" type="text" placeholder="رقم الهاتف" class="border rounded-md px-3 py-2" required />
+				<input id="city" type="text" placeholder="المدينة" class="border rounded-md px-3 py-2" />
+				<select id="jobId" class="border rounded-md px-3 py-2" required></select>
+				<input id="age" type="number" placeholder="العمر" class="border rounded-md px-3 py-2" />
+				<input id="yearsOfExperience" type="number" placeholder="سنوات الخبرة" class="border rounded-md px-3 py-2" />
+				<input id="contactEmail" type="email" placeholder="البريد للتواصل" class="border rounded-md px-3 py-2" />
+				<input id="jobPostedAt" type="date" class="border rounded-md px-3 py-2" />
+				<textarea id="summary" placeholder="نبذة" class="md:col-span-3 border rounded-md px-3 py-2"></textarea>
+				<div class="md:col-span-3 flex gap-2">
+					<button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md">حفظ</button>
+					<button type="button" id="resetBtn" class="border px-4 py-2 rounded-md">إلغاء</button>
+				</div>
+			</form>
+		</section>
+
+		<section class="mt-6">
+			<div class="flex items-center justify-between mb-3">
+				<h2 class="font-semibold">قائمة الطلبات</h2>
+				<div class="flex gap-2">
+					<select id="filterJob" class="border rounded-md px-3 py-2"></select>
+					<input id="searchInput" type="text" placeholder="بحث بالاسم/المدينة" class="border rounded-md px-3 py-2" />
+				</div>
+			</div>
+			<table class="w-full bg-white border rounded-lg shadow-sm text-sm">
+				<thead>
+					<tr class="border-b bg-gray-50">
+						<th class="p-3 text-right">#</th>
+						<th class="p-3 text-right">المتقدم</th>
+						<th class="p-3 text-right">الوظيفة</th>
+						<th class="p-3 text-right">المدينة</th>
+						<th class="p-3 text-right">الهاتف</th>
+						<th class="p-3 text-right">الإيميل</th>
+						<th class="p-3 text-right">أضيف</th>
+						<th class="p-3 text-right">إجراءات</th>
+					</tr>
+				</thead>
+				<tbody id="appsTable"></tbody>
+			</table>
+			<p id="emptyState" class="text-center text-gray-500 hidden mt-6">لا توجد طلبات</p>
+		</section>
+	</main>
+
+	<script>
+	const API_ORIGIN = localStorage.getItem('api_origin') || 'http://localhost:5276';
+	const API = {
+		jobs: `${API_ORIGIN}/api/AdminJobs`,
+		list: `${API_ORIGIN}/api/AdminJobApplications`,
+		create: `${API_ORIGIN}/api/AdminJobApplications`,
+		update: (id) => `${API_ORIGIN}/api/AdminJobApplications/${id}`,
+		remove: (id) => `${API_ORIGIN}/api/AdminJobApplications/${id}`
+	};
+
+	function authHeaders(){
+		const token = localStorage.getItem('token');
+		return token ? { 'Authorization': `Bearer ${token}`, 'Content-Type':'application/json' } : { 'Content-Type':'application/json' };
+	}
+
+	function rowTemplate(a, idx){
+		return `
+			<tr class="border-b">
+				<td class="p-3">${idx+1}</td>
+				<td class="p-3">${a.applicantName}</td>
+				<td class="p-3">${a.jobName}</td>
+				<td class="p-3">${a.city ?? '—'}</td>
+				<td class="p-3">${a.phoneNumber}</td>
+				<td class="p-3">${a.contactEmail ?? '—'}</td>
+				<td class="p-3">${new Date(a.createdAt).toLocaleDateString()}</td>
+				<td class="p-3">
+					<button data-edit="${a.id}" class="text-blue-600 hover:underline mr-3">تعديل</button>
+					<button data-del="${a.id}" class="text-red-600 hover:underline">حذف</button>
+				</td>
+			</tr>
+		`;
+	}
+
+	async function fetchJobs(){
+		const res = await fetch(API.jobs, { headers: authHeaders() });
+		if(!res.ok) throw new Error('failed');
+		return (await res.json()).data || [];
+	}
+	async function fetchApps(jobId){
+		const url = jobId ? `${API.list}?jobId=${encodeURIComponent(jobId)}` : API.list;
+		const res = await fetch(url, { headers: authHeaders() });
+		if(!res.ok) throw new Error('failed');
+		return (await res.json()).data || [];
+	}
+
+	function fillJobsSelect(jobs){
+		const sel = document.getElementById('jobId');
+		const filterSel = document.getElementById('filterJob');
+		sel.innerHTML = '<option value="" disabled selected>اختر الوظيفة</option>' + jobs.map(j=>`<option value="${j.id}">${j.name}</option>`).join('');
+		filterSel.innerHTML = '<option value="">الكل</option>' + jobs.map(j=>`<option value="${j.id}">${j.name}</option>`).join('');
+	}
+
+	async function saveApp(e){
+		e.preventDefault();
+		const id = document.getElementById('appId').value;
+		const payload = {
+			applicantName: document.getElementById('applicantName').value.trim(),
+			phoneNumber: document.getElementById('phoneNumber').value.trim(),
+			city: document.getElementById('city').value.trim(),
+			jobId: parseInt(document.getElementById('jobId').value),
+			age: document.getElementById('age').value ? parseInt(document.getElementById('age').value) : null,
+			yearsOfExperience: document.getElementById('yearsOfExperience').value ? parseInt(document.getElementById('yearsOfExperience').value) : null,
+			summary: document.getElementById('summary').value.trim(),
+			jobPostedAt: document.getElementById('jobPostedAt').value ? new Date(document.getElementById('jobPostedAt').value).toISOString() : null,
+			contactEmail: document.getElementById('contactEmail').value.trim(),
+			isActive: true
+		};
+		const method = id ? 'PUT' : 'POST';
+		const url = id ? API.update(id) : API.create;
+		const res = await fetch(url, { method, headers: authHeaders(), body: JSON.stringify(payload) });
+		if(!res.ok){ alert('فشل الحفظ'); return; }
+		resetForm();
+		render();
+	}
+
+	function resetForm(){
+		document.getElementById('appId').value = '';
+		document.getElementById('appForm').reset();
+	}
+
+	function bindActions(){
+		document.querySelectorAll('[data-edit]').forEach(btn => {
+			btn.addEventListener('click', () => {
+				const id = btn.getAttribute('data-edit');
+				const row = cache.find(x => x.id == id);
+				if(!row) return;
+				document.getElementById('appId').value = row.id;
+				document.getElementById('applicantName').value = row.applicantName || '';
+				document.getElementById('phoneNumber').value = row.phoneNumber || '';
+				document.getElementById('city').value = row.city || '';
+				document.getElementById('jobId').value = row.jobId;
+				document.getElementById('age').value = row.age ?? '';
+				document.getElementById('yearsOfExperience').value = row.yearsOfExperience ?? '';
+				document.getElementById('summary').value = row.summary || '';
+				document.getElementById('contactEmail').value = row.contactEmail || '';
+				document.getElementById('jobPostedAt').value = row.jobPostedAt ? new Date(row.jobPostedAt).toISOString().substring(0,10) : '';
+				window.scrollTo({ top: 0, behavior: 'smooth' });
+			});
+		});
+		document.querySelectorAll('[data-del]').forEach(btn => {
+			btn.addEventListener('click', async () => {
+				const id = btn.getAttribute('data-del');
+				if(!confirm('تأكيد حذف الطلب؟')) return;
+				const res = await fetch(API.remove(id), { method:'DELETE', headers: authHeaders() });
+				if(!res.ok){ alert('فشل الحذف'); return; }
+				render();
+			});
+		});
+	}
+
+	let cache = [];
+	async function render(){
+		const table = document.getElementById('appsTable');
+		const empty = document.getElementById('emptyState');
+		const jobId = document.getElementById('filterJob').value;
+		const search = document.getElementById('searchInput').value.trim();
+		table.innerHTML = '';
+		try{
+			const [jobs, apps] = await Promise.all([fetchJobs(), fetchApps(jobId)]);
+			fillJobsSelect(jobs);
+			cache = apps.map(a => ({...a}));
+			let data = cache;
+			if(search){
+				data = data.filter(x =>
+					(x.applicantName && x.applicantName.includes(search)) ||
+					(x.city && x.city.includes(search))
+				);
+			}
+			if(!data.length){ empty.classList.remove('hidden'); return; }
+			empty.classList.add('hidden');
+			table.innerHTML = data.map(rowTemplate).join('');
+			bindActions();
+		}catch(e){ empty.textContent = 'حدث خطأ أثناء الجلب'; empty.classList.remove('hidden'); }
+	}
+
+	document.getElementById('appForm').addEventListener('submit', saveApp);
+	document.getElementById('resetBtn').addEventListener('click', resetForm);
+	document.getElementById('filterJob').addEventListener('change', render);
+	document.getElementById('searchInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') render(); });
+
+	// Initial load chain to ensure selects filled before first render
+	(async ()=>{
+		try{
+			const jobs = await fetchJobs();
+			fillJobsSelect(jobs);
+			await render();
+		}catch(e){ document.getElementById('emptyState').textContent = 'تعذر التحميل'; document.getElementById('emptyState').classList.remove('hidden'); }
+	})();
+	</script>
+</body>
+</html>

@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم صاحب المطعم - WeenRest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+        }
+        .sidebar-link.active {
+            background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-8 flex flex-col items-center">
+            <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-yellow-600 mb-4"></div>
+            <p class="text-gray-700 font-semibold">جاري التحميل...</p>
+        </div>
+    </div>
+
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gradient-to-b from-gray-900 to-black text-white shadow-2xl">
+            <div class="flex flex-col h-full">
+                <!-- Logo -->
+                <div class="p-6 border-b border-gray-700">
+                    <div class="flex items-center space-x-3 space-x-reverse">
+                        <div class="w-12 h-12 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-utensils text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold">WeenRest</h1>
+                            <p class="text-xs text-gray-400">لوحة صاحب المطعم</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="flex-1 p-4 space-y-2">
+                    <a href="#" onclick="showSection('dashboard'); return false;" class="sidebar-link active flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer">
+                        <i class="fas fa-home w-5"></i>
+                        <span>لوحة التحكم</span>
+                    </a>
+                    <a href="#" onclick="showSection('restaurant'); return false;" class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
+                        <i class="fas fa-store w-5"></i>
+                        <span>إدارة المطعم</span>
+                    </a>
+                    <a href="#" onclick="showSection('offers'); loadOffers(); return false;" class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
+                        <i class="fas fa-bullhorn w-5"></i>
+                        <span>العروض</span>
+                    </a>
+                    <a href="#" onclick="showSection('menus'); loadMenus(); return false;" class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
+                        <i class="fas fa-book-open w-5"></i>
+                        <span>قائمة المنيو</span>
+                    </a>
+                    <a href="#" onclick="showSection('profile'); return false;" class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
+                        <i class="fas fa-user-circle w-5"></i>
+                        <span>الملف الشخصي</span>
+                    </a>
+                </nav>
+
+                <!-- User Info -->
+                <div class="p-4 border-t border-gray-700">
+                    <div class="flex items-center space-x-3 space-x-reverse mb-3">
+                        <div class="w-10 h-10 bg-yellow-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-white"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-semibold truncate" id="userName">صاحب المطعم</p>
+                            <p class="text-xs text-gray-400 truncate" id="userEmail">owner@weenrest.com</p>
+                        </div>
+                    </div>
+                    <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg transition duration-300 text-sm font-semibold">
+                        <i class="fas fa-sign-out-alt mr-2"></i>
+                        تسجيل الخروج
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Header -->
+            <header class="bg-white shadow-md border-b border-gray-200">
+                <div class="flex items-center justify-between px-6 py-4">
+                    <h2 class="text-2xl font-bold text-gray-800" id="pageTitle">لوحة التحكم</h2>
+                    <div class="flex items-center space-x-4 space-x-reverse">
+                        <div class="flex items-center space-x-2 space-x-reverse bg-gray-100 px-4 py-2 rounded-lg">
+                            <i class="fas fa-calendar text-gray-600"></i>
+                            <span class="text-sm text-gray-700" id="currentDate"></span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <!-- Dashboard Section -->
+                <div id="dashboard" class="section">
+                    <!-- Welcome Card -->
+                    <div class="bg-gradient-to-r from-yellow-600 to-amber-600 rounded-xl p-8 text-white mb-6 card-hover transition duration-300">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-2xl font-bold mb-2">مرحباً بك في لوحة التحكم</h3>
+                                <p class="text-yellow-100">يمكنك إدارة مطعمك وملفك الشخصي من هنا</p>
+                            </div>
+                            <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-store text-3xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6" id="statsCards">
+                        <!-- Stats will be loaded here -->
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">إجراءات سريعة</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                            <button onclick="showSection('restaurant')" class="flex flex-col items-center p-4 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-lg hover:from-yellow-100 hover:to-amber-100 transition duration-300 cursor-pointer">
+                                <i class="fas fa-store text-yellow-600 text-2xl mb-2"></i>
+                                <span class="text-sm font-semibold text-gray-700">إدارة المطعم</span>
+                            </button>
+                            <button onclick="editRestaurant()" class="flex flex-col items-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg hover:from-blue-100 hover:to-indigo-100 transition duration-300 cursor-pointer">
+                                <i class="fas fa-edit text-blue-600 text-2xl mb-2"></i>
+                                <span class="text-sm font-semibold text-gray-700">تعديل المطعم</span>
+                            </button>
+                            <button onclick="window.location.href='customize.html'" class="flex flex-col items-center p-4 bg-gradient-to-br from-pink-50 to-rose-50 rounded-lg hover:from-pink-100 hover:to-rose-100 transition duration-300 cursor-pointer">
+                                <i class="fas fa-magic text-pink-600 text-2xl mb-2"></i>
+                                <span class="text-sm font-semibold text-gray-700">خصص مطعمك</span>
+                            </button>
+                            <button onclick="showSection('profile')" class="flex flex-col items-center p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg hover:from-green-100 hover:to-emerald-100 transition duration-300 cursor-pointer">
+                                <i class="fas fa-user-cog text-green-600 text-2xl mb-2"></i>
+                                <span class="text-sm font-semibold text-gray-700">الملف الشخصي</span>
+                            </button>
+                            <button onclick="window.location.href='index.html'" class="flex flex-col items-center p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-lg hover:from-gray-100 hover:to-slate-100 transition duration-300 cursor-pointer">
+                                <i class="fas fa-globe text-gray-600 text-2xl mb-2"></i>
+                                <span class="text-sm font-semibold text-gray-700">الموقع الرئيسي</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Restaurant Section -->
+                <div id="restaurant" class="section hidden">
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <!-- Header -->
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+                                <h3 class="text-2xl font-bold text-gray-800">إدارة المطعم</h3>
+                                <div class="flex space-x-3 space-x-reverse">
+                                    <button onclick="editRestaurant()" id="editRestaurantBtn" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-4 py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                                        <i class="fas fa-edit mr-2"></i>تعديل المطعم
+                                    </button>
+                                    <button onclick="openRestaurantModal()" id="createRestaurantBtn" class="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-4 py-2 rounded-lg hover:from-green-700 hover:to-emerald-700 transition duration-300">
+                                        <i class="fas fa-plus mr-2"></i>إنشاء مطعم
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Restaurant Info -->
+                        <div class="p-6" id="restaurantInfo">
+                            <div class="text-center py-12" id="noRestaurantMsg">
+                                <i class="fas fa-store text-6xl text-gray-300 mb-4"></i>
+                                <h4 class="text-xl font-bold text-gray-600 mb-2">لا يوجد مطعم مرتبط بحسابك</h4>
+                                <p class="text-gray-500 mb-6">قم بإنشاء مطعم جديد للبدء</p>
+                                <button onclick="openRestaurantModal()" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-6 py-3 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                                    <i class="fas fa-plus mr-2"></i>إنشاء مطعم جديد
+                                </button>
+                            </div>
+
+                            <div id="restaurantDetails" class="hidden">
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <!-- Restaurant Image -->
+                                    <div>
+                                        <img id="restaurantImage" src="" alt="صورة المطعم" class="w-full h-64 object-contain rounded-lg shadow-md mb-4">
+                                    </div>
+
+                                    <!-- Restaurant Info -->
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-1">اسم المطعم</label>
+                                            <p id="restaurantName" class="text-lg font-bold text-gray-800"></p>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-1">الوصف</label>
+                                            <p id="restaurantDescription" class="text-gray-600"></p>
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-sm font-semibold text-gray-700 mb-1">رقم الهاتف</label>
+                                                <p id="restaurantPhone" class="text-gray-600"></p>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-semibold text-gray-700 mb-1">القسم</label>
+                                                <p id="restaurantCategory" class="text-gray-600"></p>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-1">العنوان</label>
+                                            <p id="restaurantAddress" class="text-gray-600"></p>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-1">المدن</label>
+                                            <div id="restaurantCities" class="flex flex-wrap gap-2"></div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-1">الحالة</label>
+                                            <span id="restaurantStatus" class="inline-block px-3 py-1 rounded-full text-sm font-semibold"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-6 flex space-x-3 space-x-reverse">
+                                    <button onclick="editRestaurant()" class="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-2 rounded-lg transition duration-300">
+                                        <i class="fas fa-edit mr-2"></i>تعديل
+                                    </button>
+                                    <button onclick="deleteRestaurant()" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition duration-300">
+                                        <i class="fas fa-trash mr-2"></i>حذف المطعم
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Offers Section -->
+                <div id="offers" class="section hidden">
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+                            <h3 class="text-2xl font-bold text-gray-800">عروض المطعم</h3>
+                            <button onclick="openOfferModal()" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-4 py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                                <i class="fas fa-plus mr-2"></i>إضافة عرض
+                            </button>
+                        </div>
+                        <div class="p-6">
+                            <div id="offersList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <!-- Offers will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Menus Section -->
+                <div id="menus" class="section hidden">
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+                            <h3 class="text-2xl font-bold text-gray-800">المنيو</h3>
+                            <button onclick="openMenuModal()" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-4 py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                                <i class="fas fa-plus mr-2"></i>إضافة منيو
+                            </button>
+                        </div>
+                        <div class="p-6">
+                            <div id="menusList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Section -->
+                <div id="profile" class="section hidden">
+                    <div class="max-w-4xl mx-auto">
+                        <!-- Profile Info Card -->
+                        <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-6">الملف الشخصي</h3>
+                            
+                            <!-- Profile Form -->
+                            <form id="profileForm" class="space-y-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">الاسم الأول</label>
+                                        <input type="text" id="profileFirstName" required
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">الاسم الأخير</label>
+                                        <input type="text" id="profileLastName" required
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">البريد الإلكتروني</label>
+                                        <input type="email" id="profileEmail" required
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">رقم الهاتف</label>
+                                        <input type="tel" id="profilePhone" required
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                                    </div>
+                         
+                                </div>
+
+                                <button type="submit" class="w-full bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-3 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                                    <i class="fas fa-save mr-2"></i>
+                                    حفظ التغييرات
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Change Password Card -->
+                        <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-6">تغيير كلمة المرور</h3>
+                            
+                            <form id="passwordForm" class="space-y-6">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">كلمة المرور الحالية</label>
+                                    <input type="password" id="currentPassword" required
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">كلمة المرور الجديدة</label>
+                                    <input type="password" id="newPassword" required
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                                </div>
+
+                                <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition duration-300">
+                                    <i class="fas fa-key mr-2"></i>
+                                    تغيير كلمة المرور
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Restaurant Modal -->
+    <div id="restaurantModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-2xl font-bold text-gray-800" id="restaurantModalTitle">إنشاء مطعم</h3>
+            </div>
+            <form id="restaurantForm" class="p-6 space-y-4">
+                <input type="hidden" id="restaurantId">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">اسم المطعم *</label>
+                        <input type="text" id="restaurantNameInput" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">القسم *</label>
+                        <select id="restaurantCategoryId" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                            <option value="">اختر القسم</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">الوصف</label>
+                        <textarea id="restaurantDescriptionInput" rows="3"
+                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">رقم الهاتف</label>
+                        <input type="tel" id="restaurantPhoneNumber"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">العنوان</label>
+                        <input type="text" id="restaurantAddressInput"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">المدينة (قديم)</label>
+                        <input type="text" id="restaurantCity"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">المدن (متعدد) *</label>
+                        <select id="restaurantCityIds" multiple
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                            <option value="">اختر المدن</option>
+                        </select>
+                        <p class="text-xs text-gray-500 mt-1">اضغط Ctrl (أو Cmd على Mac) لتحديد عدة مدن</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">رفع صورة</label>
+                        <input type="file" id="restaurantImageFile" accept="image/*"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                        <p class="text-xs text-gray-500 mt-1">الحجم الأقصى: 5MB | الصيغ المدعومة: JPG, PNG, GIF, WEBP</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">أو رابط الصورة</label>
+                        <input type="url" id="restaurantImageUrl"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="flex items-center space-x-2 space-x-reverse">
+                            <input type="checkbox" id="restaurantIsActive" class="w-4 h-4 text-yellow-600 rounded" checked>
+                            <span class="text-sm font-semibold text-gray-700">مفعّل</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flex space-x-3 space-x-reverse pt-4">
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-2 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                        حفظ
+                    </button>
+                    <button type="button" onclick="closeRestaurantModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg font-semibold transition duration-300">
+                        إلغاء
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Offer Modal -->
+    <div id="offerModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-2xl font-bold text-gray-800" id="offerModalTitle">إضافة عرض</h3>
+            </div>
+            <form id="offerForm" class="p-6 space-y-4">
+                <input type="hidden" id="offerId">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">اسم العرض *</label>
+                        <input type="text" id="offerName" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">تاريخ الانتهاء *</label>
+                        <input type="date" id="offerExpirationDate" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">تفاصيل العرض</label>
+                        <textarea id="offerDescription" rows="3"
+                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">رفع صورة</label>
+                        <input type="file" id="offerImageFile" accept="image/*"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                        <p class="text-xs text-gray-500 mt-1">الحجم الأقصى: 5MB | الصيغ المدعومة: JPG, PNG, GIF, WEBP</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">أو رابط الصورة</label>
+                        <input type="url" id="offerImageUrl"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="flex items-center space-x-2 space-x-reverse">
+                            <input type="checkbox" id="offerIsActive" class="w-4 h-4 text-yellow-600 rounded" checked>
+                            <span class="text-sm font-semibold text-gray-700">مفعّل</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flex space-x-3 space-x-reverse pt-4">
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-2 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                        حفظ
+                    </button>
+                    <button type="button" onclick="closeOfferModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg font-semibold transition duration-300">
+                        إلغاء
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Menu Modal -->
+    <div id="menuModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-2xl font-bold text-gray-800" id="menuModalTitle">إضافة منيو</h3>
+            </div>
+            <form id="menuForm" class="p-6 space-y-4">
+                <input type="hidden" id="menuId">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">صور المنيو (يمكن اختيار عدة صور)</label>
+                        <input type="file" id="menuImages" accept="image/*" multiple
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                        <p class="text-xs text-gray-500 mt-1">الحجم الأقصى لكل صورة: 5MB | الصيغ: JPG, PNG, GIF, WEBP</p>
+                    </div>
+                    <div>
+                        <label class="flex items-center space-x-2 space-x-reverse">
+                            <input type="checkbox" id="menuIsActive" class="w-4 h-4 text-yellow-600 rounded" checked>
+                            <span class="text-sm font-semibold text-gray-700">مفعّل</span>
+                        </label>
+                    </div>
+                    <div id="menuExistingImages" class="grid grid-cols-2 md:grid-cols-3 gap-3 hidden"></div>
+                </div>
+                <div class="flex space-x-3 space-x-reverse pt-4">
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-2 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300">حفظ</button>
+                    <button type="button" onclick="closeMenuModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg font-semibold transition duration-300">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        const API_BASE_URL = 'http://localhost:5276/api';
+        let currentRestaurant = null;
+        let allCategories = [];
+        let allCities = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set current date
+            const now = new Date();
+            const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+            const days = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+            const dayName = days[now.getDay()];
+            const monthName = months[now.getMonth()];
+            const dateStr = `${dayName}، ${now.getDate()} ${monthName} ${now.getFullYear()}`;
+            document.getElementById('currentDate').textContent = dateStr;
+
+            // Check authentication
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Load initial data
+            loadUserProfile();
+            loadCategories();
+            loadCities();
+            loadRestaurant();
+            loadOffers();
+
+            // Setup form handlers
+            document.getElementById('profileForm').addEventListener('submit', updateProfile);
+            document.getElementById('passwordForm').addEventListener('submit', changePassword);
+            document.getElementById('restaurantForm').addEventListener('submit', saveRestaurant);
+            document.getElementById('offerForm').addEventListener('submit', saveOffer);
+            document.getElementById('menuForm').addEventListener('submit', saveMenu);
+        });
+
+        // Navigation
+        function showSection(sectionName) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById(sectionName).classList.remove('hidden');
+
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            const titles = {
+                'dashboard': 'لوحة التحكم',
+                'restaurant': 'إدارة المطعم',
+                'offers': 'العروض',
+                'menus': 'المنيو',
+                'profile': 'الملف الشخصي'
+            };
+            document.getElementById('pageTitle').textContent = titles[sectionName] || 'لوحة التحكم';
+
+            // Highlight active link
+            const activeLink = Array.from(document.querySelectorAll('.sidebar-link')).find(link => 
+                link.textContent.includes(titles[sectionName] || '')
+            );
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+        }
+
+        // API Functions
+        async function apiCall(endpoint, method = 'GET', body = null) {
+            const token = localStorage.getItem('token');
+            const options = {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            };
+            
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+
+            const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+            return response.json();
+        }
+
+        async function apiCallFormData(endpoint, method = 'POST', formData) {
+            const token = localStorage.getItem('token');
+            const options = {
+                method,
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            };
+            
+            options.body = formData;
+
+            const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+            return response.json();
+        }
+
+        function resolveImageUrl(relativeOrAbsolute) {
+            if (!relativeOrAbsolute) return '';
+            const url = relativeOrAbsolute.trim();
+            if (url.startsWith('http://') || url.startsWith('https://')) return url;
+            const origin = API_BASE_URL.replace('/api', '');
+            const path = url.startsWith('/') ? url : `/${url}`;
+            return origin + path;
+        }
+
+        // User Profile Functions
+        async function loadUserProfile() {
+            try {
+                const data = await apiCall('/RestaurantOwnerDashboard/profile');
+                if (data.success) {
+                    const user = data.data;
+                    document.getElementById('userName').textContent = `${user.firstName} ${user.lastName}`;
+                    document.getElementById('userEmail').textContent = user.email;
+                    
+                    // Fill profile form
+                    document.getElementById('profileFirstName').value = user.firstName;
+                    document.getElementById('profileLastName').value = user.lastName;
+                    document.getElementById('profileEmail').value = user.email;
+                    document.getElementById('profilePhone').value = user.phoneNumber || '';
+                }
+            } catch (error) {
+                showToast('حدث خطأ في تحميل الملف الشخصي', 'error');
+            }
+        }
+
+        async function updateProfile(e) {
+            e.preventDefault();
+            const profileData = {
+                firstName: document.getElementById('profileFirstName').value,
+                lastName: document.getElementById('profileLastName').value,
+                email: document.getElementById('profileEmail').value,
+                phoneNumber: document.getElementById('profilePhone').value,
+            };
+
+            try {
+                const data = await apiCall('/RestaurantOwnerDashboard/profile', 'PUT', profileData);
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadUserProfile();
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                showToast('حدث خطأ في تحديث الملف الشخصي', 'error');
+            }
+        }
+
+        async function changePassword(e) {
+            e.preventDefault();
+            const passwordData = {
+                currentPassword: document.getElementById('currentPassword').value,
+                newPassword: document.getElementById('newPassword').value
+            };
+
+            try {
+                const data = await apiCall('/RestaurantOwnerDashboard/profile/change-password', 'POST', passwordData);
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    document.getElementById('passwordForm').reset();
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                showToast('حدث خطأ في تغيير كلمة المرور', 'error');
+            }
+        }
+
+        // Restaurant Functions
+        async function loadCategories() {
+            try {
+                const data = await apiCall('/RestaurantOwnerDashboard/categories');
+                if (data.success) {
+                    allCategories = data.data;
+                    const select = document.getElementById('restaurantCategoryId');
+                    select.innerHTML = '<option value="">اختر القسم</option>';
+                    allCategories.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.id;
+                        option.textContent = category.name;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+
+        async function loadCities() {
+            try {
+                const data = await apiCall('/RestaurantOwnerDashboard/cities');
+                if (data.success) {
+                    allCities = data.data;
+                    const select = document.getElementById('restaurantCityIds');
+                    select.innerHTML = '<option value="">اختر المدن</option>';
+                    allCities.forEach(city => {
+                        const option = document.createElement('option');
+                        option.value = city.id;
+                        option.textContent = city.name;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading cities:', error);
+            }
+        }
+
+        async function loadRestaurant() {
+            try {
+                const data = await apiCall('/RestaurantOwnerDashboard/restaurant');
+                if (data.success && data.data) {
+                    currentRestaurant = data.data;
+                    displayRestaurant(data.data);
+                    updateStats();
+                    document.getElementById('createRestaurantBtn').classList.add('hidden');
+                    document.getElementById('editRestaurantBtn').classList.remove('hidden');
+                } else {
+                    // No restaurant found
+                    document.getElementById('noRestaurantMsg').classList.remove('hidden');
+                    document.getElementById('restaurantDetails').classList.add('hidden');
+                    document.getElementById('createRestaurantBtn').classList.remove('hidden');
+                    document.getElementById('editRestaurantBtn').classList.add('hidden');
+                }
+            } catch (error) {
+                console.error('Error loading restaurant:', error);
+                document.getElementById('noRestaurantMsg').classList.remove('hidden');
+                document.getElementById('restaurantDetails').classList.add('hidden');
+            }
+        }
+
+        function displayRestaurant(restaurant) {
+            document.getElementById('noRestaurantMsg').classList.add('hidden');
+            document.getElementById('restaurantDetails').classList.remove('hidden');
+
+            document.getElementById('restaurantName').textContent = restaurant.name;
+            document.getElementById('restaurantDescription').textContent = restaurant.description || 'لا يوجد وصف';
+            document.getElementById('restaurantPhone').textContent = restaurant.phoneNumber || 'غير متوفر';
+            document.getElementById('restaurantAddress').textContent = restaurant.address || 'غير متوفر';
+            document.getElementById('restaurantCategory').textContent = restaurant.categoryName || 'غير محدد';
+
+            // Display image
+            const imgElement = document.getElementById('restaurantImage');
+            if (restaurant.imageUrl) {
+                imgElement.src = restaurant.imageUrl.startsWith('http') 
+                    ? restaurant.imageUrl 
+                    : `${API_BASE_URL.replace('/api', '')}${restaurant.imageUrl}`;
+                imgElement.classList.remove('hidden');
+            } else {
+                imgElement.src = '';
+                imgElement.classList.add('hidden');
+            }
+
+            // Display cities
+            const citiesContainer = document.getElementById('restaurantCities');
+            citiesContainer.innerHTML = '';
+            if (restaurant.cityNames && restaurant.cityNames.length > 0) {
+                restaurant.cityNames.forEach(cityName => {
+                    const badge = document.createElement('span');
+                    badge.className = 'px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm';
+                    badge.textContent = cityName;
+                    citiesContainer.appendChild(badge);
+                });
+            } else {
+                citiesContainer.innerHTML = '<span class="text-gray-500">لا توجد مدن محددة</span>';
+            }
+
+            // Display status
+            const statusElement = document.getElementById('restaurantStatus');
+            if (restaurant.isActive) {
+                statusElement.className = 'inline-block px-3 py-1 rounded-full text-sm font-semibold bg-green-100 text-green-800';
+                statusElement.textContent = 'مفعّل';
+            } else {
+                statusElement.className = 'inline-block px-3 py-1 rounded-full text-sm font-semibold bg-red-100 text-red-800';
+                statusElement.textContent = 'معطّل';
+            }
+        }
+
+        function updateStats() {
+            const statsCards = document.getElementById('statsCards');
+            statsCards.innerHTML = `
+                <div class="bg-gradient-to-r from-yellow-500 to-amber-500 rounded-xl p-6 text-white card-hover transition duration-300">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-yellow-100 text-sm font-semibold">اسم المطعم</p>
+                            <p class="text-2xl font-bold mt-2">${currentRestaurant?.name || 'غير محدد'}</p>
+                        </div>
+                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-store text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl p-6 text-white card-hover transition duration-300">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-green-100 text-sm font-semibold">القسم</p>
+                            <p class="text-2xl font-bold mt-2">${currentRestaurant?.categoryName || 'غير محدد'}</p>
+                        </div>
+                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-tags text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl p-6 text-white card-hover transition duration-300">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-blue-100 text-sm font-semibold">الحالة</p>
+                            <p class="text-2xl font-bold mt-2">${currentRestaurant?.isActive ? 'مفعّل' : 'معطّل'}</p>
+                        </div>
+                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-check-circle text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openRestaurantModal(id = null) {
+            document.getElementById('restaurantModalTitle').textContent = id ? 'تعديل المطعم' : 'إنشاء مطعم';
+            document.getElementById('restaurantForm').reset();
+            document.getElementById('restaurantId').value = id || '';
+            
+            if (id && currentRestaurant) {
+                // Fill form with current restaurant data
+                document.getElementById('restaurantNameInput').value = currentRestaurant.name;
+                document.getElementById('restaurantCategoryId').value = currentRestaurant.categoryId;
+                document.getElementById('restaurantDescriptionInput').value = currentRestaurant.description || '';
+                document.getElementById('restaurantPhoneNumber').value = currentRestaurant.phoneNumber || '';
+                document.getElementById('restaurantAddressInput').value = currentRestaurant.address || '';
+                document.getElementById('restaurantCity').value = currentRestaurant.city || '';
+                document.getElementById('restaurantImageUrl').value = currentRestaurant.imageUrl || '';
+                document.getElementById('restaurantIsActive').checked = currentRestaurant.isActive;
+
+                // Set selected cities
+                if (currentRestaurant.cityIds && currentRestaurant.cityIds.length > 0) {
+                    const citySelect = document.getElementById('restaurantCityIds');
+                    Array.from(citySelect.options).forEach(option => {
+                        if (currentRestaurant.cityIds.includes(parseInt(option.value))) {
+                            option.selected = true;
+                        }
+                    });
+                }
+            }
+
+            document.getElementById('restaurantModal').classList.remove('hidden');
+        }
+
+        function closeRestaurantModal() {
+            document.getElementById('restaurantModal').classList.add('hidden');
+        }
+
+        function editRestaurant() {
+            if (currentRestaurant) {
+                openRestaurantModal(currentRestaurant.id);
+            } else {
+                showToast('لا يوجد مطعم للتحرير', 'error');
+            }
+        }
+
+        async function saveRestaurant(e) {
+            e.preventDefault();
+            const id = document.getElementById('restaurantId').value;
+            const imageFile = document.getElementById('restaurantImageFile').files[0];
+
+            // Get selected city IDs
+            const citySelect = document.getElementById('restaurantCityIds');
+            const selectedCityIds = Array.from(citySelect.selectedOptions)
+                .map(option => parseInt(option.value))
+                .filter(id => !isNaN(id));
+
+            if (imageFile || document.getElementById('restaurantImageUrl').value) {
+                // Use FormData for file upload
+                const formData = new FormData();
+                
+                formData.append('Name', document.getElementById('restaurantNameInput').value);
+                formData.append('CategoryId', parseInt(document.getElementById('restaurantCategoryId').value));
+                
+                const description = document.getElementById('restaurantDescriptionInput').value;
+                if (description && description.trim()) {
+                    formData.append('Description', description);
+                }
+                
+                const phoneNumber = document.getElementById('restaurantPhoneNumber').value;
+                if (phoneNumber && phoneNumber.trim()) {
+                    formData.append('PhoneNumber', phoneNumber);
+                }
+                
+                const address = document.getElementById('restaurantAddressInput').value;
+                if (address && address.trim()) {
+                    formData.append('Address', address);
+                }
+                
+                const city = document.getElementById('restaurantCity').value;
+                if (city && city.trim()) {
+                    formData.append('City', city);
+                }
+                
+                const imageUrl = document.getElementById('restaurantImageUrl').value;
+                if (imageUrl && imageUrl.trim()) {
+                    formData.append('ImageUrl', imageUrl);
+                }
+                
+                formData.append('IsActive', document.getElementById('restaurantIsActive').checked);
+                
+                if (imageFile) {
+                    formData.append('imageFile', imageFile);
+                }
+
+                // Add CityIds as array
+                selectedCityIds.forEach((cityId, index) => {
+                    formData.append(`CityIds[${index}]`, cityId);
+                });
+
+                try {
+                    const endpoint = id ? '/RestaurantOwnerDashboard/restaurant' : '/RestaurantOwnerDashboard/restaurant';
+                    const method = id ? 'PUT' : 'POST';
+                    const result = await apiCallFormData(endpoint, method, formData);
+                    if (result.success) {
+                        showToast(result.message, 'success');
+                        closeRestaurantModal();
+                        loadRestaurant();
+                    } else {
+                        showToast(result.message, 'error');
+                    }
+                } catch (error) {
+                    showToast('حدث خطأ في حفظ المطعم', 'error');
+                }
+            } else {
+                // Use JSON for URL only (no file upload)
+                const data = {
+                    name: document.getElementById('restaurantNameInput').value,
+                    categoryId: parseInt(document.getElementById('restaurantCategoryId').value),
+                    description: document.getElementById('restaurantDescriptionInput').value,
+                    phoneNumber: document.getElementById('restaurantPhoneNumber').value,
+                    address: document.getElementById('restaurantAddressInput').value,
+                    city: document.getElementById('restaurantCity').value,
+                    imageUrl: document.getElementById('restaurantImageUrl').value,
+                    isActive: document.getElementById('restaurantIsActive').checked,
+                    cityIds: selectedCityIds
+                };
+
+                try {
+                    const endpoint = id ? '/RestaurantOwnerDashboard/restaurant' : '/RestaurantOwnerDashboard/restaurant';
+                    const method = id ? 'PUT' : 'POST';
+                    const result = await apiCall(endpoint, method, data);
+                    if (result.success) {
+                        showToast(result.message, 'success');
+                        closeRestaurantModal();
+                        loadRestaurant();
+                    } else {
+                        showToast(result.message, 'error');
+                    }
+                } catch (error) {
+                    showToast('حدث خطأ في حفظ المطعم', 'error');
+                }
+            }
+        }
+
+        async function deleteRestaurant() {
+            const result = await Swal.fire({
+                title: 'هل أنت متأكد؟',
+                text: 'هل تريد حذف مطعمك؟ لا يمكن التراجع عن هذا الإجراء',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'نعم، احذف',
+                cancelButtonText: 'إلغاء'
+            });
+
+            if (!result.isConfirmed) return;
+
+            try {
+                const data = await apiCall('/RestaurantOwnerDashboard/restaurant', 'DELETE');
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    currentRestaurant = null;
+                    loadRestaurant();
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                showToast('حدث خطأ في حذف المطعم', 'error');
+            }
+        }
+
+        // Utility Functions
+        async function loadOffers() {
+            try {
+                const data = await apiCall('/RestaurantOwnerDashboard/offers');
+                if (data.success) {
+                    const container = document.getElementById('offersList');
+                    container.innerHTML = '';
+                    const offers = data.data;
+                    if (!offers || offers.length === 0) {
+                        container.innerHTML = '<div class="col-span-1 md:col-span-2 lg:col-span-3 text-center text-gray-500 py-8">لا توجد عروض بعد</div>';
+                        return;
+                    }
+                    offers.forEach(o => {
+                        const card = document.createElement('div');
+                        card.className = 'bg-white border border-gray-200 rounded-lg p-4 shadow-sm';
+                        const imgTag = o.imageUrl ? `<img src="${o.imageUrl.startsWith('http') ? o.imageUrl : API_BASE_URL.replace('/api','') + o.imageUrl}" alt="${o.name}" class="w-full h-40 object-contain rounded mb-3">` : '';
+                        card.innerHTML = `
+                            ${imgTag}
+                            <h4 class="text-lg font-bold text-gray-800 mb-1">${o.name}</h4>
+                            <p class="text-sm text-gray-600 mb-2">${o.description || ''}</p>
+                            <div class="flex items-center justify-between text-sm mb-3">
+                                <span class="text-gray-700">ينتهي في: ${new Date(o.expirationDate).toLocaleDateString('ar-EG')}</span>
+                                <span class="${o.isActive ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'} px-2 py-0.5 rounded-full">${o.isActive ? 'مفعّل' : 'معطّل'}</span>
+                            </div>
+                            <div class="flex space-x-2 space-x-reverse">
+                                <button class="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-2 rounded" onclick="openOfferModal(${o.id})"><i class="fas fa-edit mr-1"></i>تعديل</button>
+                                <button class="flex-1 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded" onclick="deleteOffer(${o.id})"><i class="fas fa-trash mr-1"></i>حذف</button>
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    });
+                }
+            } catch (e) {
+                console.error('Error loading offers', e);
+            }
+        }
+
+        function openOfferModal(id = null) {
+            document.getElementById('offerModalTitle').textContent = id ? 'تعديل العرض' : 'إضافة عرض';
+            document.getElementById('offerForm').reset();
+            document.getElementById('offerId').value = id || '';
+            if (id && currentRestaurant) {
+                // fetch the offer details from loaded list for convenience
+                // Alternatively could request /offers/{id}
+            }
+            document.getElementById('offerModal').classList.remove('hidden');
+        }
+
+        function closeOfferModal() {
+            document.getElementById('offerModal').classList.add('hidden');
+        }
+
+        async function saveOffer(e) {
+            e.preventDefault();
+            const id = document.getElementById('offerId').value;
+            const imageFile = document.getElementById('offerImageFile').files[0];
+            const formData = new FormData();
+            formData.append('Name', document.getElementById('offerName').value);
+            formData.append('ExpirationDate', document.getElementById('offerExpirationDate').value);
+            const desc = document.getElementById('offerDescription').value;
+            if (desc && desc.trim()) formData.append('Description', desc);
+            const imageUrl = document.getElementById('offerImageUrl').value;
+            if (imageUrl && imageUrl.trim()) formData.append('ImageUrl', imageUrl);
+            formData.append('IsActive', document.getElementById('offerIsActive').checked);
+            if (imageFile) formData.append('imageFile', imageFile);
+
+            try {
+                const endpoint = id ? `/RestaurantOwnerDashboard/offers/${id}` : '/RestaurantOwnerDashboard/offers';
+                const method = id ? 'PUT' : 'POST';
+                const result = await apiCallFormData(endpoint, method, formData);
+                if (result.success) {
+                    showToast(result.message, 'success');
+                    closeOfferModal();
+                    loadOffers();
+                } else {
+                    showToast(result.message, 'error');
+                }
+            } catch (error) {
+                showToast('حدث خطأ في حفظ العرض', 'error');
+            }
+        }
+
+        async function deleteOffer(id) {
+            const result = await Swal.fire({
+                title: 'هل أنت متأكد؟',
+                text: 'سيتم حذف العرض نهائياً',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'نعم، احذف',
+                cancelButtonText: 'إلغاء'
+            });
+            if (!result.isConfirmed) return;
+            try {
+                const resp = await apiCall(`/RestaurantOwnerDashboard/offers/${id}`, 'DELETE');
+                if (resp.success) {
+                    showToast(resp.message, 'success');
+                    loadOffers();
+                } else {
+                    showToast(resp.message, 'error');
+                }
+            } catch (e) {
+                showToast('حدث خطأ في حذف العرض', 'error');
+            }
+        }
+
+        // Menus Functions (Owner)
+        async function loadMenus() {
+            try {
+                const data = await apiCall('/RestaurantOwnerDashboard/menus');
+                const container = document.getElementById('menusList');
+                container.innerHTML = '';
+                if (!data.success) { container.innerHTML = '<div class="col-span-1 md:col-span-2 lg:col-span-3 text-center text-gray-500 py-8">تعذر تحميل المنيو</div>'; return; }
+                const menus = data.data || [];
+                if (menus.length === 0) {
+                    container.innerHTML = '<div class="col-span-1 md:col-span-2 lg:col-span-3 text-center text-gray-500 py-8">لا توجد منيو بعد</div>';
+                    return;
+                }
+                menus.forEach(m => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-white border border-gray-200 rounded-lg p-4 shadow-sm';
+                    const gallery = (m.images || []).slice(0, 3).map(i => `<img src="${resolveImageUrl(i.imageUrl)}" class="w-full h-30 object-contain rounded">`).join('');
+                    card.innerHTML = `
+                        <div class="grid gap-2 mb-3">${gallery}</div>
+                        <div class="flex items-center justify-between text-sm mb-3">
+                            <span class="${m.isActive ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'} px-2 py-0.5 rounded-full">${m.isActive ? 'مفعّل' : 'معطّل'}</span>
+                            <span class="text-gray-500">${new Date(m.createdAt).toLocaleDateString('ar-EG')}</span>
+                        </div>
+                        <div class="flex space-x-2 space-x-reverse">
+                            <button class="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-2 rounded" data-menu='${encodeURIComponent(JSON.stringify(m))}' onclick="openMenuModal(${m.id}, decodeURIComponent(this.dataset.menu))"><i class="fas fa-edit mr-1"></i>تعديل</button>
+                            <button class="flex-1 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded" onclick="deleteMenu(${m.id})"><i class="fas fa-trash mr-1"></i>حذف</button>
+                        </div>`;
+                    container.appendChild(card);
+                });
+            } catch (e) {
+                console.error('Error loading menus', e);
+            }
+        }
+
+        function openMenuModal(id = null, serialized = null) {
+            document.getElementById('menuModalTitle').textContent = id ? 'تعديل المنيو' : 'إضافة منيو';
+            document.getElementById('menuForm').reset();
+            document.getElementById('menuId').value = id || '';
+            document.getElementById('menuExistingImages').innerHTML = '';
+            document.getElementById('menuExistingImages').classList.add('hidden');
+            document.getElementById('menuIsActive').checked = true;
+            if (serialized) {
+                const m = JSON.parse(decodeURIComponent(serialized));
+                document.getElementById('menuIsActive').checked = !!m.isActive;
+                if (m.images && m.images.length) {
+                    const container = document.getElementById('menuExistingImages');
+                    container.classList.remove('hidden');
+                    container.innerHTML = m.images.map(img => `
+                        <div class="border rounded p-2 flex flex-col items-center gap-2">
+                            <img src="${resolveImageUrl(img.imageUrl)}" class="w-full h-24 object-contain rounded">
+                            <label class="text-xs flex items-center gap-2"><input type="checkbox" value="${img.id}" class="removeMenuImage"> إزالة</label>
+                        </div>
+                    `).join('');
+                }
+            }
+            document.getElementById('menuModal').classList.remove('hidden');
+        }
+
+        function closeMenuModal() {
+            document.getElementById('menuModal').classList.add('hidden');
+        }
+
+        async function saveMenu(e) {
+            e.preventDefault();
+            const id = document.getElementById('menuId').value;
+            const isActive = document.getElementById('menuIsActive').checked;
+            const files = Array.from(document.getElementById('menuImages').files || []);
+
+            const formData = new FormData();
+            formData.append('IsActive', isActive);
+            files.forEach(f => formData.append('newImages', f));
+
+            const removeIds = Array.from(document.querySelectorAll('#menuExistingImages .removeMenuImage:checked')).map(cb => parseInt(cb.value));
+            removeIds.forEach((rid, idx) => formData.append(`removeImageIds[${idx}]`, rid));
+
+            try {
+                let endpoint, method;
+                if (id) {
+                    endpoint = `/RestaurantOwnerDashboard/menus/${id}`;
+                    method = 'PUT';
+                } else {
+                    endpoint = '/RestaurantOwnerDashboard/menus';
+                    method = 'POST';
+                }
+                const resp = await apiCallFormData(endpoint, method, formData);
+                if (resp.success) {
+                    showToast(resp.message, 'success');
+                    closeMenuModal();
+                    loadMenus();
+                } else {
+                    showToast(resp.message, 'error');
+                }
+            } catch (err) {
+                showToast('حدث خطأ في حفظ المنيو', 'error');
+            }
+        }
+
+        async function deleteMenu(id) {
+            const result = await Swal.fire({
+                title: 'هل أنت متأكد؟',
+                text: 'سيتم حذف المنيو وصوره',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'نعم، احذف',
+                cancelButtonText: 'إلغاء'
+            });
+            if (!result.isConfirmed) return;
+            try {
+                const resp = await apiCall(`/RestaurantOwnerDashboard/menus/${id}`, 'DELETE');
+                if (resp.success) {
+                    showToast(resp.message, 'success');
+                    loadMenus();
+                } else {
+                    showToast(resp.message, 'error');
+                }
+            } catch (e) {
+                showToast('حدث خطأ في حذف المنيو', 'error');
+            }
+        }
+
+        function showToast(message, type) {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+
+            Toast.fire({
+                icon: type === 'success' ? 'success' : 'error',
+                title: message
+            });
+        }
+
+        function logout() {
+            Swal.fire({
+                title: 'تسجيل الخروج',
+                text: 'هل أنت متأكد من تسجيل الخروج؟',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'نعم، سجل الخروج',
+                cancelButtonText: 'إلغاء'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    window.location.href = 'login.html';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+

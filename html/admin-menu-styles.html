@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أنواع المنيو - WeenRest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style> body{font-family:'Cairo',sans-serif;} </style>
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-5xl mx-auto px-4 py-8">
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+                <a href="admin-dashboard.html" class="w-10 h-10 rounded-full bg-white shadow flex items-center justify-center hover:bg-gray-100"><i class="fas fa-arrow-right"></i></a>
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-800">أنواع المنيو</h1>
+            </div>
+            <button onclick="openCreate()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg"><i class="fas fa-plus ml-2"></i>إضافة نوع</button>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">الاسم</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">الوصف</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">الحالة</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">التاريخ</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stylesTable" class="divide-y divide-gray-200"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5276/api';
+        document.addEventListener('DOMContentLoaded', ()=>{
+            const token = localStorage.getItem('token');
+            if(!token){ window.location.href='login.html'; return; }
+            loadStyles();
+        });
+
+        async function loadStyles(){
+            const token = localStorage.getItem('token');
+            const resp = await fetch(`${API_BASE_URL}/MenuStyles`, { headers:{'Authorization':`Bearer ${token}`}});
+            const data = await resp.json();
+            const tbody = document.getElementById('stylesTable');
+            tbody.innerHTML = '';
+            if(!data.success || !data.data || data.data.length===0){
+                tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-6 text-center text-gray-500">لا توجد أنواع</td></tr>';
+                return;
+            }
+            data.data.forEach(s=>{
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="px-4 py-3">${escapeHtml(s.name)}</td>
+                    <td class="px-4 py-3">${escapeHtml(s.description||'')}</td>
+                    <td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs ${s.isActive?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${s.isActive?'مفعّل':'معطّل'}</span></td>
+                    <td class="px-4 py-3">${new Date(s.createdAt).toLocaleDateString('ar-EG')}</td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-2">
+                            <button class="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded" onclick='editStyle(${s.id})'><i class="fas fa-edit"></i></button>
+                            <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded" onclick='deleteStyle(${s.id})'><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function escapeHtml(x){return (x||'').toString().replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+
+        async function openCreate(){
+            const { value: formValues } = await Swal.fire({
+                title: 'إضافة نوع منيو',
+                html: `
+                    <input id="swal-name" class="swal2-input" placeholder="الاسم" required>
+                    <textarea id="swal-desc" class="swal2-textarea" placeholder="الوصف"></textarea>
+                    <label class="swal2-checkbox"><input type="checkbox" id="swal-active" checked> مفعّل</label>
+                `,
+                confirmButtonText: 'حفظ', showCancelButton: true,
+                preConfirm: ()=>({ name: document.getElementById('swal-name').value, description: document.getElementById('swal-desc').value, isActive: document.getElementById('swal-active').checked })
+            });
+            if(!formValues) return;
+            const token = localStorage.getItem('token');
+            const resp = await fetch(`${API_BASE_URL}/MenuStyles`, { method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`}, body: JSON.stringify(formValues)});
+            const data = await resp.json();
+            if(data.success){ Swal.fire({icon:'success',title:'تم الإنشاء'}); loadStyles(); } else { Swal.fire({icon:'error',title:'تعذر الإنشاء',text:data.message||''}); }
+        }
+
+        async function editStyle(id){
+            const token = localStorage.getItem('token');
+            const resp = await fetch(`${API_BASE_URL}/MenuStyles/${id}`, { headers:{'Authorization':`Bearer ${token}`}});
+            const data = await resp.json();
+            if(!data.success){ return Swal.fire({icon:'error',title:'تعذر الجلب',text:data.message||''}); }
+            const s = data.data;
+            const { value: formValues } = await Swal.fire({
+                title: 'تعديل نوع منيو',
+                html: `
+                    <input id="swal-name" class="swal2-input" placeholder="الاسم" value="${escapeHtml(s.name)}">
+                    <textarea id="swal-desc" class="swal2-textarea" placeholder="الوصف">${(s.description||'').toString().replace(/</g,'&lt;')}</textarea>
+                    <label class="swal2-checkbox"><input type="checkbox" id="swal-active" ${s.isActive?'checked':''}> مفعّل</label>
+                `,
+                confirmButtonText: 'حفظ', showCancelButton: true,
+                preConfirm: ()=>({ name: document.getElementById('swal-name').value, description: document.getElementById('swal-desc').value, isActive: document.getElementById('swal-active').checked })
+            });
+            if(!formValues) return;
+            const upd = await fetch(`${API_BASE_URL}/MenuStyles/${id}`, { method:'PUT', headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`}, body: JSON.stringify(formValues)});
+            const updData = await upd.json();
+            if(updData.success){ Swal.fire({icon:'success',title:'تم الحفظ'}); loadStyles(); } else { Swal.fire({icon:'error',title:'تعذر الحفظ',text:updData.message||''}); }
+        }
+
+        async function deleteStyle(id){
+            const ok = await Swal.fire({title:'هل أنت متأكد؟',text:'سيتم حذف النوع',icon:'warning',showCancelButton:true,confirmButtonText:'حذف'});
+            if(!ok.isConfirmed) return;
+            const token = localStorage.getItem('token');
+            const resp = await fetch(`${API_BASE_URL}/MenuStyles/${id}`, { method:'DELETE', headers:{'Authorization':`Bearer ${token}`}});
+            const data = await resp.json();
+            if(data.success){ Swal.fire({icon:'success',title:'تم الحذف'}); loadStyles(); } else { Swal.fire({icon:'error',title:'تعذر الحذف',text:data.message||''}); }
+        }
+    </script>
+</body>
+</html>
+
+

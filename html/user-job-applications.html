@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>طلباتي على الوظائف - المستخدم</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+	<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-[Cairo] min-h-screen flex flex-col">
+	<!-- Header (shared) -->
+	<header class="bg-gradient-to-r from-gray-900 to-black shadow-lg sticky top-0 z-50">
+		<div class="container mx-auto px-4 py-4">
+			<div class="flex items-center justify-between">
+				<!-- Logo -->
+				<div class="flex items-center space-x-4 space-x-reverse">
+					<div class="w-12 h-12 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
+						<i class="fas fa-utensils text-white text-xl"></i>
+					</div>
+					<h1 class="text-white text-2xl font-bold">WeenRest</h1>
+				</div>
+
+				<!-- Navigation Menu -->
+				<nav class="hidden md:flex items-center space-x-8 space-x-reverse">
+					<a href="index.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">الرئيسية</a>
+					<a href="places.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">أصناف الطعام</a>
+					<a href="jobs.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">وظائف</a>
+					<a href="customize.html" id="customize-restaurant-nav" class="text-white hover:text-yellow-400 transition duration-300 font-medium">خصص مطعمك</a>
+				</nav>
+
+				<!-- Login & Signup Buttons (Hidden when logged in) -->
+				<div class="flex items-center space-x-4 space-x-reverse" id="auth-buttons">
+					<a href="signup.html" class="border-2 border-yellow-600 text-yellow-600 px-6 py-2 rounded-full font-semibold hover:bg-yellow-600 hover:text-white transition duration-300">إنشاء حساب</a>
+					<a href="login.html" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-6 py-2 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-md">تسجيل الدخول</a>
+					<!-- Mobile Menu Button -->
+					<button class="md:hidden text-white text-2xl" id="mobile-menu-btn">
+						<i class="fas fa-bars"></i>
+					</button>
+				</div>
+
+				<!-- User Info (Shown when logged in) -->
+				<div class="flex items-center space-x-4 space-x-reverse hidden" id="user-info">
+					<div class="flex items-center space-x-3 space-x-reverse text-white">
+						<i class="fas fa-user-circle text-2xl text-yellow-400"></i>
+						<div class="hidden md:block">
+							<span class="text-sm text-gray-300">مرحباً،</span>
+							<span class="font-semibold mr-1" id="user-name">المستخدم</span>
+						</div>
+					</div>
+					<a href="user-dashboard.html" id="dashboard-link" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-5 py-2 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-md text-sm">لوحة التحكم</a>
+					<button id="logout-btn" class="border-2 border-yellow-600 text-yellow-600 px-5 py-2 rounded-full font-semibold hover:bg-yellow-600 hover:text-white transition duration-300 text-sm">تسجيل الخروج</button>
+					<!-- Mobile Menu Button -->
+					<button class="md:hidden text-white text-2xl" id="mobile-menu-btn-auth">
+						<i class="fas fa-bars"></i>
+					</button>
+				</div>
+			</div>
+
+			<!-- Mobile Menu -->
+			<div class="md:hidden mt-4 hidden" id="mobile-menu">
+				<div class="flex flex-col space-y-4">
+					<a href="index.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">الرئيسية</a>
+					<a href="places.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">اصناف الطعام</a>
+					<a href="jobs.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">وظائف</a>
+					<a href="customize.html" id="customize-restaurant-mobile" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">خصص مطعمك</a>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<main class="flex-1 max-w-7xl mx-auto px-4 py-10 pb-24 md:pb-32 space-y-8">
+		<section class="bg-white border rounded-lg shadow-sm p-4">
+			<h2 class="font-semibold mb-3">إنشاء / تعديل طلب تقديم</h2>
+			<form id="appForm" class="grid md:grid-cols-3 gap-3">
+				<input type="hidden" id="appId" />
+				<select id="jobId" class="border rounded-md px-3 py-2" required></select>
+				<input id="applicantName" type="text" placeholder="اسمك" class="border rounded-md px-3 py-2" required />
+				<input id="phoneNumber" type="text" placeholder="رقم الهاتف" class="border rounded-md px-3 py-2" required />
+				<input id="city" type="text" placeholder="المدينة" class="border rounded-md px-3 py-2" />
+				<input id="age" type="number" placeholder="العمر" class="border rounded-md px-3 py-2" />
+				<input id="yearsOfExperience" type="number" placeholder="سنوات الخبرة" class="border rounded-md px-3 py-2" />
+				<input id="contactEmail" type="email" placeholder="البريد للتواصل" class="border rounded-md px-3 py-2" />
+				<textarea id="summary" placeholder="نبذة" class="md:col-span-3 border rounded-md px-3 py-2"></textarea>
+				<div class="md:col-span-3 flex gap-2">
+					<button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md">حفظ</button>
+					<button type="button" id="resetBtn" class="border px-4 py-2 rounded-md">إلغاء</button>
+				</div>
+			</form>
+		</section>
+
+		<section class="bg-white border rounded-lg shadow-sm p-4">
+			<div class="flex items-center justify-between mb-3">
+				<h2 class="font-semibold">طلباتي</h2>
+				<input id="searchInput" type="text" placeholder="بحث بالاسم/المدينة" class="border rounded-md px-3 py-2" />
+			</div>
+			<table class="w-full text-sm">
+				<thead>
+					<tr class="border-b bg-gray-50">
+						<th class="p-3 text-right">#</th>
+						<th class="p-3 text-right">الوظيفة</th>
+						<th class="p-3 text-right">المدينة</th>
+						<th class="p-3 text-right">الخبرة</th>
+						<th class="p-3 text-right">تاريخ</th>
+						<th class="p-3 text-right">إجراءات</th>
+					</tr>
+				</thead>
+				<tbody id="appsTable"></tbody>
+			</table>
+			<p id="emptyState" class="text-center text-gray-500 hidden mt-4">لا توجد طلبات</p>
+		</section>
+	</main>
+
+	<!-- Footer (shared) -->
+	<footer class="bg-gradient-to-r from-gray-900 to-black text-white py-12">
+		<div class="container mx-auto px-4">
+			<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+				<!-- Company Info -->
+				<div class="col-span-1 md:col-span-2">
+					<div class="flex items-center space-x-3 space-x-reverse mb-4">
+						<div class="w-10 h-10 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
+							<i class="fas fa-utensils text-white"></i>
+						</div>
+						<h3 class="text-2xl font-bold">WeenRest</h3>
+					</div>
+					<p class="text-gray-300 mb-4 max-w-md">منصة المطاعم الرائدة في سوريا. اكتشف أفضل المطاعم والعروض، أو أضف مطعمك وابدأ رحلتك معنا.</p>
+					<div class="flex space-x-4 space-x-reverse">
+						<a href="#" class="text-yellow-400 hover:text-white transition duration-300"><i class="fab fa-facebook text-2xl"></i></a>
+						<a href="#" class="text-yellow-400 hover:text-white transition duration-300"><i class="fab fa-twitter text-2xl"></i></a>
+						<a href="#" class="text-yellow-400 hover:text-white transition duration-300"><i class="fab fa-instagram text-2xl"></i></a>
+						<a href="#" class="text-yellow-400 hover:text-white transition duration-300"><i class="fab fa-linkedin text-2xl"></i></a>
+					</div>
+				</div>
+
+				<!-- Quick Links -->
+				<div>
+					<h4 class="text-lg font-semibold mb-4">روابط سريعة</h4>
+					<ul class="space-y-2">
+						<li><a href="#" class="text-yellow-400 hover:text-white transition duration-300">عن الموقع</a></li>
+						<li><a href="#" class="text-yellow-400 hover:text-white transition duration-300">كيفية الاستخدام</a></li>
+						<li><a href="#" class="text-yellow-400 hover:text-white transition duration-300">الشروط والأحكام</a></li>
+						<li><a href="#" class="text-yellow-400 hover:text-white transition duration-300">سياسة الخصوصية</a></li>
+					</ul>
+				</div>
+
+				<!-- Contact Info -->
+				<div>
+					<h4 class="text-lg font-semibold mb-4">تواصل معنا</h4>
+					<ul class="space-y-2">
+						<li class="flex items-center space-x-2 space-x-reverse"><i class="fas fa-phone text-yellow-400"></i><span class="text-yellow-400">+20 123 456 7890</span></li>
+						<li class="flex items-center space-x-2 space-x-reverse"><i class="fas fa-envelope text-yellow-400"></i><span class="text-yellow-400">info@weenrest.com</span></li>
+						<li class="flex items-center space-x-2 space-x-reverse"><i class="fas fa-map-marker-alt text-yellow-400"></i><span class="text-yellow-400">دمشق، سوريا</span></li>
+					</ul>
+				</div>
+			</div>
+
+			<!-- Bottom Bar -->
+			<div class="border-t border-yellow-600 mt-8 pt-8">
+				<div class="flex flex-col md:flex-row justify-between items-center">
+					<p class="text-yellow-400 text-sm">© 2024 WeenRest. جميع الحقوق محفوظة.</p>
+					<div class="flex space-x-6 space-x-reverse mt-4 md:mt-0">
+						<a href="#" class="text-yellow-400 hover:text-white text-sm transition duration-300">سياسة الخصوصية</a>
+						<a href="#" class="text-yellow-400 hover:text-white text-sm transition duration-300">الشروط والأحكام</a>
+						<a href="#" class="text-yellow-400 hover:text-white text-sm transition duration-300">تواصل معنا</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</footer>
+
+	<!-- Header behavior/auth -->
+	<script>
+	(function() {
+		const token = localStorage.getItem('token');
+		const userData = localStorage.getItem('user');
+		const authButtons = document.getElementById('auth-buttons');
+		const userInfo = document.getElementById('user-info');
+		const userName = document.getElementById('user-name');
+		const dashboardLink = document.getElementById('dashboard-link');
+		if (token && userData) {
+			try {
+				const user = JSON.parse(userData);
+				authButtons?.classList.add('hidden');
+				userInfo?.classList.remove('hidden');
+				const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'المستخدم';
+				if (userName) userName.textContent = fullName;
+				if (user?.role === 'admin') { if(dashboardLink) dashboardLink.href = 'admin-dashboard.html'; }
+				else if (user?.role === 'stakeholder') { if(dashboardLink) dashboardLink.href = 'restaurant-owner-dashboard.html'; }
+				else { if(dashboardLink) dashboardLink.href = 'user-dashboard.html'; }
+				const customizeNav = document.getElementById('customize-restaurant-nav');
+				const customizeMobile = document.getElementById('customize-restaurant-mobile');
+				if (user.role !== 'stakeholder') {
+					if (customizeNav) customizeNav.style.display = 'none';
+					if (customizeMobile) customizeMobile.style.display = 'none';
+				}
+			} catch(e) {
+				localStorage.removeItem('token');
+				localStorage.removeItem('user');
+			}
+		} else {
+			authButtons?.classList.remove('hidden');
+			userInfo?.classList.add('hidden');
+		}
+		// Mobile menu toggle
+		document.getElementById('mobile-menu-btn')?.addEventListener('click', function(){
+			document.getElementById('mobile-menu')?.classList.toggle('hidden');
+		});
+		document.getElementById('mobile-menu-btn-auth')?.addEventListener('click', function(){
+			document.getElementById('mobile-menu')?.classList.toggle('hidden');
+		});
+		// Logout
+		document.getElementById('logout-btn')?.addEventListener('click', function(){
+			localStorage.removeItem('token');
+			localStorage.removeItem('user');
+			window.location.href = 'index.html';
+		});
+	})();
+	</script>
+
+	<script>
+	const API_ORIGIN = localStorage.getItem('api_origin') || 'http://localhost:5276';
+	const API = {
+		listJobs: `${API_ORIGIN}/api/UserJobApplications/jobs`,
+		list: `${API_ORIGIN}/api/UserJobApplications`,
+		create: `${API_ORIGIN}/api/UserJobApplications`,
+		update: (id) => `${API_ORIGIN}/api/UserJobApplications/${id}`,
+		remove: (id) => `${API_ORIGIN}/api/UserJobApplications/${id}`
+	};
+
+	function authHeaders(){
+		const token = localStorage.getItem('token');
+		return token ? { 'Authorization': `Bearer ${token}`, 'Content-Type':'application/json' } : { 'Content-Type':'application/json' };
+	}
+
+	function getQuery(){ const u=new URL(window.location.href); return { jobId: u.searchParams.get('jobId') }; }
+
+	async function fetchJobs(){
+		const res = await fetch(API.listJobs);
+		if(!res.ok) throw new Error('failed');
+		return (await res.json()).data || [];
+	}
+	async function fetchApps(){
+		const res = await fetch(API.list, { headers: authHeaders() });
+		if(!res.ok) throw new Error('failed');
+		return (await res.json()).data || [];
+	}
+
+	function fillJobsSelect(jobs){
+		const sel = document.getElementById('jobId');
+		sel.innerHTML = '<option value="" disabled selected>اختر الوظيفة</option>' + jobs.map(j=>`<option value="${j.id}">${j.name}</option>`).join('');
+		const { jobId } = getQuery();
+		if(jobId){ sel.value = jobId; }
+	}
+
+	function rowTemplate(a, i){
+		return `
+			<tr class="border-b">
+				<td class="p-3">${i+1}</td>
+				<td class="p-3">${a.jobName}</td>
+				<td class="p-3">${a.city ?? '—'}</td>
+				<td class="p-3">${a.yearsOfExperience ?? '—'}</td>
+				<td class="p-3">${new Date(a.createdAt).toLocaleDateString()}</td>
+				<td class="p-3">
+					<button data-edit="${a.id}" class="text-blue-600 hover:underline mr-3">تعديل</button>
+					<button data-del="${a.id}" class="text-red-600 hover:underline">حذف</button>
+				</td>
+			</tr>`;
+	}
+
+	async function saveApp(e){
+		e.preventDefault();
+		const id = document.getElementById('appId').value;
+		const payload = {
+			jobId: parseInt(document.getElementById('jobId').value),
+			applicantName: document.getElementById('applicantName').value.trim(),
+			phoneNumber: document.getElementById('phoneNumber').value.trim(),
+			city: document.getElementById('city').value.trim(),
+			age: document.getElementById('age').value ? parseInt(document.getElementById('age').value) : null,
+			yearsOfExperience: document.getElementById('yearsOfExperience').value ? parseInt(document.getElementById('yearsOfExperience').value) : null,
+			summary: document.getElementById('summary').value.trim(),
+			contactEmail: document.getElementById('contactEmail').value.trim(),
+			isActive: true
+		};
+		const method = id ? 'PUT' : 'POST';
+		const url = id ? API.update(id) : API.create;
+		const res = await fetch(url, { method, headers: authHeaders(), body: JSON.stringify(payload) });
+		if(!res.ok){ alert('فشل الحفظ'); return; }
+		resetForm();
+		render();
+	}
+
+	function resetForm(){
+		document.getElementById('appId').value = '';
+		document.getElementById('appForm').reset();
+	}
+
+	function bindActions(){
+		document.querySelectorAll('[data-edit]').forEach(btn => {
+			btn.addEventListener('click', () => {
+				const id = btn.getAttribute('data-edit');
+				const row = cache.find(x => x.id == id);
+				if(!row) return;
+				document.getElementById('appId').value = row.id;
+				document.getElementById('jobId').value = row.jobId;
+				document.getElementById('applicantName').value = row.applicantName || '';
+				document.getElementById('phoneNumber').value = row.phoneNumber || '';
+				document.getElementById('city').value = row.city || '';
+				document.getElementById('age').value = row.age ?? '';
+				document.getElementById('yearsOfExperience').value = row.yearsOfExperience ?? '';
+				document.getElementById('summary').value = row.summary || '';
+				document.getElementById('contactEmail').value = row.contactEmail || '';
+				window.scrollTo({ top: 0, behavior: 'smooth' });
+			});
+		});
+		document.querySelectorAll('[data-del]').forEach(btn => {
+			btn.addEventListener('click', async () => {
+				const id = btn.getAttribute('data-del');
+				if(!confirm('تأكيد حذف الطلب؟')) return;
+				const res = await fetch(API.remove(id), { method:'DELETE', headers: authHeaders() });
+				if(!res.ok){ alert('فشل الحذف'); return; }
+				render();
+			});
+		});
+	}
+
+	let cache = [];
+	async function render(){
+		const table = document.getElementById('appsTable');
+		const empty = document.getElementById('emptyState');
+		const search = document.getElementById('searchInput').value.trim();
+		table.innerHTML = '';
+		try{
+			const [jobs, apps] = await Promise.all([fetchJobs(), fetchApps()]);
+			fillJobsSelect(jobs);
+			cache = apps;
+			let data = cache;
+			if(search){
+				data = data.filter(x => (x.jobName && x.jobName.includes(search)) || (x.city && x.city.includes(search)));
+			}
+			if(!data.length){ empty.classList.remove('hidden'); return; }
+			empty.classList.add('hidden');
+			table.innerHTML = data.map(rowTemplate).join('');
+			bindActions();
+		}catch(e){ empty.textContent = 'حدث خطأ أثناء الجلب'; empty.classList.remove('hidden'); }
+	}
+
+	document.getElementById('appForm').addEventListener('submit', saveApp);
+	document.getElementById('resetBtn').addEventListener('click', resetForm);
+	document.getElementById('searchInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') render(); });
+
+	(async ()=>{ await render(); })();
+	</script>
+</body>
+</html>

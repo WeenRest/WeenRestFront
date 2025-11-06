@@ -1,0 +1,2575 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم الأدمن - WeenRest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+        }
+        .sidebar-link.active {
+            background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-8 flex flex-col items-center">
+            <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-yellow-600 mb-4"></div>
+            <p class="text-gray-700 font-semibold">جاري التحميل...</p>
+        </div>
+    </div>
+
+    <!-- Offer Admin Modal -->
+    <div id="offerAdminModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-2xl font-bold text-gray-800" id="offerAdminModalTitle">إضافة عرض</h3>
+            </div>
+            <form id="offerAdminForm" class="p-6 space-y-4">
+                <input type="hidden" id="offerAdminId">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">اسم العرض *</label>
+                        <input type="text" id="offerNameAdmin" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">تاريخ الانتهاء *</label>
+                        <input type="date" id="offerExpirationDateAdmin" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">تفاصيل العرض</label>
+                        <textarea id="offerDescriptionAdmin" rows="3"
+                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">المطعم *</label>
+                        <select id="offerRestaurantId" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                            <option value="">اختر المطعم</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">رفع صورة</label>
+                        <input type="file" id="offerImageFileAdmin" accept="image/*"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                        <p class="text-xs text-gray-500 mt-1">الحجم الأقصى: 5MB | الصيغ المدعومة: JPG, PNG, GIF, WEBP</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">أو رابط الصورة</label>
+                        <input type="url" id="offerImageUrlAdmin"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="flex items-center space-x-2 space-x-reverse">
+                            <input type="checkbox" id="offerIsActiveAdmin" class="w-4 h-4 text-yellow-600 rounded" checked>
+                            <span class="text-sm font-semibold text-gray-700">مفعّل</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flex space-x-3 space-x-reverse pt-4">
+                    <button type="submit" onclick="saveOfferAdmin(event)" class="flex-1 bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-2 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                        حفظ
+                    </button>
+                    <button type="button" onclick="closeOfferAdminModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg font-semibold transition duration-300">
+                        إلغاء
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gradient-to-b from-gray-900 to-black text-white shadow-2xl">
+            <div class="flex flex-col h-full">
+                <!-- Logo -->
+                <div class="p-6 border-b border-gray-700">
+                    <div class="flex items-center space-x-3 space-x-reverse">
+                        <div class="w-12 h-12 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-utensils text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold">WeenRest</h1>
+                            <p class="text-xs text-gray-400">لوحة التحكم</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="flex-1 p-4 space-y-2">
+                    <a href="#" onclick="showSection('dashboard'); return false;" class="sidebar-link active flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer">
+                        <i class="fas fa-home w-5"></i>
+                        <span>لوحة التحكم</span>
+                    </a>
+                    <a href="#" onclick="showSection('users'); return false;" class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
+                        <i class="fas fa-users w-5"></i>
+                        <span>المستخدمين</span>
+                    </a>
+                    <a href="#" onclick="showSection('main-categories'); return false;" class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
+                        <i class="fas fa-layer-group w-5"></i>
+                        <span>الأقسام الرئيسية</span>
+                    </a>
+                    <a href="#" onclick="showSection('categories'); return false;" class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
+                        <i class="fas fa-tags w-5"></i>
+                        <span>الأقسام</span>
+                    </a>
+                    <a href="#" onclick="showSection('restaurants'); return false;" class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
+                        <i class="fas fa-utensils w-5"></i>
+                        <span>المطاعم</span>
+                    </a>
+                    <a href="#" onclick="showSection('offers'); loadOffersAdmin(); return false;" class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
+                        <i class="fas fa-bullhorn w-5"></i>
+                        <span>العروض</span>
+                    </a>
+                    <a href="#" onclick="showSection('menus'); loadMenusAdmin(); return false;" class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
+                        <i class="fas fa-book-open w-5"></i>
+                        <span>المنيو</span>
+                    </a>
+                    <a href="#" onclick="showSection('cities'); return false;" class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
+                        <i class="fas fa-city w-5"></i>
+                        <span>المدن</span>
+                    </a>
+                    <a href="#" onclick="showSection('profile'); return false;" class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
+                        <i class="fas fa-user-circle w-5"></i>
+                        <span>الملف الشخصي</span>
+                    </a>
+                </nav>
+
+                <!-- User Info -->
+                <div class="p-4 border-t border-gray-700">
+                    <div class="flex items-center space-x-3 space-x-reverse mb-3">
+                        <div class="w-10 h-10 bg-yellow-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-white"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-semibold truncate" id="userName">الأدمن</p>
+                            <p class="text-xs text-gray-400 truncate" id="userEmail">admin@weenrest.com</p>
+                        </div>
+                    </div>
+                    <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg transition duration-300 text-sm font-semibold">
+                        <i class="fas fa-sign-out-alt mr-2"></i>
+                        تسجيل الخروج
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Header -->
+            <header class="bg-white shadow-md border-b border-gray-200">
+                <div class="flex items-center justify-between px-6 py-4">
+                    <h2 class="text-2xl font-bold text-gray-800" id="pageTitle">لوحة التحكم</h2>
+                    <div class="flex items-center space-x-4 space-x-reverse">
+                        <div class="flex items-center space-x-2 space-x-reverse bg-gray-100 px-4 py-2 rounded-lg">
+                            <i class="fas fa-calendar text-gray-600"></i>
+                            <span class="text-sm text-gray-700" id="currentDate"></span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <!-- Dashboard Section -->
+                <div id="dashboard" class="section">
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-6 text-white card-hover transition duration-300">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-blue-100 text-sm font-semibold">إجمالي المستخدمين</p>
+                                    <p class="text-3xl font-bold mt-2" id="totalUsers">0</p>
+                                </div>
+                                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-users text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-6 text-white card-hover transition duration-300">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-green-100 text-sm font-semibold">أصحاب المطاعم</p>
+                                    <p class="text-3xl font-bold mt-2" id="totalStakeholders">0</p>
+                                </div>
+                                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-store text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl p-6 text-white card-hover transition duration-300">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-purple-100 text-sm font-semibold">المستخدمين العاديين</p>
+                                    <p class="text-3xl font-bold mt-2" id="totalNormalUsers">0</p>
+                                </div>
+                                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user-friends text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">إجراءات سريعة</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
+                            <button onclick="showSection('users')" class="flex flex-col items-center p-4 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-lg hover:from-yellow-100 hover:to-amber-100 transition duration-300 cursor-pointer">
+                                <i class="fas fa-users text-yellow-600 text-2xl mb-2"></i>
+                                <span class="text-sm font-semibold text-gray-700">عرض المستخدمين</span>
+                            </button>
+                            <button onclick="window.location.reload()" class="flex flex-col items-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg hover:from-blue-100 hover:to-indigo-100 transition duration-300 cursor-pointer">
+                                <i class="fas fa-sync-alt text-blue-600 text-2xl mb-2"></i>
+                                <span class="text-sm font-semibold text-gray-700">تحديث البيانات</span>
+                            </button>
+                            <button onclick="window.location.href='admin-menu-requests.html'" class="flex flex-col items-center p-4 bg-gradient-to-br from-pink-50 to-rose-50 rounded-lg hover:from-pink-100 hover:to-rose-100 transition duration-300 cursor-pointer">
+                                <i class="fas fa-list-check text-rose-600 text-2xl mb-2"></i>
+                                <span class="text-sm font-semibold text-gray-700">طلبات المنيو</span>
+                            </button>
+                            <button onclick="window.location.href='admin-menu-styles.html'" class="flex flex-col items-center p-4 bg-gradient-to-br from-teal-50 to-emerald-50 rounded-lg hover:from-teal-100 hover:to-emerald-100 transition duration-300 cursor-pointer">
+                                <i class="fas fa-shapes text-emerald-600 text-2xl mb-2"></i>
+                                <span class="text-sm font-semibold text-gray-700">أنواع المنيو</span>
+                            </button>
+                            <button onclick="window.location.href='admin-uniform-requests.html'" class="flex flex-col items-center p-4 bg-gradient-to-br from-rose-50 to-red-50 rounded-lg hover:from-rose-100 hover:to-red-100 transition duration-300 cursor-pointer">
+                                <i class="fas fa-user-tie text-rose-600 text-2xl mb-2"></i>
+                                <span class="text-sm font-semibold text-gray-700">طلبات يونيفورم الطاقم</span>
+                            </button>
+                            <button onclick="window.location.href='admin-uniform-styles.html'" class="flex flex-col items-center p-4 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-lg hover:from-indigo-100 hover:to-blue-100 transition duration-300 cursor-pointer">
+                                <i class="fas fa-tshirt text-indigo-600 text-2xl mb-2"></i>
+                                <span class="text-sm font-semibold text-gray-700">ستايلات يونيفورم الطاقم</span>
+                            </button>
+                            <button onclick="window.location.href='admin-jobs.html'" class="flex flex-col items-center p-4 bg-gradient-to-br from-amber-50 to-yellow-50 rounded-lg hover:from-amber-100 hover:to-yellow-100 transition duration-300 cursor-pointer">
+                                <i class="fas fa-briefcase text-yellow-600 text-2xl mb-2"></i>
+                                <span class="text-sm font-semibold text-gray-700">الوظائف</span>
+                            </button>
+                            <button onclick="window.location.href='admin-job-applications.html'" class="flex flex-col items-center p-4 bg-gradient-to-br from-cyan-50 to-sky-50 rounded-lg hover:from-cyan-100 hover:to-sky-100 transition duration-300 cursor-pointer">
+                                <i class="fas fa-file-signature text-sky-600 text-2xl mb-2"></i>
+                                <span class="text-sm font-semibold text-gray-700">طلبات التقديم</span>
+                            </button>
+                            <button onclick="showSection('profile')" class="flex flex-col items-center p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg hover:from-green-100 hover:to-emerald-100 transition duration-300 cursor-pointer">
+                                <i class="fas fa-user-cog text-green-600 text-2xl mb-2"></i>
+                                <span class="text-sm font-semibold text-gray-700">الملف الشخصي</span>
+                            </button>
+                            <button onclick="window.location.href='index.html'" class="flex flex-col items-center p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-lg hover:from-gray-100 hover:to-slate-100 transition duration-300 cursor-pointer">
+                                <i class="fas fa-globe text-gray-600 text-2xl mb-2"></i>
+                                <span class="text-sm font-semibold text-gray-700">الموقع الرئيسي</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Section -->
+                <div id="users" class="section hidden">
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <!-- Header -->
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+                                <h3 class="text-2xl font-bold text-gray-800">إدارة المستخدمين</h3>
+                                <div class="flex space-x-3 space-x-reverse">
+                                    <!-- Search -->
+                                    <div class="relative">
+                                        <input type="text" id="searchInput" placeholder="البحث في المستخدمين..." 
+                                               class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                                        <i class="fas fa-search absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                    </div>
+                                    <!-- Filter by Role -->
+                                    <select id="roleFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                                        <option value="">جميع الأدوار</option>
+                                        <option value="admin">أدمن</option>
+                                        <option value="stakeholder">صاحب مطعم</option>
+                                        <option value="user">مستخدم</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Users Table -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الاسم</th>
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">البريد الإلكتروني</th>
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">رقم الهاتف</th>
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">المدينة</th>
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الدور</th>
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الحالة</th>
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody" class="bg-white divide-y divide-gray-200">
+                                    <!-- Users will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="p-4 border-t border-gray-200 flex items-center justify-between">
+                            <div class="text-sm text-gray-600">
+                                عرض <span id="currentPageStart">0</span> - <span id="currentPageEnd">0</span> من <span id="totalCount">0</span>
+                            </div>
+                            <div class="flex space-x-2 space-x-reverse">
+                                <button onclick="changePage(-1)" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-300">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                                <span id="currentPage" class="px-4 py-2 bg-yellow-600 text-white rounded-lg">1</span>
+                                <button onclick="changePage(1)" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-300">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Categories Section -->
+                <div id="main-categories" class="section hidden">
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+                            <h3 class="text-2xl font-bold text-gray-800">الأقسام الرئيسية</h3>
+                            <button onclick="openMainCategoryModal()" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-4 py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                                <i class="fas fa-plus mr-2"></i>إضافة قسم رئيسي
+                            </button>
+                        </div>
+                        <div class="p-6">
+                            <div class="mb-4">
+                                <input type="text" id="mainCategorySearch" placeholder="البحث في الأقسام الرئيسية..." 
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                            </div>
+                            <div id="mainCategoriesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <!-- Main Categories will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categories Section -->
+                <div id="categories" class="section hidden">
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+                            <h3 class="text-2xl font-bold text-gray-800">الأقسام</h3>
+                            <button onclick="openCategoryModal()" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-4 py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                                <i class="fas fa-plus mr-2"></i>إضافة قسم
+                            </button>
+                        </div>
+                        <div class="p-6">
+                            <div class="mb-4 flex space-x-3 space-x-reverse">
+                                <input type="text" id="categorySearch" placeholder="البحث في الأقسام..." 
+                                       class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                                <select id="categoryMainCategoryFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                                    <option value="">جميع الأقسام الرئيسية</option>
+                                </select>
+                            </div>
+                            <div id="categoriesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <!-- Categories will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Restaurants Section -->
+                <div id="restaurants" class="section hidden">
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+                            <h3 class="text-2xl font-bold text-gray-800">المطاعم</h3>
+                            <button onclick="openRestaurantModal()" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-4 py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                                <i class="fas fa-plus mr-2"></i>إضافة مطعم
+                            </button>
+                        </div>
+                        <div class="p-6">
+                            <div class="mb-4 flex space-x-3 space-x-reverse flex-wrap gap-3">
+                                <input type="text" id="restaurantSearch" placeholder="البحث في المطاعم..." 
+                                       class="flex-1 min-w-64 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                                <select id="restaurantCategoryFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                                    <option value="">جميع الأقسام</option>
+                                </select>
+                                <select id="restaurantCityFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                                    <option value="">جميع المدن</option>
+                                </select>
+                            </div>
+                            <div id="restaurantsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <!-- Restaurants will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Offers Section (Admin) -->
+                <div id="offers" class="section hidden">
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+                            <h3 class="text-2xl font-bold text-gray-800">إدارة العروض</h3>
+                            <button onclick="openOfferAdminModal()" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-4 py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                                <i class="fas fa-plus mr-2"></i>إضافة عرض
+                            </button>
+                        </div>
+                        <div class="p-6">
+                            <div class="mb-4 flex space-x-3 space-x-reverse flex-wrap gap-3">
+                                <input type="text" id="offerSearch" placeholder="البحث في العروض..." 
+                                       class="flex-1 min-w-64 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                                <select id="offerRestaurantFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                                    <option value="">جميع المطاعم</option>
+                                </select>
+                            </div>
+                            <div id="offersAdminList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <!-- Offers will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Menus Section (Admin) -->
+                <div id="menus" class="section hidden">
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+                            <h3 class="text-2xl font-bold text-gray-800">إدارة المنيو</h3>
+                            <button onclick="openMenuAdminModal()" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-4 py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                                <i class="fas fa-plus mr-2"></i>إضافة منيو
+                            </button>
+                        </div>
+                        <div class="p-6">
+                            <div class="mb-4 flex space-x-3 space-x-reverse flex-wrap gap-3">
+                                <select id="menuRestaurantFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                                    <option value="">جميع المطاعم</option>
+                                </select>
+                            </div>
+                            <div id="menusAdminList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cities Section -->
+                <div id="cities" class="section hidden">
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+                            <h3 class="text-2xl font-bold text-gray-800">المدن</h3>
+                            <button onclick="openCityModal()" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-4 py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                                <i class="fas fa-plus mr-2"></i>إضافة مدينة
+                            </button>
+                        </div>
+                        <div class="p-6">
+                            <div class="mb-4">
+                                <input type="text" id="citySearch" placeholder="البحث في المدن..." 
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                            </div>
+                            <div id="citiesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <!-- Cities will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Section -->
+                <div id="profile" class="section hidden">
+                    <div class="max-w-4xl mx-auto">
+                        <!-- Profile Info Card -->
+                        <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-6">الملف الشخصي</h3>
+                            
+                            <!-- Profile Form -->
+                            <form id="profileForm" class="space-y-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">الاسم الأول</label>
+                                        <input type="text" id="profileFirstName" required
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">الاسم الأخير</label>
+                                        <input type="text" id="profileLastName" required
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">البريد الإلكتروني</label>
+                                        <input type="email" id="profileEmail" required
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">رقم الهاتف</label>
+                                        <input type="tel" id="profilePhone" required
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">المدينة</label>
+                                        <input type="text" id="profileCity" required
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="w-full bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-3 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                                    <i class="fas fa-save mr-2"></i>
+                                    حفظ التغييرات
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Change Password Card -->
+                        <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-6">تغيير كلمة المرور</h3>
+                            
+                            <form id="passwordForm" class="space-y-6">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">كلمة المرور الحالية</label>
+                                    <input type="password" id="currentPassword" required
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">كلمة المرور الجديدة</label>
+                                    <input type="password" id="newPassword" required
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                                </div>
+
+                                <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition duration-300">
+                                    <i class="fas fa-key mr-2"></i>
+                                    تغيير كلمة المرور
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Delete Account Card -->
+                        <div class="bg-red-50 border-2 border-red-200 rounded-xl p-6">
+                            <h3 class="text-xl font-bold text-red-800 mb-4">حذف الحساب</h3>
+                            <p class="text-red-700 text-sm mb-4">تنبيه: هذا الإجراء لا يمكن التراجع عنه. سيتم حذف جميع بياناتك بشكل دائم.</p>
+                            <button onclick="confirmDeleteAccount()" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition duration-300 font-semibold">
+                                <i class="fas fa-trash-alt mr-2"></i>
+                                حذف الحساب
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div id="editUserModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-2xl font-bold text-gray-800">تعديل المستخدم</h3>
+            </div>
+            <form id="editUserForm" class="p-6 space-y-4">
+                <input type="hidden" id="editUserId">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">الاسم الأول</label>
+                        <input type="text" id="editFirstName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">الاسم الأخير</label>
+                        <input type="text" id="editLastName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">البريد الإلكتروني</label>
+                        <input type="email" id="editEmail" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">رقم الهاتف</label>
+                        <input type="tel" id="editPhone" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">المدينة</label>
+                        <input type="text" id="editCity" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">الدور</label>
+                        <select id="editRole" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                            <option value="user">مستخدم</option>
+                            <option value="stakeholder">صاحب مطعم</option>
+                            <option value="admin">أدمن</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="flex items-center space-x-2 space-x-reverse">
+                            <input type="checkbox" id="editIsActive" class="w-4 h-4 text-yellow-600 rounded">
+                            <span class="text-sm font-semibold text-gray-700">الحساب مفعّل</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="flex space-x-3 space-x-reverse pt-4">
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-2 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                        حفظ التغييرات
+                    </button>
+                    <button type="button" onclick="closeEditModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg font-semibold transition duration-300">
+                        إلغاء
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Category Modal -->
+    <div id="mainCategoryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-2xl font-bold text-gray-800" id="mainCategoryModalTitle">إضافة قسم رئيسي</h3>
+            </div>
+            <form id="mainCategoryForm" class="p-6 space-y-4">
+                <input type="hidden" id="mainCategoryId">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">اسم القسم الرئيسي *</label>
+                    <input type="text" id="mainCategoryName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">الوصف</label>
+                    <textarea id="mainCategoryDescription" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">رفع صورة</label>
+                    <input type="file" id="mainCategoryImageFile" accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                    <p class="text-xs text-gray-500 mt-1">الحجم الأقصى: 5MB | الصيغ المدعومة: JPG, PNG, GIF, WEBP</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">أو رابط الصورة</label>
+                    <input type="url" id="mainCategoryImageUrl" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                </div>
+                <div>
+                    <label class="flex items-center space-x-2 space-x-reverse">
+                        <input type="checkbox" id="mainCategoryIsActive" class="w-4 h-4 text-yellow-600 rounded" checked>
+                        <span class="text-sm font-semibold text-gray-700">مفعّل</span>
+                    </label>
+                </div>
+                <div class="flex space-x-3 space-x-reverse pt-4">
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-2 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                        حفظ
+                    </button>
+                    <button type="button" onclick="closeMainCategoryModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg font-semibold transition duration-300">
+                        إلغاء
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Category Modal -->
+    <div id="categoryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-2xl font-bold text-gray-800" id="categoryModalTitle">إضافة قسم</h3>
+            </div>
+            <form id="categoryForm" class="p-6 space-y-4">
+                <input type="hidden" id="categoryId">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">اسم القسم *</label>
+                    <input type="text" id="categoryName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">القسم الرئيسي *</label>
+                    <select id="categoryMainCategoryId" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                        <option value="">اختر القسم الرئيسي</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">الوصف</label>
+                    <textarea id="categoryDescription" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">رفع صورة</label>
+                    <input type="file" id="categoryImageFile" accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                    <p class="text-xs text-gray-500 mt-1">الحجم الأقصى: 5MB | الصيغ المدعومة: JPG, PNG, GIF, WEBP</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">أو رابط الصورة</label>
+                    <input type="url" id="categoryImageUrl" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                </div>
+                <div>
+                    <label class="flex items-center space-x-2 space-x-reverse">
+                        <input type="checkbox" id="categoryIsActive" class="w-4 h-4 text-yellow-600 rounded" checked>
+                        <span class="text-sm font-semibold text-gray-700">مفعّل</span>
+                    </label>
+                </div>
+                <div class="flex space-x-3 space-x-reverse pt-4">
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-2 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                        حفظ
+                    </button>
+                    <button type="button" onclick="closeCategoryModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg font-semibold transition duration-300">
+                        إلغاء
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- City Modal -->
+    <div id="cityModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-2xl font-bold text-gray-800" id="cityModalTitle">إضافة مدينة</h3>
+            </div>
+            <form id="cityForm" class="p-6 space-y-4">
+                <input type="hidden" id="cityId">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">اسم المدينة *</label>
+                    <input type="text" id="cityName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">الوصف</label>
+                    <textarea id="cityDescription" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"></textarea>
+                </div>
+                <div>
+                    <label class="flex items-center space-x-2 space-x-reverse">
+                        <input type="checkbox" id="cityIsActive" class="w-4 h-4 text-yellow-600 rounded" checked>
+                        <span class="text-sm font-semibold text-gray-700">مفعّل</span>
+                    </label>
+                </div>
+                <div class="flex space-x-3 space-x-reverse pt-4">
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-2 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                        حفظ
+                    </button>
+                    <button type="button" onclick="closeCityModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg font-semibold transition duration-300">
+                        إلغاء
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Restaurant Modal -->
+    <div id="restaurantModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-2xl font-bold text-gray-800" id="restaurantModalTitle">إضافة مطعم</h3>
+            </div>
+            <form id="restaurantForm" class="p-6 space-y-4">
+                <input type="hidden" id="restaurantId">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">اسم المطعم *</label>
+                    <input type="text" id="restaurantName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">القسم *</label>
+                    <select id="restaurantCategoryId" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                        <option value="">اختر القسم</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">الوصف</label>
+                    <textarea id="restaurantDescription" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"></textarea>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">رقم الهاتف</label>
+                        <input type="tel" id="restaurantPhoneNumber" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">المدينة (اختياري - للتوافق مع النظام القديم)</label>
+                        <input type="text" id="restaurantCity" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">المدن *</label>
+                    <select id="restaurantCityIds" multiple class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500" style="min-height: 100px;">
+                        <!-- Cities will be loaded here -->
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1">اضغط Ctrl (أو Cmd على Mac) للاختيار المتعدد</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">العنوان</label>
+                    <input type="text" id="restaurantAddress" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">رفع صورة</label>
+                    <input type="file" id="restaurantImageFile" accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                    <p class="text-xs text-gray-500 mt-1">الحجم الأقصى: 5MB | الصيغ المدعومة: JPG, PNG, GIF, WEBP</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">أو رابط الصورة</label>
+                    <input type="url" id="restaurantImageUrl" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                </div>
+                <div>
+                    <label class="flex items-center space-x-2 space-x-reverse">
+                        <input type="checkbox" id="restaurantIsActive" class="w-4 h-4 text-yellow-600 rounded" checked>
+                        <span class="text-sm font-semibold text-gray-700">مفعّل</span>
+                    </label>
+                </div>
+                <div class="flex space-x-3 space-x-reverse pt-4">
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-2 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                        حفظ
+                    </button>
+                    <button type="button" onclick="closeRestaurantModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg font-semibold transition duration-300">
+                        إلغاء
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Menu Admin Modal -->
+    <div id="menuAdminModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-2xl font-bold text-gray-800" id="menuAdminModalTitle">إضافة منيو</h3>
+            </div>
+            <form id="menuAdminForm" class="p-6 space-y-4" onsubmit="saveMenuAdmin(event)">
+                <input type="hidden" id="menuAdminId">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">المطعم *</label>
+                        <select id="menuRestaurantId" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                            <option value="">اختر المطعم</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">صور المنيو (متعدد)</label>
+                        <input type="file" id="menuAdminImages" accept="image/*" multiple class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                        <p class="text-xs text-gray-500 mt-1">الحجم الأقصى: 5MB | الصيغ المدعومة: JPG, PNG, GIF, WEBP</p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="flex items-center space-x-2 space-x-reverse">
+                            <input type="checkbox" id="menuAdminIsActive" class="w-4 h-4 text-yellow-600 rounded" checked>
+                            <span class="text-sm font-semibold text-gray-700">مفعّل</span>
+                        </label>
+                    </div>
+                </div>
+                <div id="menuAdminExistingImages" class="grid grid-cols-2 md:grid-cols-3 gap-3 hidden"></div>
+                <div class="flex space-x-3 space-x-reverse pt-4">
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-2 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300">حفظ</button>
+                    <button type="button" onclick="closeMenuAdminModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg font-semibold transition duration-300">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Message Toast -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-white rounded-lg shadow-2xl border border-gray-200 p-4 hidden z-50 max-w-sm">
+        <div class="flex items-center space-x-3 space-x-reverse">
+            <div id="toastIcon" class="flex-shrink-0"></div>
+            <p id="toastMessage" class="text-sm font-semibold text-gray-800"></p>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        const API_BASE_URL = 'http://localhost:5276/api';
+        let currentPage = 1;
+        let totalCount = 0;
+        let allUsers = [];
+        let filteredUsers = [];
+        let currentUserId = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set current date (Gregorian calendar with Arabic names)
+            const now = new Date();
+            const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+            const days = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+            const dayName = days[now.getDay()];
+            const monthName = months[now.getMonth()];
+            const dateStr = `${dayName}، ${now.getDate()} ${monthName} ${now.getFullYear()}`;
+            document.getElementById('currentDate').textContent = dateStr;
+
+            // Check authentication
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Load user profile
+            loadUserProfile();
+            
+            // Load dashboard stats
+            loadDashboardStats();
+            
+            // Setup form handlers
+            document.getElementById('profileForm').addEventListener('submit', updateProfile);
+            document.getElementById('passwordForm').addEventListener('submit', changePassword);
+            document.getElementById('editUserForm').addEventListener('submit', saveUserEdit);
+            document.getElementById('searchInput').addEventListener('input', filterUsers);
+            document.getElementById('roleFilter').addEventListener('change', filterUsers);
+
+            // Load users
+            loadUsers();
+
+            // Load restaurant management data
+            loadMainCategories();
+            loadCategories();
+            loadCities();
+            loadRestaurants();
+
+            // Setup search handlers
+            document.getElementById('mainCategorySearch')?.addEventListener('input', filterMainCategories);
+            document.getElementById('categorySearch')?.addEventListener('input', filterCategories);
+            document.getElementById('categoryMainCategoryFilter')?.addEventListener('change', filterCategories);
+            document.getElementById('citySearch')?.addEventListener('input', filterCities);
+            document.getElementById('restaurantSearch')?.addEventListener('input', filterRestaurants);
+            document.getElementById('restaurantCategoryFilter')?.addEventListener('change', filterRestaurants);
+            document.getElementById('restaurantCityFilter')?.addEventListener('change', filterRestaurants);
+
+            // Setup form handlers
+            document.getElementById('mainCategoryForm')?.addEventListener('submit', saveMainCategory);
+            document.getElementById('categoryForm')?.addEventListener('submit', saveCategory);
+            document.getElementById('cityForm')?.addEventListener('submit', saveCity);
+            document.getElementById('restaurantForm')?.addEventListener('submit', saveRestaurant);
+
+            // Offers admin hooks
+            document.getElementById('offerSearch')?.addEventListener('input', () => loadOffersAdmin());
+            document.getElementById('offerRestaurantFilter')?.addEventListener('change', () => loadOffersAdmin());
+            document.getElementById('menuRestaurantFilter')?.addEventListener('change', () => loadMenusAdmin());
+        });
+
+        // Navigation
+        function showSection(sectionName) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById(sectionName).classList.remove('hidden');
+
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.textContent.includes(getSectionTitle(sectionName))) {
+                    link.classList.add('active');
+                }
+            });
+
+            document.getElementById('pageTitle').textContent = getSectionTitle(sectionName);
+        }
+
+        function getSectionTitle(sectionName) {
+            const titles = {
+                'dashboard': 'لوحة التحكم',
+                'users': 'المستخدمين',
+                'main-categories': 'الأقسام الرئيسية',
+                'categories': 'الأقسام',
+                'restaurants': 'المطاعم',
+                'offers': 'العروض',
+                'menus': 'المنيو',
+                'cities': 'المدن',
+                'profile': 'الملف الشخصي'
+            };
+            return titles[sectionName] || 'لوحة التحكم';
+        }
+
+        // API Functions
+        async function apiCall(endpoint, method = 'GET', body = null) {
+            const token = localStorage.getItem('token');
+            const options = {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            };
+            
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+
+            const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+            return response.json();
+        }
+
+        async function apiCallFormData(endpoint, method = 'POST', formData) {
+            const token = localStorage.getItem('token');
+            const options = {
+                method,
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                    // Don't set Content-Type for FormData, browser will set it automatically
+                }
+            };
+            
+            options.body = formData;
+
+            const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+            return response.json();
+        }
+
+        function resolveImageUrl(relativeOrAbsolute) {
+            if (!relativeOrAbsolute) return '';
+            const url = relativeOrAbsolute.trim();
+            if (url.startsWith('http://') || url.startsWith('https://')) return url;
+            const origin = API_BASE_URL.replace('/api', '');
+            const path = url.startsWith('/') ? url : `/${url}`;
+            return origin + path;
+        }
+
+        // ============ Offers (Admin) ============
+        async function loadOfferRestaurantsOptions() {
+            try {
+                const data = await apiCall('/AdminDashboard/restaurants?pageSize=1000');
+                if (data.success) {
+                    const select = document.getElementById('offerRestaurantFilter');
+                    if (select) {
+                        const currentVal = select.value;
+                        select.innerHTML = '<option value="">جميع المطاعم</option>';
+                        data.data.forEach(r => {
+                            const opt = document.createElement('option');
+                            opt.value = r.id;
+                            opt.textContent = r.name;
+                            select.appendChild(opt);
+                        });
+                        if (currentVal) select.value = currentVal;
+                    }
+                    const offerRestaurantId = document.getElementById('offerRestaurantId');
+                    if (offerRestaurantId) {
+                        offerRestaurantId.innerHTML = '<option value="">اختر المطعم</option>';
+                        data.data.forEach(r => {
+                            const opt = document.createElement('option');
+                            opt.value = r.id;
+                            opt.textContent = r.name;
+                            offerRestaurantId.appendChild(opt);
+                        });
+                    }
+                }
+            } catch (e) {
+                console.error('Error loading restaurants for offers', e);
+            }
+        }
+
+        // ============ Menus (Admin) ============
+        async function loadMenuRestaurantsOptions() {
+            try {
+                const data = await apiCall('/AdminDashboard/restaurants?pageSize=1000');
+                if (data.success) {
+                    const select = document.getElementById('menuRestaurantFilter');
+                    if (select) {
+                        const currentVal = select.value;
+                        select.innerHTML = '<option value="">جميع المطاعم</option>';
+                        data.data.forEach(r => {
+                            const opt = document.createElement('option');
+                            opt.value = r.id;
+                            opt.textContent = r.name;
+                            select.appendChild(opt);
+                        });
+                        if (currentVal) select.value = currentVal;
+                    }
+                    const menuRestaurantId = document.getElementById('menuRestaurantId');
+                    if (menuRestaurantId) {
+                        menuRestaurantId.innerHTML = '<option value="">اختر المطعم</option>';
+                        data.data.forEach(r => {
+                            const opt = document.createElement('option');
+                            opt.value = r.id;
+                            opt.textContent = r.name;
+                            menuRestaurantId.appendChild(opt);
+                        });
+                    }
+                }
+            } catch (e) {
+                console.error('Error loading restaurants for menus', e);
+            }
+        }
+
+        async function loadMenusAdmin() {
+            await loadMenuRestaurantsOptions();
+            const restaurantId = document.getElementById('menuRestaurantFilter')?.value || '';
+            const q = new URLSearchParams();
+            if (restaurantId) q.append('restaurantId', restaurantId);
+            try {
+                const data = await apiCall(`/AdminDashboard/menus${q.toString() ? '?' + q.toString() : ''}`);
+                if (data.success) {
+                    const container = document.getElementById('menusAdminList');
+                    container.innerHTML = '';
+                    const menus = data.data || [];
+                    if (menus.length === 0) {
+                        container.innerHTML = '<div class="col-span-1 md:col-span-2 lg:col-span-3 text-center text-gray-500 py-8">لا توجد منيو</div>';
+                        return;
+                    }
+                    menus.forEach(m => {
+                        const card = document.createElement('div');
+                        card.className = 'bg-white border border-gray-200 rounded-lg p-4 shadow-sm';
+                        const gallery = (m.images || []).slice(0, 3).map(i => `<img src="${resolveImageUrl(i.imageUrl)}" class="w-full h-28 object-contain rounded">`).join('');
+                        card.innerHTML = `
+                            <div class="text-sm text-gray-700 mb-2">مطعم: ${m.restaurantName || ''}</div>
+                            <div class="grid grid-cols-3 gap-2 mb-3">${gallery}</div>
+                            <div class="flex items-center justify-between text-sm mb-3">
+                                <span class="${m.isActive ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'} px-2 py-0.5 rounded-full">${m.isActive ? 'مفعّل' : 'معطّل'}</span>
+                                <span class="text-gray-500">${new Date(m.createdAt).toLocaleDateString('ar-EG')}</span>
+                            </div>
+                            <div class="flex space-x-2 space-x-reverse">
+                                <button class="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1.5 rounded" onclick='openMenuAdminModal(${m.id}, ${JSON.stringify({id:0}).id}, ${JSON.stringify(m).replace(/'/g,"&#39;")})'><i class='fas fa-edit mr-1'></i>تعديل</button>
+                                <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded" onclick="deleteMenuAdmin(${m.id})"><i class='fas fa-trash mr-1'></i>حذف</button>
+                            </div>`;
+                        container.appendChild(card);
+                    });
+                }
+            } catch (e) {
+                console.error('Error loading menus (admin)', e);
+            }
+        }
+
+        function openMenuAdminModal(id = null, _unused = null, serialized = null) {
+            const modal = document.getElementById('menuAdminModal');
+            document.getElementById('menuAdminModalTitle').textContent = id ? 'تعديل المنيو' : 'إضافة منيو';
+            document.getElementById('menuAdminForm').reset();
+            document.getElementById('menuAdminId').value = id || '';
+            document.getElementById('menuAdminExistingImages').innerHTML = '';
+            document.getElementById('menuAdminExistingImages').classList.add('hidden');
+            document.getElementById('menuAdminIsActive').checked = true;
+            if (serialized) {
+                const m = JSON.parse(serialized);
+                document.getElementById('menuRestaurantId').value = m.restaurantId;
+                document.getElementById('menuAdminIsActive').checked = !!m.isActive;
+                if (m.images && m.images.length) {
+                    const container = document.getElementById('menuAdminExistingImages');
+                    container.classList.remove('hidden');
+                    container.innerHTML = m.images.map(img => `
+                        <div class="border rounded p-2 flex flex-col items-center gap-2">
+                            <img src="${img.imageUrl.startsWith('http') ? img.imageUrl : API_BASE_URL.replace('/api','') + img.imageUrl}" class="w-full h-24 object-contain rounded">
+                            <label class="text-xs flex items-center gap-2"><input type="checkbox" value="${img.id}" class="removeMenuImageAdmin"> إزالة</label>
+                        </div>
+                    `).join('');
+                }
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeMenuAdminModal() {
+            document.getElementById('menuAdminModal').classList.add('hidden');
+        }
+
+        async function saveMenuAdmin(e) {
+            e.preventDefault();
+            const id = document.getElementById('menuAdminId').value;
+            const restaurantId = parseInt(document.getElementById('menuRestaurantId').value);
+            const isActive = document.getElementById('menuAdminIsActive').checked;
+            const files = Array.from(document.getElementById('menuAdminImages').files || []);
+
+            const formData = new FormData();
+            formData.append('RestaurantId', restaurantId);
+            formData.append('IsActive', isActive);
+            files.forEach(f => formData.append('newImages', f));
+            const removeIds = Array.from(document.querySelectorAll('#menuAdminExistingImages .removeMenuImageAdmin:checked')).map(cb => parseInt(cb.value));
+            removeIds.forEach((rid, idx) => formData.append(`removeImageIds[${idx}]`, rid));
+
+            try {
+                const endpoint = id ? `/AdminDashboard/menus/${id}` : '/AdminDashboard/menus';
+                const method = id ? 'PUT' : 'POST';
+                const resp = await apiCallFormData(endpoint, method, formData);
+                if (resp.success) {
+                    showToast(resp.message, 'success');
+                    closeMenuAdminModal();
+                    loadMenusAdmin();
+                } else {
+                    showToast(resp.message, 'error');
+                }
+            } catch (e) {
+                showToast('حدث خطأ في حفظ المنيو', 'error');
+            }
+        }
+
+        async function deleteMenuAdmin(id) {
+            const result = await Swal.fire({
+                title: 'هل أنت متأكد؟',
+                text: 'سيتم حذف المنيو وصوره',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'نعم، احذف',
+                cancelButtonText: 'إلغاء'
+            });
+            if (!result.isConfirmed) return;
+            try {
+                const resp = await apiCall(`/AdminDashboard/menus/${id}`, 'DELETE');
+                if (resp.success) {
+                    showToast(resp.message, 'success');
+                    loadMenusAdmin();
+                } else {
+                    showToast(resp.message, 'error');
+                }
+            } catch (e) {
+                showToast('حدث خطأ في حذف المنيو', 'error');
+            }
+        }
+
+        async function loadOffersAdmin() {
+            await loadOfferRestaurantsOptions();
+            const search = document.getElementById('offerSearch')?.value || '';
+            const restaurantId = document.getElementById('offerRestaurantFilter')?.value || '';
+            const q = new URLSearchParams();
+            if (search) q.append('search', search);
+            if (restaurantId) q.append('restaurantId', restaurantId);
+            try {
+                const data = await apiCall(`/AdminDashboard/offers${q.toString() ? '?' + q.toString() : ''}`);
+                if (data.success) {
+                    const container = document.getElementById('offersAdminList');
+                    container.innerHTML = '';
+                    const offers = data.data;
+                    if (!offers || offers.length === 0) {
+                        container.innerHTML = '<div class="col-span-1 md:col-span-2 lg:col-span-3 text-center text-gray-500 py-8">لا توجد عروض</div>';
+                        return;
+                    }
+                    offers.forEach(o => {
+                        const card = document.createElement('div');
+                        card.className = 'bg-white border border-gray-200 rounded-lg p-4 shadow-sm';
+                        const imgTag = o.imageUrl ? `<img src="${o.imageUrl.startsWith('http') ? o.imageUrl : API_BASE_URL.replace('/api','') + o.imageUrl}" alt="${o.name}" class="w-full h-40 object-contain rounded mb-3">` : '';
+                        card.innerHTML = `
+                            ${imgTag}
+                            <h4 class="text-lg font-bold text-gray-800 mb-1">${o.name}</h4>
+                            <p class="text-sm text-gray-600 mb-2">${o.description || ''}</p>
+                            <div class="flex items-center justify-between text-sm mb-2">
+                                <span class="text-gray-700">مطعم: ${o.restaurantName || ''}</span>
+                                <span class="text-gray-700">ينتهي: ${new Date(o.expirationDate).toLocaleDateString('ar-EG')}</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm mb-3">
+                                <span class="${o.isActive ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'} px-2 py-0.5 rounded-full">${o.isActive ? 'مفعّل' : 'معطّل'}</span>
+                                <div class="flex space-x-2 space-x-reverse">
+                                    <button class="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1.5 rounded" onclick="openOfferAdminModal(${o.id}, o)"><i class='fas fa-edit mr-1'></i>تعديل</button>
+                                    <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded" onclick="deleteOfferAdmin(${o.id})"><i class='fas fa-trash mr-1'></i>حذف</button>
+                                </div>
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    });
+                }
+            } catch (e) {
+                console.error('Error loading offers (admin)', e);
+            }
+        }
+
+        function openOfferAdminModal(id = null, offer = null) {
+            const modal = document.getElementById('offerAdminModal');
+            document.getElementById('offerAdminModalTitle').textContent = id ? 'تعديل العرض' : 'إضافة عرض';
+            document.getElementById('offerAdminForm').reset();
+            document.getElementById('offerAdminId').value = id || '';
+            loadOfferRestaurantsOptions();
+            if (offer) {
+                document.getElementById('offerNameAdmin').value = offer.name;
+                document.getElementById('offerExpirationDateAdmin').value = offer.expirationDate?.slice(0,10);
+                document.getElementById('offerDescriptionAdmin').value = offer.description || '';
+                document.getElementById('offerImageUrlAdmin').value = offer.imageUrl || '';
+                document.getElementById('offerIsActiveAdmin').checked = !!offer.isActive;
+                document.getElementById('offerRestaurantId').value = offer.restaurantId;
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeOfferAdminModal() {
+            document.getElementById('offerAdminModal').classList.add('hidden');
+        }
+
+        async function saveOfferAdmin(e) {
+            e.preventDefault();
+            const id = document.getElementById('offerAdminId').value;
+            const imageFile = document.getElementById('offerImageFileAdmin').files[0];
+            const formData = new FormData();
+            formData.append('Name', document.getElementById('offerNameAdmin').value);
+            formData.append('ExpirationDate', document.getElementById('offerExpirationDateAdmin').value);
+            const desc = document.getElementById('offerDescriptionAdmin').value;
+            if (desc && desc.trim()) formData.append('Description', desc);
+            const imageUrl = document.getElementById('offerImageUrlAdmin').value;
+            if (imageUrl && imageUrl.trim()) formData.append('ImageUrl', imageUrl);
+            formData.append('IsActive', document.getElementById('offerIsActiveAdmin').checked);
+            const restaurantId = document.getElementById('offerRestaurantId').value;
+            if (!restaurantId) { showToast('اختر المطعم', 'error'); return; }
+            formData.append('RestaurantId', parseInt(restaurantId));
+            if (imageFile) formData.append('imageFile', imageFile);
+
+            try {
+                const endpoint = id ? `/AdminDashboard/offers/${id}` : '/AdminDashboard/offers';
+                const method = id ? 'PUT' : 'POST';
+                const result = await apiCallFormData(endpoint, method, formData);
+                if (result.success) {
+                    showToast(result.message, 'success');
+                    closeOfferAdminModal();
+                    loadOffersAdmin();
+                } else {
+                    showToast(result.message, 'error');
+                }
+            } catch (e) {
+                showToast('حدث خطأ في حفظ العرض', 'error');
+            }
+        }
+
+        async function deleteOfferAdmin(id) {
+            const result = await Swal.fire({
+                title: 'هل أنت متأكد؟',
+                text: 'سيتم حذف العرض نهائياً',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'نعم، احذف',
+                cancelButtonText: 'إلغاء'
+            });
+            if (!result.isConfirmed) return;
+            try {
+                const resp = await apiCall(`/AdminDashboard/offers/${id}`, 'DELETE');
+                if (resp.success) {
+                    showToast(resp.message, 'success');
+                    loadOffersAdmin();
+                } else {
+                    showToast(resp.message, 'error');
+                }
+            } catch (e) {
+                showToast('حدث خطأ في حذف العرض', 'error');
+            }
+        }
+
+        async function loadUserProfile() {
+            try {
+                const data = await apiCall('/AdminDashboard/profile');
+                if (data.success) {
+                    const user = data.data;
+                    currentUserId = user.id;
+                    document.getElementById('userName').textContent = `${user.firstName} ${user.lastName}`;
+                    document.getElementById('userEmail').textContent = user.email;
+                    
+                    // Fill profile form
+                    document.getElementById('profileFirstName').value = user.firstName;
+                    document.getElementById('profileLastName').value = user.lastName;
+                    document.getElementById('profileEmail').value = user.email;
+                    document.getElementById('profilePhone').value = user.phoneNumber || '';
+                    document.getElementById('profileCity').value = user.city || '';
+                }
+            } catch (error) {
+                showToast('حدث خطأ في تحميل الملف الشخصي', 'error');
+            }
+        }
+
+        async function loadDashboardStats() {
+            try {
+                const data = await apiCall('/AdminDashboard/users?pageSize=1000');
+                if (data.success) {
+                    const users = data.data;
+                    document.getElementById('totalUsers').textContent = users.length;
+                    document.getElementById('totalStakeholders').textContent = users.filter(u => u.role === 'stakeholder').length;
+                    document.getElementById('totalNormalUsers').textContent = users.filter(u => u.role === 'user').length;
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        async function loadUsers() {
+            showLoading(true);
+            try {
+                const data = await apiCall(`/AdminDashboard/users?page=${currentPage}&pageSize=10`);
+                if (data.success) {
+                    allUsers = data.data;
+                    filteredUsers = allUsers;
+                    renderUsers();
+                }
+                showLoading(false);
+            } catch (error) {
+                showToast('حدث خطأ في تحميل المستخدمين', 'error');
+                showLoading(false);
+            }
+        }
+
+        function renderUsers() {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+
+            filteredUsers.forEach(user => {
+                const roleColors = {
+                    'admin': 'bg-purple-100 text-purple-800',
+                    'stakeholder': 'bg-blue-100 text-blue-800',
+                    'user': 'bg-green-100 text-green-800'
+                };
+
+                const roleNames = {
+                    'admin': 'أدمن',
+                    'stakeholder': 'صاحب مطعم',
+                    'user': 'مستخدم'
+                };
+
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50 transition duration-200';
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center space-x-3 space-x-reverse">
+                            <div class="flex-shrink-0 h-10 w-10">
+                                <div class="h-10 w-10 rounded-full bg-gradient-to-r from-yellow-600 to-amber-600 flex items-center justify-center">
+                                    <span class="text-white font-semibold">${user.firstName.charAt(0)}${user.lastName.charAt(0)}</span>
+                                </div>
+                            </div>
+                            <div class="text-sm font-medium text-gray-900">${user.firstName} ${user.lastName}</div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${user.email}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${user.phoneNumber || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${user.city || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 py-1 rounded-full text-xs font-semibold ${roleColors[user.role] || 'bg-gray-100 text-gray-800'}">${roleNames[user.role] || user.role}</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 py-1 rounded-full text-xs font-semibold ${user.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            ${user.isActive ? 'مفعّل' : 'معطّل'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div class="flex space-x-2 space-x-reverse">
+                            <button onclick="toggleUserStatus('${user.id}')" class="text-blue-600 hover:text-blue-900" title="تبديل الحالة">
+                                <i class="fas fa-toggle-${user.isActive ? 'on' : 'off'}"></i>
+                            </button>
+                            <button onclick="openEditModal('${user.id}')" class="text-yellow-600 hover:text-yellow-900" title="تعديل">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            ${user.id !== currentUserId ? `<button onclick="deleteUser('${user.id}')" class="text-red-600 hover:text-red-900" title="حذف"><i class="fas fa-trash-alt"></i></button>` : ''}
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            document.getElementById('currentPageStart').textContent = filteredUsers.length > 0 ? 1 : 0;
+            document.getElementById('currentPageEnd').textContent = filteredUsers.length;
+            document.getElementById('totalCount').textContent = filteredUsers.length;
+            document.getElementById('currentPage').textContent = currentPage;
+        }
+
+        function filterUsers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const roleFilter = document.getElementById('roleFilter').value;
+
+            filteredUsers = allUsers.filter(user => {
+                const matchesSearch = !searchTerm || 
+                    user.firstName.toLowerCase().includes(searchTerm) ||
+                    user.lastName.toLowerCase().includes(searchTerm) ||
+                    user.email.toLowerCase().includes(searchTerm) ||
+                    (user.phoneNumber && user.phoneNumber.includes(searchTerm));
+                
+                const matchesRole = !roleFilter || user.role === roleFilter;
+                
+                return matchesSearch && matchesRole;
+            });
+
+            renderUsers();
+        }
+
+        function changePage(direction) {
+            currentPage += direction;
+            if (currentPage < 1) currentPage = 1;
+            loadUsers();
+        }
+
+        async function toggleUserStatus(userId) {
+            if (userId === currentUserId) {
+                showToast('لا يمكنك تعطيل حسابك الخاص', 'error');
+                return;
+            }
+
+            try {
+                const data = await apiCall(`/AdminDashboard/users/${userId}/toggle-status`, 'POST');
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadUsers();
+                    loadDashboardStats();
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                showToast('حدث خطأ في تغيير حالة المستخدم', 'error');
+            }
+        }
+
+        function openEditModal(userId) {
+            const user = allUsers.find(u => u.id === userId);
+            if (!user) return;
+
+            document.getElementById('editUserId').value = user.id;
+            document.getElementById('editFirstName').value = user.firstName;
+            document.getElementById('editLastName').value = user.lastName;
+            document.getElementById('editEmail').value = user.email;
+            document.getElementById('editPhone').value = user.phoneNumber || '';
+            document.getElementById('editCity').value = user.city || '';
+            document.getElementById('editRole').value = user.role;
+            document.getElementById('editIsActive').checked = user.isActive;
+
+            document.getElementById('editUserModal').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editUserModal').classList.add('hidden');
+        }
+
+        async function saveUserEdit(e) {
+            e.preventDefault();
+            const userId = document.getElementById('editUserId').value;
+            
+            const userData = {
+                firstName: document.getElementById('editFirstName').value,
+                lastName: document.getElementById('editLastName').value,
+                email: document.getElementById('editEmail').value,
+                phoneNumber: document.getElementById('editPhone').value,
+                city: document.getElementById('editCity').value,
+                role: document.getElementById('editRole').value,
+                isActive: document.getElementById('editIsActive').checked
+            };
+
+            try {
+                const data = await apiCall(`/AdminDashboard/users/${userId}`, 'PUT', userData);
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    closeEditModal();
+                    loadUsers();
+                    loadDashboardStats();
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                showToast('حدث خطأ في تحديث المستخدم', 'error');
+            }
+        }
+
+        async function deleteUser(userId) {
+            if (userId === currentUserId) {
+                showToast('لا يمكنك حذف حسابك الخاص من هنا. استخدم قسم الملف الشخصي', 'error');
+                return;
+            }
+
+            const result = await Swal.fire({
+                title: 'هل أنت متأكد؟',
+                text: 'هل أنت متأكد من حذف هذا المستخدم؟',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'نعم، احذف',
+                cancelButtonText: 'إلغاء',
+                customClass: {
+                    title: 'font-cairo',
+                    text: 'font-cairo',
+                    confirmButton: 'font-cairo',
+                    cancelButton: 'font-cairo'
+                }
+            });
+
+            if (!result.isConfirmed) return;
+
+            try {
+                const data = await apiCall(`/AdminDashboard/users/${userId}`, 'DELETE');
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadUsers();
+                    loadDashboardStats();
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                showToast('حدث خطأ في حذف المستخدم', 'error');
+            }
+        }
+
+        async function updateProfile(e) {
+            e.preventDefault();
+            showLoading(true);
+
+            const profileData = {
+                firstName: document.getElementById('profileFirstName').value,
+                lastName: document.getElementById('profileLastName').value,
+                email: document.getElementById('profileEmail').value,
+                phoneNumber: document.getElementById('profilePhone').value,
+                city: document.getElementById('profileCity').value
+            };
+
+            try {
+                const data = await apiCall('/AdminDashboard/profile', 'PUT', profileData);
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadUserProfile();
+                } else {
+                    showToast(data.message, 'error');
+                }
+                showLoading(false);
+            } catch (error) {
+                showToast('حدث خطأ في تحديث الملف الشخصي', 'error');
+                showLoading(false);
+            }
+        }
+
+        async function changePassword(e) {
+            e.preventDefault();
+            showLoading(true);
+
+            const passwordData = {
+                currentPassword: document.getElementById('currentPassword').value,
+                newPassword: document.getElementById('newPassword').value
+            };
+
+            try {
+                const data = await apiCall('/AdminDashboard/profile/change-password', 'POST', passwordData);
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    document.getElementById('passwordForm').reset();
+                } else {
+                    showToast(data.message, 'error');
+                }
+                showLoading(false);
+            } catch (error) {
+                showToast('حدث خطأ في تغيير كلمة المرور', 'error');
+                showLoading(false);
+            }
+        }
+
+        async function confirmDeleteAccount() {
+            const firstConfirm = await Swal.fire({
+                title: 'تحذير!',
+                text: 'هل أنت متأكد من حذف حسابك؟ هذا الإجراء لا يمكن التراجع عنه!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'نعم، احذف الحساب',
+                cancelButtonText: 'إلغاء',
+                customClass: {
+                    title: 'font-cairo',
+                    text: 'font-cairo',
+                    confirmButton: 'font-cairo',
+                    cancelButton: 'font-cairo'
+                }
+            });
+
+            if (!firstConfirm.isConfirmed) return;
+
+            const secondConfirm = await Swal.fire({
+                title: 'تحذير أخير!',
+                text: 'سيتم حذف حسابك بشكل دائم. هل أنت متأكد تماماً؟',
+                icon: 'error',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'نعم، أنا متأكد',
+                cancelButtonText: 'إلغاء',
+                customClass: {
+                    title: 'font-cairo',
+                    text: 'font-cairo',
+                    confirmButton: 'font-cairo',
+                    cancelButton: 'font-cairo'
+                }
+            });
+
+            if (!secondConfirm.isConfirmed) return;
+
+            showLoading(true);
+            try {
+                const data = await apiCall('/AdminDashboard/profile', 'DELETE');
+                if (data.success) {
+                    await Swal.fire({
+                        title: 'تم الحذف!',
+                        text: data.message,
+                        icon: 'success',
+                        confirmButtonColor: '#f59e0b',
+                        confirmButtonText: 'حسناً',
+                        customClass: {
+                            title: 'font-cairo',
+                            text: 'font-cairo',
+                            confirmButton: 'font-cairo'
+                        }
+                    });
+                    localStorage.removeItem('token');
+                    window.location.href = 'login.html';
+                } else {
+                    showToast(data.message, 'error');
+                    showLoading(false);
+                }
+            } catch (error) {
+                showToast('حدث خطأ في حذف الحساب', 'error');
+                showLoading(false);
+            }
+        }
+
+        async function logout() {
+            const result = await Swal.fire({
+                title: 'تسجيل الخروج',
+                text: 'هل أنت متأكد من تسجيل الخروج؟',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#f59e0b',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'نعم، سجل الخروج',
+                cancelButtonText: 'إلغاء',
+                customClass: {
+                    title: 'font-cairo',
+                    text: 'font-cairo',
+                    confirmButton: 'font-cairo',
+                    cancelButton: 'font-cairo'
+                }
+            });
+
+            if (result.isConfirmed) {
+                localStorage.removeItem('token');
+                window.location.href = 'login.html';
+            }
+        }
+
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMessage.textContent = message;
+
+            if (type === 'success') {
+                toastIcon.innerHTML = '<i class="fas fa-check-circle text-green-500 text-xl"></i>';
+                toast.classList.remove('hidden');
+            } else {
+                toastIcon.innerHTML = '<i class="fas fa-exclamation-circle text-red-500 text-xl"></i>';
+                toast.classList.remove('hidden');
+            }
+
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        function showLoading(show) {
+            document.getElementById('loadingOverlay').classList.toggle('hidden', !show);
+        }
+
+        // ==================== Main Categories Functions ====================
+        let allMainCategories = [];
+        let filteredMainCategories = [];
+
+        async function loadMainCategories() {
+            try {
+                const data = await apiCall('/AdminDashboard/main-categories?pageSize=1000');
+                if (data.success) {
+                    allMainCategories = data.data;
+                    filteredMainCategories = allMainCategories;
+                    renderMainCategories();
+                    
+                    // Update category modal dropdown
+                    const select = document.getElementById('categoryMainCategoryId');
+                    const filterSelect = document.getElementById('categoryMainCategoryFilter');
+                    if (select) {
+                        const currentValue = select.value;
+                        select.innerHTML = '<option value="">اختر القسم الرئيسي</option>';
+                        allMainCategories.forEach(mc => {
+                            const option = document.createElement('option');
+                            option.value = mc.id;
+                            option.textContent = mc.name;
+                            select.appendChild(option);
+                        });
+                        select.value = currentValue;
+                    }
+                    if (filterSelect) {
+                        const currentFilterValue = filterSelect.value;
+                        filterSelect.innerHTML = '<option value="">جميع الأقسام الرئيسية</option>';
+                        allMainCategories.forEach(mc => {
+                            const filterOption = document.createElement('option');
+                            filterOption.value = mc.id;
+                            filterOption.textContent = mc.name;
+                            filterSelect.appendChild(filterOption);
+                        });
+                        filterSelect.value = currentFilterValue;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading main categories:', error);
+            }
+        }
+
+        function renderMainCategories() {
+            const container = document.getElementById('mainCategoriesList');
+            if (!container) return;
+
+            container.innerHTML = '';
+            filteredMainCategories.forEach(mc => {
+                const card = document.createElement('div');
+                card.className = 'bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition duration-300';
+                card.innerHTML = `
+                    ${mc.imageUrl ? `
+                        <div class="w-full h-40 overflow-hidden bg-gray-200">
+                            <img src="${API_BASE_URL.replace('/api', '')}${mc.imageUrl}" alt="${mc.name}" class="w-full h-full object-contain">
+                        </div>
+                    ` : ''}
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg font-bold text-gray-800">${mc.name}</h4>
+                            <span class="px-2 py-1 text-xs rounded-full ${mc.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                ${mc.isActive ? 'مفعّل' : 'معطّل'}
+                            </span>
+                        </div>
+                        ${mc.description ? `<p class="text-sm text-gray-600 mb-2">${mc.description}</p>` : ''}
+                        <p class="text-xs text-gray-500 mb-3">عدد الأقسام: ${mc.categoriesCount}</p>
+                        <div class="flex space-x-2 space-x-reverse">
+                            <button onclick="editMainCategory(${mc.id})" class="flex-1 bg-yellow-600 text-white px-3 py-2 rounded text-sm hover:bg-yellow-700 transition">
+                                <i class="fas fa-edit mr-1"></i>تعديل
+                            </button>
+                            <button onclick="deleteMainCategory(${mc.id})" class="flex-1 bg-red-600 text-white px-3 py-2 rounded text-sm hover:bg-red-700 transition">
+                                <i class="fas fa-trash mr-1"></i>حذف
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function filterMainCategories() {
+            const searchTerm = document.getElementById('mainCategorySearch').value.toLowerCase();
+            filteredMainCategories = allMainCategories.filter(mc =>
+                mc.name.toLowerCase().includes(searchTerm) ||
+                (mc.description && mc.description.toLowerCase().includes(searchTerm))
+            );
+            renderMainCategories();
+        }
+
+        function openMainCategoryModal(id = null) {
+            document.getElementById('mainCategoryModalTitle').textContent = id ? 'تعديل قسم رئيسي' : 'إضافة قسم رئيسي';
+            document.getElementById('mainCategoryForm').reset();
+            document.getElementById('mainCategoryId').value = id || '';
+            if (id) {
+                const mc = allMainCategories.find(m => m.id === id);
+                if (mc) {
+                    document.getElementById('mainCategoryName').value = mc.name;
+                    document.getElementById('mainCategoryDescription').value = mc.description || '';
+                    document.getElementById('mainCategoryImageUrl').value = mc.imageUrl || '';
+                    document.getElementById('mainCategoryIsActive').checked = mc.isActive;
+                }
+            }
+            document.getElementById('mainCategoryModal').classList.remove('hidden');
+        }
+
+        function closeMainCategoryModal() {
+            document.getElementById('mainCategoryModal').classList.add('hidden');
+        }
+
+        async function saveMainCategory(e) {
+            e.preventDefault();
+            const id = document.getElementById('mainCategoryId').value;
+            
+            // Check if there's a file to upload
+            const imageFile = document.getElementById('mainCategoryImageFile').files[0];
+            const hasFile = imageFile && imageFile.size > 0;
+            
+            if (hasFile) {
+                // Use FormData to send file
+                const formData = new FormData();
+                formData.append('Name', document.getElementById('mainCategoryName').value);
+                formData.append('Description', document.getElementById('mainCategoryDescription').value);
+                formData.append('ImageUrl', document.getElementById('mainCategoryImageUrl').value);
+                formData.append('IsActive', document.getElementById('mainCategoryIsActive').checked);
+                formData.append('imageFile', imageFile);
+
+                try {
+                    const result = await apiCallFormData(
+                        id ? `/AdminDashboard/main-categories/${id}` : '/AdminDashboard/main-categories',
+                        id ? 'PUT' : 'POST',
+                        formData
+                    );
+                    if (result.success) {
+                        showToast(result.message, 'success');
+                        closeMainCategoryModal();
+                        loadMainCategories();
+                    } else {
+                        showToast(result.message, 'error');
+                    }
+                } catch (error) {
+                    showToast('حدث خطأ في حفظ القسم الرئيسي', 'error');
+                }
+            } else {
+                // Use JSON for URL only
+                const data = {
+                    name: document.getElementById('mainCategoryName').value,
+                    description: document.getElementById('mainCategoryDescription').value,
+                    imageUrl: document.getElementById('mainCategoryImageUrl').value,
+                    isActive: document.getElementById('mainCategoryIsActive').checked
+                };
+
+                try {
+                    const result = await apiCall(
+                        id ? `/AdminDashboard/main-categories/${id}` : '/AdminDashboard/main-categories',
+                        id ? 'PUT' : 'POST',
+                        data
+                    );
+                    if (result.success) {
+                        showToast(result.message, 'success');
+                        closeMainCategoryModal();
+                        loadMainCategories();
+                    } else {
+                        showToast(result.message, 'error');
+                    }
+                } catch (error) {
+                    showToast('حدث خطأ في حفظ القسم الرئيسي', 'error');
+                }
+            }
+        }
+
+        function editMainCategory(id) {
+            openMainCategoryModal(id);
+        }
+
+        async function deleteMainCategory(id) {
+            const result = await Swal.fire({
+                title: 'هل أنت متأكد؟',
+                text: 'هل تريد حذف هذا القسم الرئيسي؟',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'نعم، احذف',
+                cancelButtonText: 'إلغاء'
+            });
+
+            if (!result.isConfirmed) return;
+
+            try {
+                const data = await apiCall(`/AdminDashboard/main-categories/${id}`, 'DELETE');
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadMainCategories();
+                    loadCategories();
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                showToast('حدث خطأ في حذف القسم الرئيسي', 'error');
+            }
+        }
+
+        // ==================== Categories Functions ====================
+        let allCategories = [];
+        let filteredCategories = [];
+
+        async function loadCategories() {
+            try {
+                const data = await apiCall('/AdminDashboard/categories?pageSize=1000');
+                if (data.success) {
+                    allCategories = data.data;
+                    filteredCategories = allCategories;
+                    renderCategories();
+
+                    // Update restaurant modal dropdown
+                    const select = document.getElementById('restaurantCategoryId');
+                    const filterSelect = document.getElementById('restaurantCategoryFilter');
+                    if (select) {
+                        const currentValue = select.value;
+                        select.innerHTML = '<option value="">اختر القسم</option>';
+                        allCategories.forEach(c => {
+                            const option = document.createElement('option');
+                            option.value = c.id;
+                            option.textContent = c.name;
+                            select.appendChild(option);
+                        });
+                        select.value = currentValue;
+                    }
+                    if (filterSelect) {
+                        const currentFilterValue = filterSelect.value;
+                        filterSelect.innerHTML = '<option value="">جميع الأقسام</option>';
+                        allCategories.forEach(c => {
+                            const filterOption = document.createElement('option');
+                            filterOption.value = c.id;
+                            filterOption.textContent = c.name;
+                            filterSelect.appendChild(filterOption);
+                        });
+                        filterSelect.value = currentFilterValue;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+
+        function renderCategories() {
+            const container = document.getElementById('categoriesList');
+            if (!container) return;
+
+            container.innerHTML = '';
+            filteredCategories.forEach(c => {
+                const card = document.createElement('div');
+                card.className = 'bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition duration-300';
+                card.innerHTML = `
+                    ${c.imageUrl ? `
+                        <div class="w-full h-40 overflow-hidden bg-gray-200">
+                            <img src="${API_BASE_URL.replace('/api', '')}${c.imageUrl}" alt="${c.name}" class="w-full h-full object-cover">
+                        </div>
+                    ` : ''}
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg font-bold text-gray-800">${c.name}</h4>
+                            <span class="px-2 py-1 text-xs rounded-full ${c.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                ${c.isActive ? 'مفعّل' : 'معطّل'}
+                            </span>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-1">القسم الرئيسي: ${c.mainCategoryName}</p>
+                        ${c.description ? `<p class="text-sm text-gray-600 mb-2 mt-2">${c.description}</p>` : ''}
+                        <p class="text-xs text-gray-500 mb-3">عدد المطاعم: ${c.restaurantsCount}</p>
+                        <div class="flex space-x-2 space-x-reverse">
+                            <button onclick="editCategory(${c.id})" class="flex-1 bg-yellow-600 text-white px-3 py-2 rounded text-sm hover:bg-yellow-700 transition">
+                                <i class="fas fa-edit mr-1"></i>تعديل
+                            </button>
+                            <button onclick="deleteCategory(${c.id})" class="flex-1 bg-red-600 text-white px-3 py-2 rounded text-sm hover:bg-red-700 transition">
+                                <i class="fas fa-trash mr-1"></i>حذف
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function filterCategories() {
+            const searchTerm = document.getElementById('categorySearch').value.toLowerCase();
+            const mainCategoryFilter = document.getElementById('categoryMainCategoryFilter').value;
+
+            filteredCategories = allCategories.filter(c => {
+                const matchesSearch = !searchTerm ||
+                    c.name.toLowerCase().includes(searchTerm) ||
+                    (c.description && c.description.toLowerCase().includes(searchTerm));
+                const matchesMainCategory = !mainCategoryFilter || c.mainCategoryId == mainCategoryFilter;
+                return matchesSearch && matchesMainCategory;
+            });
+            renderCategories();
+        }
+
+        function openCategoryModal(id = null) {
+            document.getElementById('categoryModalTitle').textContent = id ? 'تعديل قسم' : 'إضافة قسم';
+            document.getElementById('categoryForm').reset();
+            document.getElementById('categoryId').value = id || '';
+            
+            // Load main categories in dropdown
+            const select = document.getElementById('categoryMainCategoryId');
+            if (select) {
+                select.innerHTML = '<option value="">اختر القسم الرئيسي</option>';
+                allMainCategories.forEach(mc => {
+                    const option = document.createElement('option');
+                    option.value = mc.id;
+                    option.textContent = mc.name;
+                    select.appendChild(option);
+                });
+            }
+
+            if (id) {
+                const c = allCategories.find(cat => cat.id === id);
+                if (c) {
+                    document.getElementById('categoryName').value = c.name;
+                    document.getElementById('categoryMainCategoryId').value = c.mainCategoryId;
+                    document.getElementById('categoryDescription').value = c.description || '';
+                    document.getElementById('categoryImageUrl').value = c.imageUrl || '';
+                    document.getElementById('categoryIsActive').checked = c.isActive;
+                }
+            }
+            document.getElementById('categoryModal').classList.remove('hidden');
+        }
+
+        function closeCategoryModal() {
+            document.getElementById('categoryModal').classList.add('hidden');
+        }
+
+        async function saveCategory(e) {
+            e.preventDefault();
+            const id = document.getElementById('categoryId').value;
+            
+            // Check if there's a file to upload
+            const imageFile = document.getElementById('categoryImageFile').files[0];
+            const hasFile = imageFile && imageFile.size > 0;
+            
+            if (hasFile) {
+                // Use FormData to send file
+                const formData = new FormData();
+                formData.append('Name', document.getElementById('categoryName').value);
+                formData.append('MainCategoryId', parseInt(document.getElementById('categoryMainCategoryId').value));
+                formData.append('Description', document.getElementById('categoryDescription').value);
+                formData.append('ImageUrl', document.getElementById('categoryImageUrl').value);
+                formData.append('IsActive', document.getElementById('categoryIsActive').checked);
+                formData.append('imageFile', imageFile);
+
+                try {
+                    const result = await apiCallFormData(
+                        id ? `/AdminDashboard/categories/${id}` : '/AdminDashboard/categories',
+                        id ? 'PUT' : 'POST',
+                        formData
+                    );
+                    if (result.success) {
+                        showToast(result.message, 'success');
+                        closeCategoryModal();
+                        loadCategories();
+                        loadRestaurants();
+                    } else {
+                        showToast(result.message, 'error');
+                    }
+                } catch (error) {
+                    showToast('حدث خطأ في حفظ القسم', 'error');
+                }
+            } else {
+                // Use JSON for URL only
+                const data = {
+                    name: document.getElementById('categoryName').value,
+                    mainCategoryId: parseInt(document.getElementById('categoryMainCategoryId').value),
+                    description: document.getElementById('categoryDescription').value,
+                    imageUrl: document.getElementById('categoryImageUrl').value,
+                    isActive: document.getElementById('categoryIsActive').checked
+                };
+
+                try {
+                    const result = await apiCall(
+                        id ? `/AdminDashboard/categories/${id}` : '/AdminDashboard/categories',
+                        id ? 'PUT' : 'POST',
+                        data
+                    );
+                    if (result.success) {
+                        showToast(result.message, 'success');
+                        closeCategoryModal();
+                        loadCategories();
+                        loadRestaurants();
+                    } else {
+                        showToast(result.message, 'error');
+                    }
+                } catch (error) {
+                    showToast('حدث خطأ في حفظ القسم', 'error');
+                }
+            }
+        }
+
+        function editCategory(id) {
+            openCategoryModal(id);
+        }
+
+        async function deleteCategory(id) {
+            const result = await Swal.fire({
+                title: 'هل أنت متأكد؟',
+                text: 'هل تريد حذف هذا القسم؟',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'نعم، احذف',
+                cancelButtonText: 'إلغاء'
+            });
+
+            if (!result.isConfirmed) return;
+
+            try {
+                const data = await apiCall(`/AdminDashboard/categories/${id}`, 'DELETE');
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadCategories();
+                    loadRestaurants();
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                showToast('حدث خطأ في حذف القسم', 'error');
+            }
+        }
+
+        // ==================== Restaurants Functions ====================
+        let allRestaurants = [];
+        let filteredRestaurants = [];
+
+        async function loadRestaurants() {
+            try {
+                const data = await apiCall('/AdminDashboard/restaurants?pageSize=1000');
+                if (data.success) {
+                    allRestaurants = data.data;
+                    filteredRestaurants = allRestaurants;
+                    renderRestaurants();
+                }
+            } catch (error) {
+                console.error('Error loading restaurants:', error);
+            }
+        }
+
+        function renderRestaurants() {
+            const container = document.getElementById('restaurantsList');
+            if (!container) return;
+
+            container.innerHTML = '';
+            filteredRestaurants.forEach(r => {
+                const card = document.createElement('div');
+                card.className = 'bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition duration-300';
+                card.innerHTML = `
+                    ${r.imageUrl ? `
+                        <div class="w-full h-40 overflow-hidden bg-gray-200">
+                            <img src="${API_BASE_URL.replace('/api', '')}${r.imageUrl}" alt="${r.name}" class="w-full h-full object-cover">
+                        </div>
+                    ` : ''}
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg font-bold text-gray-800">${r.name}</h4>
+                            <span class="px-2 py-1 text-xs rounded-full ${r.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                ${r.isActive ? 'مفعّل' : 'معطّل'}
+                            </span>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-1">القسم: ${r.categoryName}</p>
+                        <p class="text-xs text-gray-500 mb-1">القسم الرئيسي: ${r.mainCategoryName}</p>
+                        ${r.cityNames && r.cityNames.length > 0 ? `<p class="text-xs text-gray-500 mb-1">المدن: ${r.cityNames.join(', ')}</p>` : (r.city ? `<p class="text-xs text-gray-500 mb-1">المدينة: ${r.city}</p>` : '')}
+                        ${r.phoneNumber ? `<p class="text-xs text-gray-500 mb-1">الهاتف: ${r.phoneNumber}</p>` : ''}
+                        ${r.description ? `<p class="text-sm text-gray-600 mb-2 mt-2">${r.description}</p>` : ''}
+                        <div class="flex space-x-2 space-x-reverse mt-3">
+                            <button onclick="editRestaurant(${r.id})" class="flex-1 bg-yellow-600 text-white px-3 py-2 rounded text-sm hover:bg-yellow-700 transition">
+                                <i class="fas fa-edit mr-1"></i>تعديل
+                            </button>
+                            <button onclick="deleteRestaurant(${r.id})" class="flex-1 bg-red-600 text-white px-3 py-2 rounded text-sm hover:bg-red-700 transition">
+                                <i class="fas fa-trash mr-1"></i>حذف
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function filterRestaurants() {
+            const searchTerm = document.getElementById('restaurantSearch').value.toLowerCase();
+            const categoryFilter = document.getElementById('restaurantCategoryFilter').value;
+            const cityFilter = document.getElementById('restaurantCityFilter').value.toLowerCase();
+
+            filteredRestaurants = allRestaurants.filter(r => {
+                const matchesSearch = !searchTerm ||
+                    r.name.toLowerCase().includes(searchTerm) ||
+                    (r.description && r.description.toLowerCase().includes(searchTerm)) ||
+                    (r.address && r.address.toLowerCase().includes(searchTerm));
+                const matchesCategory = !categoryFilter || r.categoryId == categoryFilter;
+                const matchesCity = !cityFilter || 
+                    (r.cityNames && r.cityNames.some(cn => cn.toLowerCase().includes(cityFilter.toLowerCase()))) ||
+                    (r.city && r.city.toLowerCase().includes(cityFilter.toLowerCase()));
+                return matchesSearch && matchesCategory && matchesCity;
+            });
+            renderRestaurants();
+        }
+
+        function openRestaurantModal(id = null) {
+            document.getElementById('restaurantModalTitle').textContent = id ? 'تعديل مطعم' : 'إضافة مطعم';
+            document.getElementById('restaurantForm').reset();
+            document.getElementById('restaurantId').value = id || '';
+
+            // Load categories in dropdown
+            const select = document.getElementById('restaurantCategoryId');
+            if (select) {
+                select.innerHTML = '<option value="">اختر القسم</option>';
+                allCategories.forEach(c => {
+                    const option = document.createElement('option');
+                    option.value = c.id;
+                    option.textContent = c.name;
+                    select.appendChild(option);
+                });
+            }
+
+            // Load cities in multi-select
+            const citySelect = document.getElementById('restaurantCityIds');
+            if (citySelect) {
+                citySelect.innerHTML = '';
+                allCities.filter(c => c.isActive).forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city.id;
+                    option.textContent = city.name;
+                    citySelect.appendChild(option);
+                });
+            }
+
+            if (id) {
+                const r = allRestaurants.find(res => res.id === id);
+                if (r) {
+                    document.getElementById('restaurantName').value = r.name;
+                    document.getElementById('restaurantCategoryId').value = r.categoryId;
+                    document.getElementById('restaurantDescription').value = r.description || '';
+                    document.getElementById('restaurantPhoneNumber').value = r.phoneNumber || '';
+                    document.getElementById('restaurantAddress').value = r.address || '';
+                    document.getElementById('restaurantCity').value = r.city || '';
+                    document.getElementById('restaurantImageUrl').value = r.imageUrl || '';
+                    document.getElementById('restaurantIsActive').checked = r.isActive;
+                    
+                    // Set selected cities
+                    if (r.cityIds && r.cityIds.length > 0 && citySelect) {
+                        Array.from(citySelect.options).forEach(option => {
+                            if (r.cityIds.includes(parseInt(option.value))) {
+                                option.selected = true;
+                            }
+                        });
+                    }
+                }
+            }
+            document.getElementById('restaurantModal').classList.remove('hidden');
+        }
+
+        function closeRestaurantModal() {
+            document.getElementById('restaurantModal').classList.add('hidden');
+        }
+
+        async function saveRestaurant(e) {
+            e.preventDefault();
+            const id = document.getElementById('restaurantId').value;
+            
+            // Check if there's a file to upload
+            const imageFile = document.getElementById('restaurantImageFile').files[0];
+            const hasFile = imageFile && imageFile.size > 0;
+            
+            // Get selected city IDs
+            const citySelect = document.getElementById('restaurantCityIds');
+            const selectedCityIds = Array.from(citySelect.selectedOptions).map(option => parseInt(option.value));
+
+            if (hasFile) {
+                // Use FormData to send file
+                const formData = new FormData();
+                formData.append('Name', document.getElementById('restaurantName').value);
+                formData.append('CategoryId', parseInt(document.getElementById('restaurantCategoryId').value));
+                formData.append('Description', document.getElementById('restaurantDescription').value);
+                formData.append('PhoneNumber', document.getElementById('restaurantPhoneNumber').value);
+                formData.append('Address', document.getElementById('restaurantAddress').value);
+                formData.append('City', document.getElementById('restaurantCity').value);
+                formData.append('ImageUrl', document.getElementById('restaurantImageUrl').value);
+                formData.append('IsActive', document.getElementById('restaurantIsActive').checked);
+                formData.append('imageFile', imageFile);
+                
+                // Add CityIds as array
+                selectedCityIds.forEach((cityId, index) => {
+                    formData.append(`CityIds[${index}]`, cityId);
+                });
+
+                try {
+                    const result = await apiCallFormData(
+                        id ? `/AdminDashboard/restaurants/${id}` : '/AdminDashboard/restaurants',
+                        id ? 'PUT' : 'POST',
+                        formData
+                    );
+                    if (result.success) {
+                        showToast(result.message, 'success');
+                        closeRestaurantModal();
+                        loadRestaurants();
+                    } else {
+                        showToast(result.message, 'error');
+                    }
+                } catch (error) {
+                    showToast('حدث خطأ في حفظ المطعم', 'error');
+                }
+            } else {
+                // Use JSON for URL only
+                const data = {
+                    name: document.getElementById('restaurantName').value,
+                    categoryId: parseInt(document.getElementById('restaurantCategoryId').value),
+                    description: document.getElementById('restaurantDescription').value,
+                    phoneNumber: document.getElementById('restaurantPhoneNumber').value,
+                    address: document.getElementById('restaurantAddress').value,
+                    city: document.getElementById('restaurantCity').value,
+                    imageUrl: document.getElementById('restaurantImageUrl').value,
+                    isActive: document.getElementById('restaurantIsActive').checked
+                };
+
+                try {
+                    const result = await apiCall(
+                        id ? `/AdminDashboard/restaurants/${id}` : '/AdminDashboard/restaurants',
+                        id ? 'PUT' : 'POST',
+                        data
+                    );
+                    if (result.success) {
+                        showToast(result.message, 'success');
+                        closeRestaurantModal();
+                        loadRestaurants();
+                    } else {
+                        showToast(result.message, 'error');
+                    }
+                } catch (error) {
+                    showToast('حدث خطأ في حفظ المطعم', 'error');
+                }
+            }
+        }
+
+        function editRestaurant(id) {
+            openRestaurantModal(id);
+        }
+
+        async function deleteRestaurant(id) {
+            const result = await Swal.fire({
+                title: 'هل أنت متأكد؟',
+                text: 'هل تريد حذف هذا المطعم؟',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'نعم، احذف',
+                cancelButtonText: 'إلغاء'
+            });
+
+            if (!result.isConfirmed) return;
+
+            try {
+                const data = await apiCall(`/AdminDashboard/restaurants/${id}`, 'DELETE');
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadRestaurants();
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                showToast('حدث خطأ في حذف المطعم', 'error');
+            }
+        }
+
+        // ==================== Cities Functions ====================
+        let allCities = [];
+        let filteredCities = [];
+
+        async function loadCities() {
+            try {
+                const data = await apiCall('/AdminDashboard/cities?pageSize=1000');
+                if (data.success) {
+                    allCities = data.data;
+                    filteredCities = allCities;
+                    renderCities();
+                    
+                    // Update restaurant modal dropdown and filter
+                    updateCityDropdowns();
+                }
+            } catch (error) {
+                console.error('Error loading cities:', error);
+            }
+        }
+
+        function updateCityDropdowns() {
+            // Update restaurant modal city select
+            const restaurantCitySelect = document.getElementById('restaurantCityIds');
+            if (restaurantCitySelect) {
+                const currentSelections = Array.from(restaurantCitySelect.selectedOptions).map(opt => parseInt(opt.value));
+                restaurantCitySelect.innerHTML = '';
+                allCities.filter(c => c.isActive).forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city.id;
+                    option.textContent = city.name;
+                    if (currentSelections.includes(city.id)) {
+                        option.selected = true;
+                    }
+                    restaurantCitySelect.appendChild(option);
+                });
+            }
+
+            // Update restaurant filter dropdown
+            const restaurantCityFilter = document.getElementById('restaurantCityFilter');
+            if (restaurantCityFilter) {
+                const currentFilter = restaurantCityFilter.value;
+                restaurantCityFilter.innerHTML = '<option value="">جميع المدن</option>';
+                allCities.filter(c => c.isActive).forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city.name;
+                    option.textContent = city.name;
+                    if (city.name === currentFilter) {
+                        option.selected = true;
+                    }
+                    restaurantCityFilter.appendChild(option);
+                });
+            }
+        }
+
+        function renderCities() {
+            const container = document.getElementById('citiesList');
+            if (!container) return;
+
+            container.innerHTML = '';
+            filteredCities.forEach(city => {
+                const card = document.createElement('div');
+                card.className = 'bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition duration-300';
+                card.innerHTML = `
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg font-bold text-gray-800">${city.name}</h4>
+                            <span class="px-2 py-1 text-xs rounded-full ${city.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                ${city.isActive ? 'مفعّل' : 'معطّل'}
+                            </span>
+                        </div>
+                        ${city.description ? `<p class="text-sm text-gray-600 mb-2">${city.description}</p>` : ''}
+                        <p class="text-xs text-gray-500 mb-3">عدد المطاعم: ${city.restaurantsCount}</p>
+                        <div class="flex space-x-2 space-x-reverse">
+                            <button onclick="editCity(${city.id})" class="flex-1 bg-yellow-600 text-white px-3 py-2 rounded text-sm hover:bg-yellow-700 transition">
+                                <i class="fas fa-edit mr-1"></i>تعديل
+                            </button>
+                            <button onclick="deleteCity(${city.id})" class="flex-1 bg-red-600 text-white px-3 py-2 rounded text-sm hover:bg-red-700 transition">
+                                <i class="fas fa-trash mr-1"></i>حذف
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function filterCities() {
+            const searchTerm = document.getElementById('citySearch').value.toLowerCase();
+            filteredCities = allCities.filter(city =>
+                city.name.toLowerCase().includes(searchTerm) ||
+                (city.description && city.description.toLowerCase().includes(searchTerm))
+            );
+            renderCities();
+        }
+
+        function openCityModal(id = null) {
+            document.getElementById('cityModalTitle').textContent = id ? 'تعديل مدينة' : 'إضافة مدينة';
+            document.getElementById('cityForm').reset();
+            document.getElementById('cityId').value = id || '';
+            
+            if (id) {
+                const city = allCities.find(c => c.id === id);
+                if (city) {
+                    document.getElementById('cityName').value = city.name;
+                    document.getElementById('cityDescription').value = city.description || '';
+                    document.getElementById('cityIsActive').checked = city.isActive;
+                }
+            }
+            document.getElementById('cityModal').classList.remove('hidden');
+        }
+
+        function closeCityModal() {
+            document.getElementById('cityModal').classList.add('hidden');
+        }
+
+        async function saveCity(e) {
+            e.preventDefault();
+            const id = document.getElementById('cityId').value;
+            
+            const data = {
+                name: document.getElementById('cityName').value,
+                description: document.getElementById('cityDescription').value,
+                isActive: document.getElementById('cityIsActive').checked
+            };
+
+            try {
+                const result = await apiCall(
+                    id ? `/AdminDashboard/cities/${id}` : '/AdminDashboard/cities',
+                    id ? 'PUT' : 'POST',
+                    data
+                );
+                if (result.success) {
+                    showToast(result.message, 'success');
+                    closeCityModal();
+                    loadCities();
+                    loadRestaurants();
+                } else {
+                    showToast(result.message, 'error');
+                }
+            } catch (error) {
+                showToast('حدث خطأ في حفظ المدينة', 'error');
+            }
+        }
+
+        function editCity(id) {
+            openCityModal(id);
+        }
+
+        async function deleteCity(id) {
+            const result = await Swal.fire({
+                title: 'هل أنت متأكد؟',
+                text: 'هل تريد حذف هذه المدينة؟',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'نعم، احذف',
+                cancelButtonText: 'إلغاء'
+            });
+
+            if (!result.isConfirmed) return;
+
+            try {
+                const data = await apiCall(`/AdminDashboard/cities/${id}`, 'DELETE');
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadCities();
+                    loadRestaurants();
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                showToast('حدث خطأ في حذف المدينة', 'error');
+            }
+        }
+    </script>
+</body>
+</html>
+

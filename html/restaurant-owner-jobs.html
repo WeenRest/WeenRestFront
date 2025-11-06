@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>وظائف ومنشورات المتقدمين - صاحب المطعم</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+	<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-[Cairo]">
+	<header class="bg-white border-b">
+		<div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+			<h1 class="text-xl font-bold">الوظائف والمتقدمون</h1>
+			<nav class="flex items-center gap-4 text-sm">
+				<a href="restaurant-owner-dashboard.html" class="text-blue-600 hover:underline">لوحة صاحب المطعم</a>
+			</nav>
+		</div>
+	</header>
+
+	<main class="max-w-7xl mx-auto px-4 py-6 space-y-8">
+		<section class="bg-white border rounded-lg shadow-sm p-4">
+			<div class="flex items-center justify-between mb-3">
+				<h2 class="font-semibold">الوظائف المتاحة</h2>
+				<input id="jobSearch" type="text" placeholder="بحث" class="border rounded-md px-3 py-2" />
+			</div>
+			<ul id="ownerJobs" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></ul>
+			<p id="ownerJobsEmpty" class="text-center text-gray-500 hidden mt-4">لا توجد وظائف</p>
+		</section>
+
+		<section class="bg-white border rounded-lg shadow-sm p-4">
+			<div class="flex items-center justify-between mb-3">
+				<h2 class="font-semibold">طلبات المتقدمين</h2>
+				<div class="flex gap-2">
+					<select id="ownerFilterJob" class="border rounded-md px-3 py-2"></select>
+					<input id="appSearch" type="text" placeholder="بحث بالاسم/المدينة" class="border rounded-md px-3 py-2" />
+				</div>
+			</div>
+			<table class="w-full text-sm">
+				<thead>
+					<tr class="border-b bg-gray-50">
+						<th class="p-3 text-right">#</th>
+						<th class="p-3 text-right">المتقدم</th>
+						<th class="p-3 text-right">الوظيفة</th>
+						<th class="p-3 text-right">المدينة</th>
+						<th class="p-3 text-right">الخبرة</th>
+						<th class="p-3 text-right">تاريخ</th>
+					</tr>
+				</thead>
+				<tbody id="ownerApps"></tbody>
+			</table>
+			<p id="ownerAppsEmpty" class="text-center text-gray-500 hidden mt-4">لا توجد طلبات</p>
+		</section>
+	</main>
+
+	<script>
+	const API_ORIGIN = localStorage.getItem('api_origin') || 'http://localhost:5276';
+	const API = {
+		jobs: `${API_ORIGIN}/api/RestaurantOwnerJobs/jobs`,
+		apps: (jobId) => jobId ? `${API_ORIGIN}/api/RestaurantOwnerJobs/applications?jobId=${encodeURIComponent(jobId)}` : `${API_ORIGIN}/api/RestaurantOwnerJobs/applications`
+	};
+
+	function authHeaders(){
+		const token = localStorage.getItem('token');
+		return token ? { 'Authorization': `Bearer ${token}` } : {};
+	}
+
+	function jobCard(j){
+		return `
+			<li class="border rounded-lg p-4 bg-white shadow-sm">
+				<h3 class="font-semibold text-gray-800">${j.name}</h3>
+				<div class="text-xs text-gray-500 mt-1">${new Date(j.createdAt).toLocaleDateString()}</div>
+			</li>
+		`;
+	}
+	function appRow(a, i){
+		return `
+			<tr class="border-b">
+				<td class="p-3">${i+1}</td>
+				<td class="p-3">${a.applicantName}</td>
+				<td class="p-3">${a.jobName}</td>
+				<td class="p-3">${a.city ?? '—'}</td>
+				<td class="p-3">${a.yearsOfExperience ?? '—'}</td>
+				<td class="p-3">${new Date(a.createdAt).toLocaleDateString()}</td>
+			</tr>
+		`;
+	}
+
+	async function fetchJSON(url){
+		const res = await fetch(url, { headers: authHeaders() });
+		if(!res.ok) throw new Error('failed');
+		return (await res.json()).data || [];
+	}
+
+	async function loadJobs(){
+		const data = await fetchJSON(API.jobs);
+		const s = document.getElementById('jobSearch').value.trim();
+		const list = document.getElementById('ownerJobs');
+		const empty = document.getElementById('ownerJobsEmpty');
+		let filtered = data;
+		if(s) filtered = data.filter(j => j.name && j.name.includes(s));
+		if(!filtered.length){ empty.classList.remove('hidden'); list.innerHTML=''; return; }
+		empty.classList.add('hidden');
+		list.innerHTML = filtered.map(jobCard).join('');
+		fillJobFilter(data);
+	}
+
+	function fillJobFilter(jobs){
+		const sel = document.getElementById('ownerFilterJob');
+		if(sel.options.length > 0) return; // fill once
+		sel.innerHTML = '<option value="">الكل</option>' + jobs.map(j=>`<option value="${j.id}">${j.name}</option>`).join('');
+	}
+
+	async function loadApps(){
+		const selJob = document.getElementById('ownerFilterJob').value;
+		const data = await fetchJSON(API.apps(selJob));
+		const s = document.getElementById('appSearch').value.trim();
+		const body = document.getElementById('ownerApps');
+		const empty = document.getElementById('ownerAppsEmpty');
+		let filtered = data;
+		if(s){
+			filtered = data.filter(a =>
+				(a.applicantName && a.applicantName.includes(s)) ||
+				(a.city && a.city.includes(s))
+			);
+		}
+		if(!filtered.length){ empty.classList.remove('hidden'); body.innerHTML=''; return; }
+		empty.classList.add('hidden');
+		body.innerHTML = filtered.map(appRow).join('');
+	}
+
+	document.getElementById('jobSearch').addEventListener('keydown', (e)=>{ if(e.key==='Enter') loadJobs(); });
+	document.getElementById('appSearch').addEventListener('keydown', (e)=>{ if(e.key==='Enter') loadApps(); });
+	document.getElementById('ownerFilterJob').addEventListener('change', loadApps);
+
+	(async ()=>{
+		try{ await loadJobs(); await loadApps(); }catch(e){ /* no-op UI */ }
+	})();
+	</script>
+</body>
+</html>

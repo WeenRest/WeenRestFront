@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة طلبات ملابس الطاقم - WeenRest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style> body{font-family:'Cairo',sans-serif;} </style>
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+                <a href="admin-dashboard.html" class="w-10 h-10 rounded-full bg-white shadow flex items-center justify-center hover:bg-gray-100"><i class="fas fa-arrow-right"></i></a>
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-800">إدارة طلبات ملابس الطاقم</h1>
+            </div>
+            <div class="flex items-center gap-3">
+                <select id="statusFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                    <option value="">كل الحالات</option>
+                    <option value="pending">قيد الانتظار</option>
+                    <option value="in_progress">قيد التنفيذ</option>
+                    <option value="completed">مكتمل</option>
+                    <option value="cancelled">ملغي</option>
+                    <option value="approved">مقبول</option>
+                    <option value="rejected">مرفوض</option>
+                </select>
+                <button id="refreshBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg"><i class="fas fa-sync-alt"></i></button>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">العنوان</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">المطعم</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">صاحب المطعم</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">الهاتف</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">الستايلات المختارة</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">الحالة</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">التاريخ</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="requestsTable" class="divide-y divide-gray-200"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5276/api';
+        document.addEventListener('DOMContentLoaded', ()=>{
+            const token = localStorage.getItem('token');
+            if(!token){ window.location.href='login.html'; return; }
+            document.getElementById('statusFilter').addEventListener('change', loadRequests);
+            document.getElementById('refreshBtn').addEventListener('click', loadRequests);
+            loadRequests();
+        });
+
+        async function loadRequests(){
+            const token = localStorage.getItem('token');
+            const status = document.getElementById('statusFilter').value;
+            const url = `${API_BASE_URL}/AdminStaffUniformRequests${status?`?status=${encodeURIComponent(status)}`:''}`;
+            const resp = await fetch(url,{ headers:{ 'Authorization': `Bearer ${token}` }});
+            const data = await resp.json();
+            const tbody = document.getElementById('requestsTable');
+            tbody.innerHTML='';
+            if(!data.success || !data.data || data.data.length===0){
+                tbody.innerHTML = '<tr><td colspan="8" class="px-4 py-6 text-center text-gray-500">لا توجد طلبات</td></tr>';
+                return;
+            }
+            data.data.forEach(r=>{
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="px-4 py-3">${escapeHtml(r.title)}</td>
+                    <td class="px-4 py-3">${escapeHtml(r.restaurantName)}</td>
+                    <td class="px-4 py-3">${escapeHtml(r.ownerName)}</td>
+                    <td class="px-4 py-3">${r.ownerPhone || '-'}</td>
+                    <td class="px-4 py-3">${(r.uniformStyleTitles||[]).map(t=>`<span class=\"inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded ml-1\">${escapeHtml(t)}</span>`).join('')}</td>
+                    <td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs ${badgeClass(r.status)}">${statusLabel(r.status)}</span></td>
+                    <td class="px-4 py-3">${new Date(r.createdAt).toLocaleDateString('ar-EG')}</td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-2">
+                            <button class="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded" onclick='editRequest(${r.id})'><i class="fas fa-edit"></i></button>
+                            <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded" onclick='deleteRequest(${r.id})'><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function statusLabel(s){
+            return s==='pending'?'قيد الانتظار': s==='in_progress'?'قيد التنفيذ': s==='completed'?'مكتمل': s==='cancelled'?'ملغي': s==='approved'?'مقبول': s==='rejected'?'مرفوض': s;
+        }
+        function badgeClass(s){
+            return s==='completed'?'bg-green-100 text-green-700': s==='in_progress'?'bg-blue-100 text-blue-700': s==='cancelled'?'bg-red-100 text-red-700': s==='approved'?'bg-emerald-100 text-emerald-700': s==='rejected'?'bg-gray-200 text-gray-700':'bg-yellow-100 text-yellow-700';
+        }
+        function escapeHtml(x){return (x||'').toString().replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+
+        async function editRequest(id){
+            const token = localStorage.getItem('token');
+            const resp = await fetch(`${API_BASE_URL}/AdminStaffUniformRequests/${id}`,{ headers:{ 'Authorization': `Bearer ${token}` }});
+            const data = await resp.json();
+            if(!data.success){ return Swal.fire({icon:'error',title:'تعذر الجلب',text:data.message||''}); }
+            const r = data.data;
+
+            const allStylesResp = await fetch(`${API_BASE_URL}/StaffUniformStyles`,{ headers:{ 'Authorization': `Bearer ${token}` }});
+            const allStylesData = await allStylesResp.json();
+            const styles = (allStylesData.data||[]).filter(s=>s.isActive);
+
+            const optionsHtml = styles.map(s=>{
+                const selected = (r.uniformStyleIds||[]).includes(s.id)?'checked':'';
+                return `<label class=\"flex items-center gap-2 mb-1\"><input type=\"checkbox\" value=\"${s.id}\" ${selected}> ${escapeHtml(s.title)}</label>`;
+            }).join('');
+
+            const { value: formValues } = await Swal.fire({
+                title: 'تعديل الطلب',
+                html: `
+                    <input id=\"swal-title\" class=\"swal2-input\" placeholder=\"العنوان\" value=\"${escapeHtml(r.title)}\">
+                    <input id=\"swal-restaurant\" class=\"swal2-input\" placeholder=\"اسم المطعم\" value=\"${escapeHtml(r.restaurantName)}\">
+                    <input id=\"swal-owner\" class=\"swal2-input\" placeholder=\"اسم صاحب المطعم\" value=\"${escapeHtml(r.ownerName)}\">
+                    <input id=\"swal-phone\" class=\"swal2-input\" placeholder=\"الهاتف\" value=\"${r.ownerPhone||''}\"> 
+                    <select id=\"swal-status\" class=\"swal2-select\">
+                        <option value=\"pending\" ${r.status==='pending'?'selected':''}>قيد الانتظار</option>
+                        <option value=\"in_progress\" ${r.status==='in_progress'?'selected':''}>قيد التنفيذ</option>
+                        <option value=\"completed\" ${r.status==='completed'?'selected':''}>مكتمل</option>
+                        <option value=\"cancelled\" ${r.status==='cancelled'?'selected':''}>ملغي</option>
+                        <option value=\"approved\" ${r.status==='approved'?'selected':''}>مقبول</option>
+                        <option value=\"rejected\" ${r.status==='rejected'?'selected':''}>مرفوض</option>
+                    </select>
+                    <div class=\"text-right mt-2\"><div class=\"text-sm text-gray-600 mb-1\">اختيار الستايلات:</div>${optionsHtml}</div>
+                    <textarea id=\"swal-details\" class=\"swal2-textarea\" placeholder=\"تفاصيل إضافية\">${(r.additionalDetails||'').toString().replace(/</g,'&lt;')}</textarea>
+                `,
+                focusConfirm: false,
+                confirmButtonText: 'حفظ',
+                showCancelButton: true,
+                preConfirm: () => {
+                    const selected = Array.from(Swal.getHtmlContainer().querySelectorAll('input[type="checkbox"]:checked')).map(i=>Number(i.value));
+                    return {
+                        title: document.getElementById('swal-title').value,
+                        restaurantName: document.getElementById('swal-restaurant').value,
+                        ownerName: document.getElementById('swal-owner').value,
+                        ownerPhone: document.getElementById('swal-phone').value,
+                        status: document.getElementById('swal-status').value,
+                        additionalDetails: document.getElementById('swal-details').value,
+                        uniformStyleIds: selected,
+                        isActive: r.isActive
+                    }
+                }
+            });
+            if(!formValues) return;
+            const upd = await fetch(`${API_BASE_URL}/AdminStaffUniformRequests/${id}`,{ method:'PUT', headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`}, body: JSON.stringify(formValues)});
+            const updData = await upd.json();
+            if(updData.success){ Swal.fire({icon:'success',title:'تم الحفظ'}); loadRequests(); } else { Swal.fire({icon:'error',title:'تعذر الحفظ',text:updData.message||''}); }
+        }
+
+        async function deleteRequest(id){
+            const token = localStorage.getItem('token');
+            const ok = await Swal.fire({title:'هل أنت متأكد؟',text:'سيتم حذف الطلب',icon:'warning',showCancelButton:true,confirmButtonText:'حذف'});
+            if(!ok.isConfirmed) return;
+            const resp = await fetch(`${API_BASE_URL}/AdminStaffUniformRequests/${id}`,{ method:'DELETE', headers:{ 'Authorization': `Bearer ${token}` }});
+            const data = await resp.json();
+            if(data.success){ Swal.fire({icon:'success',title:'تم الحذف'}); loadRequests(); } else { Swal.fire({icon:'error',title:'تعذر الحذف',text:data.message||''}); }
+        }
+    </script>
+</body>
+</html>
+
+

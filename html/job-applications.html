@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>المتقدمون على الوظيفة - WeenRest</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+	<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-[Cairo] min-h-screen flex flex-col">
+	<!-- Header (shared) -->
+	<header class="bg-gradient-to-r from-gray-900 to-black shadow-lg sticky top-0 z-50">
+		<div class="container mx-auto px-4 py-4">
+			<div class="flex items-center justify-between">
+				<!-- Logo -->
+				<div class="flex items-center space-x-4 space-x-reverse">
+					<div class="w-12 h-12 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
+						<i class="fas fa-utensils text-white text-xl"></i>
+					</div>
+					<h1 class="text-white text-2xl font-bold">WeenRest</h1>
+				</div>
+
+				<!-- Navigation Menu -->
+				<nav class="hidden md:flex items-center space-x-8 space-x-reverse">
+					<a href="index.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">الرئيسية</a>
+					<a href="places.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">أصناف الطعام</a>
+					<a href="jobs.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">وظائف</a>
+					<a href="customize.html" id="customize-restaurant-nav" class="text-white hover:text-yellow-400 transition duration-300 font-medium">خصص مطعمك</a>
+				</nav>
+
+				<!-- Login & Signup Buttons (Hidden when logged in) -->
+				<div class="flex items-center space-x-4 space-x-reverse" id="auth-buttons">
+					<a href="signup.html" class="border-2 border-yellow-600 text-yellow-600 px-6 py-2 rounded-full font-semibold hover:bg-yellow-600 hover:text-white transition duration-300">إنشاء حساب</a>
+					<a href="login.html" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-6 py-2 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-md">تسجيل الدخول</a>
+					<!-- Mobile Menu Button -->
+					<button class="md:hidden text-white text-2xl" id="mobile-menu-btn">
+						<i class="fas fa-bars"></i>
+					</button>
+				</div>
+
+				<!-- User Info (Shown when logged in) -->
+				<div class="flex items-center space-x-4 space-x-reverse hidden" id="user-info">
+					<div class="flex items-center space-x-3 space-x-reverse text-white">
+						<i class="fas fa-user-circle text-2xl text-yellow-400"></i>
+						<div class="hidden md:block">
+							<span class="text-sm text-gray-300">مرحباً،</span>
+							<span class="font-semibold mr-1" id="user-name">المستخدم</span>
+						</div>
+					</div>
+					<a href="user-dashboard.html" id="dashboard-link" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-5 py-2 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-md text-sm">لوحة التحكم</a>
+					<button id="logout-btn" class="border-2 border-yellow-600 text-yellow-600 px-5 py-2 rounded-full font-semibold hover:bg-yellow-600 hover:text-white transition duration-300 text-sm">تسجيل الخروج</button>
+					<!-- Mobile Menu Button -->
+					<button class="md:hidden text-white text-2xl" id="mobile-menu-btn-auth">
+						<i class="fas fa-bars"></i>
+					</button>
+				</div>
+			</div>
+
+			<!-- Mobile Menu -->
+			<div class="md:hidden mt-4 hidden" id="mobile-menu">
+				<div class="flex flex-col space-y-4">
+					<a href="index.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">الرئيسية</a>
+					<a href="places.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">اصناف الطعام</a>
+					<a href="jobs.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">وظائف</a>
+					<a href="customize.html" id="customize-restaurant-mobile" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">خصص مطعمك</a>
+				</div>
+			</div>
+		</div>
+	</header>
+
+<main class="flex-1 max-w-7xl mx-auto px-4 py-8">
+		<h1 id="jobTitle" class="text-2xl font-bold mb-4">المتقدمون</h1>
+		<section class="mb-8 flex items-center gap-3">
+			<input id="searchInput" type="text" placeholder="ابحث بالاسم أو المدينة" class="w-full md:w-1/2 border rounded-md px-3 py-2 focus:outline-none focus:ring" />
+			<button id="searchBtn" class="bg-blue-600 text-white px-4 py-2 rounded-md">بحث</button>
+		</section>
+
+		<section>
+			<ul id="appsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></ul>
+			<p id="emptyState" class="text-center text-gray-500 hidden mt-8">لا توجد طلبات تقديم</p>
+		</section>
+	</main>
+
+	<!-- Footer (shared) -->
+	<footer class="bg-gradient-to-r from-gray-900 to-black text-white py-12">
+		<div class="container mx-auto px-4">
+			<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+				<!-- Company Info -->
+				<div class="col-span-1 md:col-span-2">
+					<div class="flex items-center space-x-3 space-x-reverse mb-4">
+						<div class="w-10 h-10 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
+							<i class="fas fa-utensils text-white"></i>
+						</div>
+						<h3 class="text-2xl font-bold">WeenRest</h3>
+					</div>
+					<p class="text-gray-300 mb-4 max-w-md">منصة المطاعم الرائدة في سوريا. اكتشف أفضل المطاعم والعروض، أو أضف مطعمك وابدأ رحلتك معنا.</p>
+					<div class="flex space-x-4 space-x-reverse">
+						<a href="#" class="text-yellow-400 hover:text-white transition duration-300"><i class="fab fa-facebook text-2xl"></i></a>
+						<a href="#" class="text-yellow-400 hover:text-white transition duration-300"><i class="fab fa-twitter text-2xl"></i></a>
+						<a href="#" class="text-yellow-400 hover:text-white transition duration-300"><i class="fab fa-instagram text-2xl"></i></a>
+						<a href="#" class="text-yellow-400 hover:text-white transition duration-300"><i class="fab fa-linkedin text-2xl"></i></a>
+					</div>
+				</div>
+
+				<!-- Quick Links -->
+				<div>
+					<h4 class="text-lg font-semibold mb-4">روابط سريعة</h4>
+					<ul class="space-y-2">
+						<li><a href="#" class="text-yellow-400 hover:text-white transition duration-300">عن الموقع</a></li>
+						<li><a href="#" class="text-yellow-400 hover:text-white transition duration-300">كيفية الاستخدام</a></li>
+						<li><a href="#" class="text-yellow-400 hover:text-white transition duration-300">الشروط والأحكام</a></li>
+						<li><a href="#" class="text-yellow-400 hover:text-white transition duration-300">سياسة الخصوصية</a></li>
+					</ul>
+				</div>
+
+				<!-- Contact Info -->
+				<div>
+					<h4 class="text-lg font-semibold mb-4">تواصل معنا</h4>
+					<ul class="space-y-2">
+						<li class="flex items-center space-x-2 space-x-reverse"><i class="fas fa-phone text-yellow-400"></i><span class="text-yellow-400">+20 123 456 7890</span></li>
+						<li class="flex items-center space-x-2 space-x-reverse"><i class="fas fa-envelope text-yellow-400"></i><span class="text-yellow-400">info@weenrest.com</span></li>
+						<li class="flex items-center space-x-2 space-x-reverse"><i class="fas fa-map-marker-alt text-yellow-400"></i><span class="text-yellow-400">دمشق، سوريا</span></li>
+					</ul>
+				</div>
+			</div>
+
+			<!-- Bottom Bar -->
+			<div class="border-t border-yellow-600 mt-8 pt-8">
+				<div class="flex flex-col md:flex-row justify-between items-center">
+					<p class="text-yellow-400 text-sm">© 2024 WeenRest. جميع الحقوق محفوظة.</p>
+					<div class="flex space-x-6 space-x-reverse mt-4 md:mt-0">
+						<a href="#" class="text-yellow-400 hover:text-white text-sm transition duration-300">سياسة الخصوصية</a>
+						<a href="#" class="text-yellow-400 hover:text-white text-sm transition duration-300">الشروط والأحكام</a>
+						<a href="#" class="text-yellow-400 hover:text-white text-sm transition duration-300">تواصل معنا</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</footer>
+
+	<!-- Header behavior/auth -->
+	<script>
+	(function() {
+		const token = localStorage.getItem('token');
+		const userData = localStorage.getItem('user');
+		const authButtons = document.getElementById('auth-buttons');
+		const userInfo = document.getElementById('user-info');
+		const userName = document.getElementById('user-name');
+		const dashboardLink = document.getElementById('dashboard-link');
+		if (token && userData) {
+			try {
+				const user = JSON.parse(userData);
+				authButtons?.classList.add('hidden');
+				userInfo?.classList.remove('hidden');
+				const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'المستخدم';
+				if (userName) userName.textContent = fullName;
+				if (user?.role === 'admin') { if(dashboardLink) dashboardLink.href = 'admin-dashboard.html'; }
+				else if (user?.role === 'stakeholder') { if(dashboardLink) dashboardLink.href = 'restaurant-owner-dashboard.html'; }
+				else { if(dashboardLink) dashboardLink.href = 'user-dashboard.html'; }
+				const customizeNav = document.getElementById('customize-restaurant-nav');
+				const customizeMobile = document.getElementById('customize-restaurant-mobile');
+				if (user.role !== 'stakeholder') {
+					if (customizeNav) customizeNav.style.display = 'none';
+					if (customizeMobile) customizeMobile.style.display = 'none';
+				}
+			} catch(e) {
+				localStorage.removeItem('token');
+				localStorage.removeItem('user');
+			}
+		} else {
+			authButtons?.classList.remove('hidden');
+			userInfo?.classList.add('hidden');
+		}
+		// Mobile menu toggle
+		document.getElementById('mobile-menu-btn')?.addEventListener('click', function(){
+			document.getElementById('mobile-menu')?.classList.toggle('hidden');
+		});
+		document.getElementById('mobile-menu-btn-auth')?.addEventListener('click', function(){
+			document.getElementById('mobile-menu')?.classList.toggle('hidden');
+		});
+		// Logout
+		document.getElementById('logout-btn')?.addEventListener('click', function(){
+			localStorage.removeItem('token');
+			localStorage.removeItem('user');
+			window.location.href = 'index.html';
+		});
+	})();
+	</script>
+
+	<script>
+	const API_ORIGIN = localStorage.getItem('api_origin') || 'http://localhost:5276';
+const API_BASE = `${API_ORIGIN}/api/Public`;
+
+function getQuery(){
+		const u = new URL(window.location.href);
+		return {
+			jobId: u.searchParams.get('jobId'),
+		jobName: u.searchParams.get('jobName')
+		};
+	}
+
+function appItem(a){
+		return `
+		<li class="bg-white border rounded-2xl p-8 shadow-md hover:shadow-lg transition">
+				<div class="flex items-start justify-between">
+					<div>
+					<h3 class="font-semibold text-gray-900 text-2xl">${a.applicantName}</h3>
+					<p class="text-sm text-gray-500 mt-1">${new Date(a.latestAt || a.updatedAt || a.createdAt).toLocaleDateString()}</p>
+					</div>
+					<span class="px-3 py-1.5 rounded-full text-sm bg-amber-50 text-amber-700 border border-amber-200">خبرة: ${a.yearsOfExperience ?? '—'}</span>
+				</div>
+			<div class="mt-6 grid grid-cols-1 gap-4 text-base">
+				<div class="flex items-center gap-3 text-gray-700">
+					<i class="fas fa-briefcase text-amber-600 text-lg"></i>
+					<span class="text-gray-500">الوظيفة:</span>
+					<span class="font-medium">${a.jobName || '—'}</span>
+				</div>
+				<div class="flex items-center gap-3 text-gray-700">
+					<i class="fas fa-map-marker-alt text-amber-600 text-lg"></i>
+					<span class="text-gray-500">المدينة:</span>
+					<span class="font-medium">${a.city ? a.city : 'غير محدد'}</span>
+				</div>
+				${a.age ? `<div class=\"flex items-center gap-3 text-gray-700\"><i class=\"fas fa-user text-amber-600 text-lg\"></i><span class=\"text-gray-500\">العمر:</span><span class=\"font-medium\">${a.age}</span></div>` : ''}
+				${a.summary ? `<div class=\"flex items-start gap-3 text-gray-700\"><i class=\"fas fa-align-left mt-1 text-amber-600 text-lg\"></i><div><div class=\"text-gray-500\">الملخص:</div><p class=\"mt-1 text-gray-800\">${a.summary}</p></div></div>` : ''}
+			</div>
+			<div class="mt-6 flex items-center justify-between">
+				<a ${a.phoneNumber ? `href=\"tel:${a.phoneNumber}\"` : ''} class="inline-flex items-center gap-3 px-6 py-3 rounded-xl text-base font-semibold ${a.phoneNumber ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700' : 'bg-gray-200 text-gray-500 cursor-not-allowed'}">
+					<i class="fas fa-phone"></i>
+					<span>تواصل الآن</span>
+				</a>
+				${a.phoneNumber ? `<span class=\"text-base text-gray-700\"><span class=\"text-gray-500\">الهاتف:</span> <span dir=\"ltr\" class=\"font-semibold\">${a.phoneNumber}</span></span>` : (a.contactEmail ? `<span class=\"text-base text-gray-700\"><span class=\"text-gray-500\">البريد:</span> <span class=\"font-semibold\">${a.contactEmail}</span></span>` : `<span class=\"text-sm text-gray-400\">بيانات التواصل غير متوفرة</span>`)}
+			</div>
+			</li>
+		`;
+	}
+
+	async function fetchApps(jobId){
+		const res = await fetch(`${API_BASE}/job-applications?jobId=${encodeURIComponent(jobId)}`);
+		if(!res.ok) throw new Error('failed');
+		return (await res.json()).data || [];
+	}
+
+async function render(){
+	const { jobId, jobName } = getQuery();
+		if(jobName) document.getElementById('jobTitle').textContent = `المتقدمون - ${jobName}`;
+		const applyBtn = document.getElementById('applyBtn');
+		if(applyBtn){ applyBtn.href = `user-job-applications.html?jobId=${encodeURIComponent(jobId || '')}`; }
+		const listEl = document.getElementById('appsList');
+		const emptyEl = document.getElementById('emptyState');
+		const search = document.getElementById('searchInput').value.trim();
+
+		listEl.innerHTML = '';
+		try{
+			let apps = await fetchApps(jobId);
+			if(search){
+				apps = apps.filter(a =>
+					(a.applicantName && a.applicantName.includes(search)) ||
+					(a.city && a.city.includes(search))
+				);
+			}
+			if(!apps.length){
+				emptyEl.classList.remove('hidden');
+				return;
+			}
+			emptyEl.classList.add('hidden');
+			listEl.innerHTML = apps.map(appItem).join('');
+		}catch(e){
+			emptyEl.textContent = 'حدث خطأ أثناء جلب الطلبات';
+			emptyEl.classList.remove('hidden');
+		}
+	}
+
+	document.getElementById('searchBtn').addEventListener('click', render);
+	document.getElementById('searchInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') render(); });
+	render();
+	</script>
+</body>
+</html>
