@@ -4,7 +4,7 @@
 
   // Resolve API base URL (override by setting localStorage.apiBase)
   const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase'))
-    || 'http://localhost:5276';
+    || 'https://weenapp-001-site1.qtempurl.com';
 
   const showToastSafe = (msg, type = 'info') => {
     if (typeof window.showToast === 'function') {
@@ -114,7 +114,7 @@
   if (!track) return;
 
   const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase'))
-    || 'http://localhost:5276';
+    || 'https://weenapp-001-site1.qtempurl.com';
 
   const showToastSafe = (msg, type = 'info') => {
     if (typeof window.showToast === 'function') {
@@ -244,7 +244,7 @@
 
   // Resolve API base URL
   const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase'))
-    || 'http://localhost:5276';
+    || 'https://weenapp-001-site1.qtempurl.com';
 
   const showToastSafe = (msg, type = 'info') => {
     if (typeof window.showToast === 'function') {

@@ -2,7 +2,7 @@
   const qs = new URLSearchParams(window.location.search);
   const id = parseInt(qs.get('id') || '', 10);
   const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase'))
-    || 'http://localhost:5276';
+    || 'https://weenapp-001-site1.qtempurl.com';
 
   const toast = (message, type = 'info') => {
     const toastEl = document.getElementById('toast');

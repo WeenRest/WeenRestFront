@@ -1,5 +1,5 @@
 (() => {
-  const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase')) || 'http://localhost:5276';
+  const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase')) || 'https://weenapp-001-site1.qtempurl.com';
 
   const grid = document.getElementById('grid');
   if (!grid) return;
