@@ -2,7 +2,8 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "redirects": [
-    { "source": "/", "destination": "/html", "permanent": false }
+    { "source": "/", "destination": "/html/", "permanent": false },
+    { "source": "/html", "destination": "/html/", "permanent": false }
   ],
   "rewrites": [
     { "source": "/:page", "destination": "/html/:page.html" }
