@@ -339,23 +339,16 @@
                         dashboardLink.href = '/html/user-dashboard.html';
                     }
 
-                    // Hide restaurant-specific buttons for admin and regular users
-                    // Show only for stakeholders
+                    // Show restaurant-specific buttons only for admin and stakeholders
                     const customizeNav = document.getElementById('customize-restaurant-nav');
                     const customizeMobile = document.getElementById('customize-restaurant-mobile');
                     const addRestaurantBtn = document.getElementById('add-restaurant-btn');
                     
-                    if (user.role !== 'stakeholder') {
-                        // Hide buttons for admin and regular users
-                        if (customizeNav) customizeNav.style.display = 'none';
-                        if (customizeMobile) customizeMobile.style.display = 'none';
-                        if (addRestaurantBtn) addRestaurantBtn.style.display = 'none';
-                    } else {
-                        // Show buttons for stakeholders
-                        if (customizeNav) customizeNav.style.display = '';
-                        if (customizeMobile) customizeMobile.style.display = '';
-                        if (addRestaurantBtn) addRestaurantBtn.style.display = '';
-                    }
+                    const isPrivileged = user.role === 'admin' || user.role === 'stakeholder';
+                    if (customizeNav) customizeNav.style.display = isPrivileged ? '' : 'none';
+                    if (customizeMobile) customizeMobile.style.display = isPrivileged ? '' : 'none';
+                    // keep "add restaurant" visible only for stakeholders
+                    if (addRestaurantBtn) addRestaurantBtn.style.display = user.role === 'stakeholder' ? '' : 'none';
                 } catch (error) {
                     console.error('Error parsing user data:', error);
                     // Clear invalid data
@@ -367,13 +360,13 @@
                 authButtons.classList.remove('hidden');
                 userInfo.classList.add('hidden');
                 
-                // When not logged in, show all buttons (they will see them when they sign up as stakeholder)
+                // When not logged in, hide restaurant-specific buttons
                 const customizeNav = document.getElementById('customize-restaurant-nav');
                 const customizeMobile = document.getElementById('customize-restaurant-mobile');
                 const addRestaurantBtn = document.getElementById('add-restaurant-btn');
                 
-                if (customizeNav) customizeNav.style.display = '';
-                if (customizeMobile) customizeMobile.style.display = '';
+                if (customizeNav) customizeNav.style.display = 'none';
+                if (customizeMobile) customizeMobile.style.display = 'none';
                 if (addRestaurantBtn) addRestaurantBtn.style.display = '';
             }
         })();
@@ -432,6 +425,11 @@
         document.getElementById('mobile-menu-btn-auth')?.addEventListener('click', function() {
             const mobileMenu = document.getElementById('mobile-menu');
             mobileMenu.classList.toggle('hidden');
+        });
+
+        // Navigate to signup when clicking "Add Restaurant"
+        document.getElementById('add-restaurant-btn')?.addEventListener('click', function() {
+            window.location.href = '/html/signup.html';
         });
 
         // Smooth scrolling for anchor links
