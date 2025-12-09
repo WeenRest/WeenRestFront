@@ -4,7 +4,7 @@
   "rewrites": [
     { "source": "/", "destination": "/index.html" },
     { "source": "/(assets|js|img)/(.*)", "destination": "/$1/$2" },
-    { "source": "/:page", "destination": "/html/:page.html" }
+    { "source": "/:page", "destination": ":page.html" }
   ],
   "headers": [
     {

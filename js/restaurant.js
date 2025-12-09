@@ -35,7 +35,50 @@
     return `${API_BASE}/${url}`;
   };
 
-  const setHero = (data) => {
+  const renderWorkingHours = (workingHours) => {
+    const container = document.getElementById('working-hours-list');
+    const section = document.getElementById('working-hours-section');
+    if (!container || !section) return;
+
+    if (!workingHours || !workingHours.days || workingHours.days.length === 0) {
+      section.style.display = 'none';
+      return;
+    }
+
+    section.style.display = 'block';
+
+    const dayNames = {
+      'Monday': 'الاثنين',
+      'Tuesday': 'الثلاثاء',
+      'Wednesday': 'الأربعاء',
+      'Thursday': 'الخميس',
+      'Friday': 'الجمعة',
+      'Saturday': 'السبت',
+      'Sunday': 'الأحد'
+    };
+
+    container.innerHTML = workingHours.days.map(day => {
+      if (day.isClosed) {
+        return `
+          <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
+            <span class="font-semibold text-gray-700">${day.dayArabic || dayNames[day.day] || day.day}</span>
+            <span class="text-sm text-red-600 font-medium">مغلق</span>
+          </div>
+        `;
+      }
+      const timeStr = day.startTime && day.endTime 
+        ? `${day.startTime} - ${day.endTime}`
+        : 'غير محدد';
+      return `
+        <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
+          <span class="font-semibold text-gray-700">${day.dayArabic || dayNames[day.day] || day.day}</span>
+          <span class="text-sm text-gray-600">${timeStr}</span>
+        </div>
+      `;
+    }).join('');
+  };
+
+    const setHero = (data) => {
     const heroImg = document.getElementById('restaurant-image');
     const nameEl = document.getElementById('restaurant-name');
     const descEl = document.getElementById('restaurant-description');
@@ -60,6 +103,28 @@
     } else {
       phoneEl.style.display = 'none';
     }
+
+    // Add delivery badge - always show, but with different styles based on availability
+    const deliveryBadge = document.getElementById('delivery-badge');
+    const deliveryBadgeText = document.getElementById('delivery-badge-text');
+    if (deliveryBadge && deliveryBadgeText) {
+      // Support both camelCase and PascalCase from API
+      const hasDelivery = data.hasDelivery || data.HasDelivery || false;
+      deliveryBadge.style.display = 'inline-flex';
+      
+      if (hasDelivery) {
+        // Delivery available - green badge
+        deliveryBadge.className = 'inline-flex items-center bg-green-50 text-green-700 px-3 py-1 rounded-full';
+        deliveryBadgeText.textContent = 'خدمة التوصيل متاحة';
+      } else {
+        // No delivery - gray badge
+        deliveryBadge.className = 'inline-flex items-center bg-gray-100 text-gray-600 px-3 py-1 rounded-full';
+        deliveryBadgeText.textContent = 'خدمة التوصيل غير متاحة';
+      }
+    }
+
+    // Render working hours
+    renderWorkingHours(data.workingHours);
   };
 
   const renderOffers = (offers) => {

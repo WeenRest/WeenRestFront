@@ -29,7 +29,7 @@
 
                 <!-- Navigation Menu -->
                 <nav class="hidden md:flex items-center space-x-8 space-x-reverse">
-                    <a href="../index.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">الرئيسية</a>
+                    <a href="index.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">الرئيسية</a>
                     <a href="places.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">أصناف الطعام</a>
                     <a href="#" class="text-white hover:text-yellow-400 transition duration-300 font-medium">وظائف</a>
                     <a href="customize.html" id="customize-restaurant-nav" class="text-white hover:text-yellow-400 transition duration-300 font-medium">خصص مطعمك</a>
@@ -76,7 +76,7 @@
             <!-- Mobile Menu -->
             <div class="md:hidden mt-4 hidden" id="mobile-menu">
                 <div class="flex flex-col space-y-4">
-                    <a href="../index.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">الرئيسية</a>
+                    <a href="index.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">الرئيسية</a>
                     <a href="places.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">اصناف الطعام</a>
                     <a href="#" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">وظائف</a>
                     <a href="customize.html" id="customize-restaurant-mobile" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">خصص مطعمك</a>
@@ -85,71 +85,63 @@
         </div>
     </header>
 
-    <div class="max-w-6xl mx-auto px_4 px-4 py-8 flex-1">
-        <div class="flex items-center justify-between mb-6">
-            <div class="flex items-center gap-3">
-                <a href="customize.html" class="w-10 h-10 rounded-full bg-white shadow flex items-center justify-center hover:bg-gray-100">
-                    <i class="fas fa-arrow-right"></i>
-                </a>
-                <h1 class="text-2xl md:text-3xl font-bold text-gray-800">طلب تخصيص منيو</h1>
+    <div class="max-w-7xl mx-auto px-4 py-8 flex-1">
+        <!-- صفحة اختيار نوع المنيو -->
+        <div id="menuStylesSelection" class="hidden">
+            <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center gap-3">
+                    <a href="customize.html" class="w-10 h-10 rounded-full bg-white shadow flex items-center justify-center hover:bg-gray-100 transition">
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <h1 class="text-2xl md:text-3xl font-bold text-gray-800">اختر نوع المنيو</h1>
+                </div>
+                <a href="restaurant-owner-dashboard.html" class="text-sm text-gray-600 hover:text-gray-800">العودة للوحة التحكم</a>
             </div>
-            <a href="restaurant-owner-dashboard.html" class="text-sm text-gray-600 hover:text-gray-800">العودة للوحة التحكم</a>
+
+            <p class="text-gray-600 mb-8 text-center">اختر نوع المنيو الذي يناسب مطعمك. اضغط على الكارد للبدء في ملء طلب إنشاء المنيو.</p>
+
+            <!-- Grid of Menu Style Cards -->
+            <div id="menuStylesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Cards will be loaded here -->
+                <div class="col-span-full text-center py-12">
+                    <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-600"></div>
+                    <p class="mt-4 text-gray-600">جاري تحميل أنواع المنيو...</p>
+                </div>
+            </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-            <!-- مثال منيو عادي (يسار النموذج في الشاشات الكبيرة) -->
-            <aside id="example-print" class="order-1 lg:order-1 bg-white rounded-xl shadow-md p-5 border border-gray-200">
-                <div class="flex items-center justify-between mb-3">
-                    <h3 class="text-lg font-bold text-gray-800">منيو مطبوعة (عادية)</h3>
-                    <span class="text-xs px-2 py-0.5 rounded-full bg-rose-100 text-rose-700">مثال</span>
+        <!-- صفحة الفورم -->
+        <div id="menuRequestFormSection" class="hidden">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <button onclick="goBackToSelection()" class="w-10 h-10 rounded-full bg-white shadow flex items-center justify-center hover:bg-gray-100 transition">
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <h1 class="text-2xl md:text-3xl font-bold text-gray-800">طلب تخصيص منيو</h1>
                 </div>
-                <!-- Mockup: A4 sheet with sections and fake data -->
-                <div class="border border-gray-300 rounded-lg p-4 bg-white">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="text-rose-700 font-extrabold tracking-wide">مشويات أبو مازن</div>
-                        <span class="text-[11px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">القائمة الرئيسية</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <h4 class="text-rose-600 font-bold mb-1">المقبلات</h4>
-                            <ul class="space-y-1">
-                                <li class="flex justify-between"><span>حمص بالطحينة</span><span class="text-gray-600">18.00</span></li>
-                                <li class="flex justify-between"><span>متبل باذنجان</span><span class="text-gray-600">17.00</span></li>
-                                <li class="flex justify-between"><span>تبولة شامية</span><span class="text-gray-600">20.00</span></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 class="text-rose-600 font-bold mb-1">المشاوي</h4>
-                            <ul class="space-y-1">
-                                <li class="flex justify-between"><span>كباب لحم</span><span class="text-gray-600">55.00</span></li>
-                                <li class="flex justify-between"><span>شيش طاووق</span><span class="text-gray-600">49.00</span></li>
-                                <li class="flex justify-between"><span>ميكس جريل</span><span class="text-gray-600">89.00</span></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 class="text-rose-600 font-bold mb-1">سندوتشات</h4>
-                            <ul class="space-y-1">
-                                <li class="flex justify-between"><span>شاورما دجاج</span><span class="text-gray-600">28.00</span></li>
-                                <li class="flex justify-between"><span>كفتة حار</span><span class="text-gray-600">32.00</span></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 class="text-rose-600 font-bold mb-1">مشروبات</h4>
-                            <ul class="space-y-1">
-                                <li class="flex justify-between"><span>عصير ليمون نعناع</span><span class="text-gray-600">16.00</span></li>
-                                <li class="flex justify-between"><span>مياه معدنية</span><span class="text-gray-600">6.00</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <p class="text-xs text-gray-500 mt-3">تصميم ورقي واضح مع أقسام وعناوين بألوان هادئة.</p>
-            </aside>
+                <a href="restaurant-owner-dashboard.html" class="text-sm text-gray-600 hover:text-gray-800">العودة للوحة التحكم</a>
+            </div>
 
-            <!-- النموذج في الوسط -->
-            <div class="order-3 lg:order-3 lg:col-span-2 bg-white rounded-xl shadow-md p-6">
+            <!-- Selected Menu Style Info -->
+            <div id="selectedMenuStyleInfo" class="bg-gradient-to-r from-yellow-50 to-amber-50 rounded-xl p-6 mb-6 border border-yellow-200">
+                <div class="flex items-center gap-4">
+                    <div id="selectedMenuStyleImage" class="w-24 h-24 rounded-lg overflow-hidden bg-gray-200 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-image text-gray-400 text-2xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 id="selectedMenuStyleName" class="text-xl font-bold text-gray-800 mb-1">نوع المنيو</h3>
+                        <p id="selectedMenuStyleDescription" class="text-gray-600 text-sm"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <div class="bg-white rounded-xl shadow-md p-6">
                 <p class="text-gray-600 mb-6">املأ البيانات التالية لإرسال طلب إنشاء منيو لمطعمك. سنقوم بالتواصل معك بعد المراجعة.</p>
 
                 <form id="menuRequestForm" class="space-y-5">
+                    <input type="hidden" id="selectedMenuStyleId" value="">
+
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">عنوان الطلب *</label>
                         <input type="text" id="title" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent" placeholder="مثال: إنشاء منيو رقمي لمطعم مشويات أبو مازن">
@@ -166,25 +158,9 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">رقم الهاتف</label>
-                            <input type="tel" id="ownerPhone" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent" placeholder="+201234567890">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">نوع المنيو *</label>
-                            <div class="flex items-center gap-4">
-                                <label class="flex items-center gap-2">
-                                    <input type="radio" name="menuStyle" value="digital" checked>
-                                    <span>ديجيتال (رقمي)</span>
-                                </label>
-                                <label class="flex items-center gap-2">
-                                    <input type="radio" name="menuStyle" value="print">
-                                    <span>مطبوعة (عادية)</span>
-                                </label>
-                            </div>
-                            <p class="text-xs text-gray-500 mt-1">اختر النوع المناسب، وسيتم تحديد الـ MenuStyleId تلقائياً.</p>
-                        </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">رقم الهاتف</label>
+                        <input type="tel" id="ownerPhone" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent" placeholder="+201234567890">
                     </div>
 
                     <div>
@@ -197,54 +173,6 @@
                     </button>
                 </form>
             </div>
-
-            <!-- مثال منيو ديجيتال (يمين النموذج في الشاشات الكبيرة) -->
-            <aside id="example-digital" class="order-2 lg:order-2 bg-white rounded-xl shadow-md p-5 border border-gray-200">
-                <div class="flex items-center justify-between mb-3">
-                    <h3 class="text-lg font-bold text-gray-800">منيو ديجيتال (رقمي)</h3>
-                    <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">مثال</span>
-                </div>
-                <!-- Mockup: phone screen with real-looking content -->
-                <div class="mx-auto w-48 h-96 rounded-3xl border-2 border-gray-300 bg-white relative overflow-hidden">
-                    <div class="absolute top-2 left-1/2 -translate-x-1/2 w-16 h-1.5 bg-gray-300 rounded-full"></div>
-                    <div class="p-3 space-y-2">
-                        <!-- صورة طبق واضحة مع تراكب مكونات -->
-                        <div class="rounded-lg overflow-hidden relative">
-                            <img src="../../cropped-turn-n-tender-majik-forest-1652791231.jpg" alt="طبق مشويات" class="h-24 w-full object-cover">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-                            <div class="absolute bottom-1 right-1 flex gap-1 flex-wrap">
-                                <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700">لحم</span>
-                                <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700">بهارات</span>
-                                <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-sky-100 text-sky-700">سلطات</span>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <div class="text-[12px] font-bold text-emerald-700">مشويات أبو مازن</div>
-                            <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">متاح</span>
-                        </div>
-                        <!-- بطاقة عنصر بارزة بصورة ومكونات وسعر -->
-                        <div class="mt-1 border border-gray-200 rounded-lg p-2">
-                            <div class="flex gap-2">
-                                <img src="../../1169700.png" alt="كباب لحم" class="w-12 h-12 rounded object-cover">
-                                <div class="flex-1">
-                                    <div class="flex items-center justify-between">
-                                        <h4 class="text-[12px] font-semibold text-gray-800">كباب لحم</h4>
-                                        <span class="text-[11px] font-bold text-emerald-700">55.00</span>
-                                    </div>
-                                    <div class="flex flex-wrap gap-1 mt-0.5">
-                                        <span class="text-[9px] px-1 bg-gray-100 text-gray-700 rounded">لحم بقري</span>
-                                        <span class="text-[9px] px-1 bg-gray-100 text-gray-700 rounded">بصل</span>
-                                        <span class="text-[9px] px-1 bg-gray-100 text-gray-700 rounded">بقدونس</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <p class="text-[10px] text-gray-500 mt-1">مشوي على الفحم يقدم مع خبز وسلطة.</p>
-                        </div>
-                        <button class="w-full bg-gradient-to-r from-emerald-600 to-amber-600 text-white rounded py-1.5 text-[12px] font-semibold shadow">اطلب الآن</button>
-                    </div>
-                </div>
-                <p class="text-xs text-gray-500 mt-3">عرض تفاعلي للأقسام والعناصر مع ألوان مميزة للهوية.</p>
-            </aside>
         </div>
     </div>
 
@@ -378,10 +306,60 @@
 
     <script>
         const API_BASE_URL = 'https://weenapp-001-site1.qtempurl.com/api';
+        let menuStyles = [];
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             const token = localStorage.getItem('token');
             if (!token) { window.location.href = 'login.html'; return; }
+
+            // Load menu styles first
+            await loadMenuStyles();
+
+            // Check if we have a menuStyleId in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const menuStyleId = urlParams.get('menuStyleId');
+
+            if (menuStyleId) {
+                // Show form with selected menu style
+                showFormWithMenuStyle(parseInt(menuStyleId));
+            } else {
+                // Show menu styles selection
+                showMenuStylesSelection();
+            }
+
+            // Form submit handler
+            document.getElementById('menuRequestForm').addEventListener('submit', submitRequest);
+        });
+
+        function showMenuStylesSelection() {
+            document.getElementById('menuStylesSelection').classList.remove('hidden');
+            document.getElementById('menuRequestFormSection').classList.add('hidden');
+        }
+
+        function showFormWithMenuStyle(menuStyleId) {
+            const menuStyle = menuStyles.find(s => s.id === menuStyleId);
+            if (!menuStyle) {
+                // If menu style not found, go back to selection
+                showMenuStylesSelection();
+                return;
+            }
+
+            // Update selected menu style info
+            const imageContainer = document.getElementById('selectedMenuStyleImage');
+            if (menuStyle.imageUrl) {
+                const imageUrl = menuStyle.imageUrl.startsWith('http') 
+                    ? menuStyle.imageUrl 
+                    : `https://weenapp-001-site1.qtempurl.com${menuStyle.imageUrl}`;
+                imageContainer.innerHTML = `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(menuStyle.name)}" class="w-full h-full object-cover">`;
+            } else {
+                imageContainer.innerHTML = '<i class="fas fa-image text-gray-400 text-2xl"></i>';
+            }
+
+            document.getElementById('selectedMenuStyleName').textContent = menuStyle.name;
+            document.getElementById('selectedMenuStyleDescription').textContent = menuStyle.description || '';
+
+            // Set hidden input
+            document.getElementById('selectedMenuStyleId').value = menuStyleId;
 
             // Prefill owner info if saved
             try {
@@ -395,22 +373,101 @@
             // Prefill restaurant name when available
             fetch(`${API_BASE_URL}/RestaurantOwnerDashboard/restaurant`, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-            }).then(r => r.json()).then(data => {
-                if (data && data.success && data.data) {
-                    document.getElementById('restaurantName').value = data.data.name || '';
-                    if (data.data.phoneNumber) document.getElementById('ownerPhone').value = data.data.phoneNumber;
+            }).then(async r => {
+                if (r.ok) {
+                    const data = await r.json();
+                    if (data && data.success && data.data) {
+                        document.getElementById('restaurantName').value = data.data.name || '';
+                        if (data.data.phoneNumber) document.getElementById('ownerPhone').value = data.data.phoneNumber;
+                    }
                 }
             }).catch(() => {});
 
-            document.getElementById('menuRequestForm').addEventListener('submit', submitRequest);
-        });
+            // Show form section
+            document.getElementById('menuStylesSelection').classList.add('hidden');
+            document.getElementById('menuRequestFormSection').classList.remove('hidden');
+        }
 
-        async function ensureMenuStyleIds() {
-            // Map radio choice to MenuStyleId by name (ديجيتال/مطبوعة). If not present, fallback IDs 1/2
-            const choice = document.querySelector('input[name="menuStyle"]:checked').value;
-            let styleId = choice === 'digital' ? 1 : 2;
-            // Try to read active styles via admin-protected endpoint is not possible. Use heuristic names if an owner endpoint added later.
-            return styleId;
+        function goBackToSelection() {
+            // Remove menuStyleId from URL
+            const url = new URL(window.location.href);
+            url.searchParams.delete('menuStyleId');
+            window.history.pushState({}, '', url);
+            showMenuStylesSelection();
+        }
+
+        async function loadMenuStyles() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/Public/menu-styles`);
+                const data = await response.json();
+                const grid = document.getElementById('menuStylesGrid');
+                
+                if (data.success && data.data && data.data.length > 0) {
+                    menuStyles = data.data;
+                    grid.innerHTML = '';
+                    
+                    data.data.forEach(style => {
+                        const card = document.createElement('div');
+                        card.className = 'bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group';
+                        card.onclick = () => {
+                            const url = new URL(window.location.href);
+                            url.searchParams.set('menuStyleId', style.id);
+                            window.location.href = url.toString();
+                        };
+
+                        const imageUrl = style.imageUrl 
+                            ? (style.imageUrl.startsWith('http') ? style.imageUrl : `https://weenapp-001-site1.qtempurl.com${style.imageUrl}`)
+                            : null;
+
+                        card.innerHTML = `
+                            <div class="relative h-64 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
+                                ${imageUrl 
+                                    ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(style.name)}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">`
+                                    : `<div class="w-full h-full flex items-center justify-center">
+                                        <i class="fas fa-image text-gray-400 text-6xl"></i>
+                                       </div>`
+                                }
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            </div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold text-gray-800 mb-2 group-hover:text-yellow-600 transition-colors">${escapeHtml(style.name)}</h3>
+                                ${style.description ? `<p class="text-gray-600 text-sm line-clamp-2">${escapeHtml(style.description)}</p>` : ''}
+                                <div class="mt-4 flex items-center text-yellow-600 font-semibold">
+                                    <span>اختر هذا النوع</span>
+                                    <i class="fas fa-arrow-left mr-2 group-hover:mr-4 transition-all"></i>
+                                </div>
+                            </div>
+                        `;
+                        grid.appendChild(card);
+                    });
+                } else {
+                    grid.innerHTML = `
+                        <div class="col-span-full text-center py-12">
+                            <i class="fas fa-inbox text-gray-400 text-5xl mb-4"></i>
+                            <p class="text-gray-600 text-lg">لا توجد أنواع منيو متاحة حالياً</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading menu styles:', error);
+                const grid = document.getElementById('menuStylesGrid');
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <i class="fas fa-exclamation-triangle text-red-400 text-5xl mb-4"></i>
+                        <p class="text-red-600 text-lg">حدث خطأ في تحميل أنواع المنيو</p>
+                        <button onclick="loadMenuStyles()" class="mt-4 px-6 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition">
+                            إعادة المحاولة
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         async function submitRequest(e) {
@@ -418,26 +475,19 @@
             const token = localStorage.getItem('token');
             if (!token) { window.location.href = 'login.html'; return; }
 
-            // Highlight examples based on selection
-            const choice = document.querySelector('input[name="menuStyle"]:checked')?.value;
-            document.getElementById('example-digital').className = document.getElementById('example-digital').className.replace(/ ring-.*? /g,' ');
-            document.getElementById('example-print').className = document.getElementById('example-print').className.replace(/ ring-.*? /g,' ');
-            if (choice === 'digital') {
-                document.getElementById('example-digital').classList.add('ring-2','ring-emerald-400');
-                document.getElementById('example-print').classList.remove('ring-2','ring-rose-400');
-            } else {
-                document.getElementById('example-print').classList.add('ring-2','ring-rose-400');
-                document.getElementById('example-digital').classList.remove('ring-2','ring-emerald-400');
+            const menuStyleId = document.getElementById('selectedMenuStyleId').value;
+            if (!menuStyleId) {
+                Swal.fire({ icon: 'error', title: 'خطأ', text: 'يرجى اختيار نوع المنيو أولاً' });
+                return;
             }
 
-            const menuStyleId = await ensureMenuStyleIds();
             const payload = {
                 title: document.getElementById('title').value,
                 restaurantName: document.getElementById('restaurantName').value,
                 ownerName: document.getElementById('ownerName').value,
                 ownerPhone: document.getElementById('ownerPhone').value || null,
                 additionalDetails: document.getElementById('additionalDetails').value || null,
-                menuStyleId: menuStyleId
+                menuStyleId: parseInt(menuStyleId)
             };
 
             try {
@@ -452,18 +502,28 @@
                         icon: 'success',
                         title: 'تم إرسال الطلب',
                         text: 'سنتواصل معك بشأن بيانات المنيو وباقي الخطوات',
-                        toast: true,
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        timerProgressBar: true
+                        confirmButtonText: 'حسناً',
+                        confirmButtonColor: '#f59e0b'
+                    }).then(() => {
+                        // Reset form and go back to selection
+                        document.getElementById('menuRequestForm').reset();
+                        goBackToSelection();
                     });
-                    document.getElementById('menuRequestForm').reset();
                 } else {
-                    Swal.fire({ icon: 'error', title: 'تعذر الإرسال', text: data.message || 'حاول مرة أخرى' });
+                    Swal.fire({ 
+                        icon: 'error', 
+                        title: 'تعذر الإرسال', 
+                        text: data.message || 'حاول مرة أخرى',
+                        confirmButtonColor: '#f59e0b'
+                    });
                 }
             } catch (err) {
-                Swal.fire({ icon: 'error', title: 'تعذر الإرسال', text: 'حدث خطأ غير متوقع' });
+                Swal.fire({ 
+                    icon: 'error', 
+                    title: 'تعذر الإرسال', 
+                    text: 'حدث خطأ غير متوقع',
+                    confirmButtonColor: '#f59e0b'
+                });
             }
         }
     </script>

@@ -120,6 +120,10 @@
                         <i class="fas fa-users w-5"></i>
                         <span>المستخدمين</span>
                     </a>
+                    <a href="admin-user-statistics.html" class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
+                        <i class="fas fa-chart-line w-5"></i>
+                        <span>إحصائيات التفاعل</span>
+                    </a>
                     <a href="#" onclick="showSection('main-categories'); return false;" class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
                         <i class="fas fa-layer-group w-5"></i>
                         <span>الأقسام الرئيسية</span>
@@ -311,6 +315,7 @@
                                         <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">المدينة</th>
                                         <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الدور</th>
                                         <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الحالة</th>
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">تاريخ الانضمام</th>
                                         <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الإجراءات</th>
                                     </tr>
                                 </thead>
@@ -752,10 +757,11 @@
                     <input type="text" id="restaurantName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">القسم *</label>
-                    <select id="restaurantCategoryId" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
-                        <option value="">اختر القسم</option>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">الأقسام *</label>
+                    <select id="restaurantCategoryIds" multiple required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500" style="min-height: 100px;">
+                        <!-- Categories will be loaded here -->
                     </select>
+                    <p class="text-xs text-gray-500 mt-1">اضغط Ctrl (أو Cmd على Mac) للاختيار المتعدد - يجب اختيار قسم واحد على الأقل</p>
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">الوصف</label>
@@ -784,12 +790,22 @@
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">رفع صورة</label>
-                    <input type="file" id="restaurantImageFile" accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                    <input type="file" id="restaurantImageFile" accept="image/*" onchange="handleImageFileChange(this)" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
                     <p class="text-xs text-gray-500 mt-1">الحجم الأقصى: 5MB | الصيغ المدعومة: JPG, PNG, GIF, WEBP</p>
+                    <!-- Image Preview -->
+                    <div id="restaurantImagePreview" class="mt-3 hidden">
+                        <img id="restaurantImagePreviewImg" src="" alt="Preview" class="max-w-full h-32 object-contain rounded-lg border border-gray-300">
+                        <button type="button" onclick="clearImagePreview()" class="mt-2 text-sm text-red-600 hover:text-red-700">
+                            <i class="fas fa-times ml-1"></i>إزالة الصورة
+                        </button>
+                    </div>
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">أو رابط الصورة</label>
-                    <input type="url" id="restaurantImageUrl" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                    <input type="text" id="restaurantImageUrl" onchange="handleImageUrlChange(this)" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
+                           placeholder="https://example.com/image.jpg">
+                    <input type="hidden" id="restaurantOriginalImageUrl" value="">
                 </div>
                 <div>
                     <label class="flex items-center space-x-2 space-x-reverse">
@@ -797,6 +813,31 @@
                         <span class="text-sm font-semibold text-gray-700">مفعّل</span>
                     </label>
                 </div>
+                <div>
+                    <label class="flex items-center space-x-2 space-x-reverse">
+                        <input type="checkbox" id="restaurantHasDelivery" class="w-4 h-4 text-green-600 rounded">
+                        <span class="text-sm font-semibold text-gray-700">
+                            <i class="fas fa-truck ml-1 text-green-600"></i>
+                            متاح خدمة التوصيل
+                        </span>
+                    </label>
+                </div>
+                
+                <!-- Working Hours Section -->
+                <div class="border-t border-gray-200 pt-4 mt-4">
+                    <h4 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-clock ml-2 text-amber-600"></i>
+                        ساعات العمل
+                    </h4>
+                    <div id="workingHoursContainer" class="space-y-3">
+                        <!-- Working hours will be dynamically added here -->
+                    </div>
+                    <button type="button" onclick="addWorkingHoursDay()" class="mt-3 text-sm text-amber-600 hover:text-amber-700 font-semibold flex items-center">
+                        <i class="fas fa-plus ml-1"></i>
+                        إضافة يوم
+                    </button>
+                </div>
+                
                 <div class="flex space-x-3 space-x-reverse pt-4">
                     <button type="submit" class="flex-1 bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-2 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300">
                         حفظ
@@ -1404,6 +1445,9 @@
                             ${user.isActive ? 'مفعّل' : 'معطّل'}
                         </span>
                     </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        ${user.createdAt ? new Date(user.createdAt).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' }) : '-'}
+                    </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div class="flex space-x-2 space-x-reverse">
                             <button onclick="toggleUserStatus('${user.id}')" class="text-blue-600 hover:text-blue-900" title="تبديل الحالة">
@@ -1938,19 +1982,33 @@
                     filteredCategories = allCategories;
                     renderCategories();
 
-                    // Update restaurant modal dropdown
-                    const select = document.getElementById('restaurantCategoryId');
+                    // Update restaurant modal multi-select
+                    const select = document.getElementById('restaurantCategoryIds');
                     const filterSelect = document.getElementById('restaurantCategoryFilter');
                     if (select) {
-                        const currentValue = select.value;
-                        select.innerHTML = '<option value="">اختر القسم</option>';
-                        allCategories.forEach(c => {
+                        const selectedValues = Array.from(select.selectedOptions).map(opt => opt.value);
+                        select.innerHTML = '';
+                        allCategories.filter(c => c.isActive).forEach(c => {
                             const option = document.createElement('option');
                             option.value = c.id;
                             option.textContent = c.name;
+                            if (selectedValues.includes(c.id.toString())) {
+                                option.selected = true;
+                            }
                             select.appendChild(option);
                         });
-                        select.value = currentValue;
+                    }
+                    // Update filter dropdown
+                    if (filterSelect) {
+                        const currentValue = filterSelect.value;
+                        filterSelect.innerHTML = '<option value="">جميع الأقسام</option>';
+                        allCategories.filter(c => c.isActive).forEach(c => {
+                            const option = document.createElement('option');
+                            option.value = c.id;
+                            option.textContent = c.name;
+                            filterSelect.appendChild(option);
+                        });
+                        filterSelect.value = currentValue;
                     }
                     if (filterSelect) {
                         const currentFilterValue = filterSelect.value;
@@ -2190,8 +2248,8 @@
                                 ${r.isActive ? 'مفعّل' : 'معطّل'}
                             </span>
                         </div>
-                        <p class="text-xs text-gray-500 mb-1">القسم: ${r.categoryName}</p>
-                        <p class="text-xs text-gray-500 mb-1">القسم الرئيسي: ${r.mainCategoryName}</p>
+                        ${r.categoryNames && r.categoryNames.length > 0 ? `<p class="text-xs text-gray-500 mb-1">الأقسام: ${r.categoryNames.join(', ')}</p>` : ''}
+                        ${r.mainCategoryNames && r.mainCategoryNames.length > 0 ? `<p class="text-xs text-gray-500 mb-1">الأقسام الرئيسية: ${r.mainCategoryNames.join(', ')}</p>` : ''}
                         ${r.cityNames && r.cityNames.length > 0 ? `<p class="text-xs text-gray-500 mb-1">المدن: ${r.cityNames.join(', ')}</p>` : (r.city ? `<p class="text-xs text-gray-500 mb-1">المدينة: ${r.city}</p>` : '')}
                         ${r.phoneNumber ? `<p class="text-xs text-gray-500 mb-1">الهاتف: ${r.phoneNumber}</p>` : ''}
                         ${r.description ? `<p class="text-sm text-gray-600 mb-2 mt-2">${r.description}</p>` : ''}
@@ -2219,7 +2277,7 @@
                     r.name.toLowerCase().includes(searchTerm) ||
                     (r.description && r.description.toLowerCase().includes(searchTerm)) ||
                     (r.address && r.address.toLowerCase().includes(searchTerm));
-                const matchesCategory = !categoryFilter || r.categoryId == categoryFilter;
+                const matchesCategory = !categoryFilter || (r.categoryIds && r.categoryIds.includes(parseInt(categoryFilter)));
                 const matchesCity = !cityFilter || 
                     (r.cityNames && r.cityNames.some(cn => cn.toLowerCase().includes(cityFilter.toLowerCase()))) ||
                     (r.city && r.city.toLowerCase().includes(cityFilter.toLowerCase()));
@@ -2233,11 +2291,11 @@
             document.getElementById('restaurantForm').reset();
             document.getElementById('restaurantId').value = id || '';
 
-            // Load categories in dropdown
-            const select = document.getElementById('restaurantCategoryId');
+            // Load categories in multi-select
+            const select = document.getElementById('restaurantCategoryIds');
             if (select) {
-                select.innerHTML = '<option value="">اختر القسم</option>';
-                allCategories.forEach(c => {
+                select.innerHTML = '';
+                allCategories.filter(c => c.isActive).forEach(c => {
                     const option = document.createElement('option');
                     option.value = c.id;
                     option.textContent = c.name;
@@ -2261,13 +2319,40 @@
                 const r = allRestaurants.find(res => res.id === id);
                 if (r) {
                     document.getElementById('restaurantName').value = r.name;
-                    document.getElementById('restaurantCategoryId').value = r.categoryId;
+                    // Set selected categories
+                    if (r.categoryIds && r.categoryIds.length > 0 && select) {
+                        Array.from(select.options).forEach(option => {
+                            if (r.categoryIds.includes(parseInt(option.value))) {
+                                option.selected = true;
+                            }
+                        });
+                    }
                     document.getElementById('restaurantDescription').value = r.description || '';
                     document.getElementById('restaurantPhoneNumber').value = r.phoneNumber || '';
                     document.getElementById('restaurantAddress').value = r.address || '';
                     document.getElementById('restaurantCity').value = r.city || '';
-                    document.getElementById('restaurantImageUrl').value = r.imageUrl || '';
+                    const imageUrl = r.imageUrl || '';
+                    document.getElementById('restaurantImageUrl').value = imageUrl;
+                    document.getElementById('restaurantOriginalImageUrl').value = imageUrl;
                     document.getElementById('restaurantIsActive').checked = r.isActive;
+                    document.getElementById('restaurantHasDelivery').checked = r.hasDelivery || false;
+                    
+                    // Show image preview if exists
+                    if (imageUrl) {
+                        const preview = document.getElementById('restaurantImagePreview');
+                        const previewImg = document.getElementById('restaurantImagePreviewImg');
+                        if (preview && previewImg) {
+                            const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase')) || 'https://weenapp-001-site1.qtempurl.com';
+                            const resolveImageUrl = (url) => {
+                                if (!url || typeof url !== 'string' || url.trim() === '') return null;
+                                if (/^https?:\/\//i.test(url)) return url;
+                                if (url.startsWith('/')) return `${API_BASE}${url}`;
+                                return `${API_BASE}/${url}`;
+                            };
+                            previewImg.src = resolveImageUrl(imageUrl) || imageUrl;
+                            preview.classList.remove('hidden');
+                        }
+                    }
                     
                     // Set selected cities
                     if (r.cityIds && r.cityIds.length > 0 && citySelect) {
@@ -2277,7 +2362,13 @@
                             }
                         });
                     }
+                    
+                    // Load working hours
+                    loadWorkingHours(r.workingHours);
                 }
+            } else {
+                // Initialize with default days for new restaurant
+                initializeDefaultWorkingHours();
             }
             document.getElementById('restaurantModal').classList.remove('hidden');
         }
@@ -2286,81 +2377,256 @@
             document.getElementById('restaurantModal').classList.add('hidden');
         }
 
+        // Working Hours Management
+        const dayNames = {
+            'Monday': 'الاثنين',
+            'Tuesday': 'الثلاثاء',
+            'Wednesday': 'الأربعاء',
+            'Thursday': 'الخميس',
+            'Friday': 'الجمعة',
+            'Saturday': 'السبت',
+            'Sunday': 'الأحد'
+        };
+
+        const dayNamesEn = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+        function initializeDefaultWorkingHours() {
+            const container = document.getElementById('workingHoursContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            dayNamesEn.forEach(day => {
+                addWorkingHoursDay(day, dayNames[day], '', '', false);
+            });
+        }
+
+        function addWorkingHoursDay(day = '', dayArabic = '', startTime = '', endTime = '', isClosed = false) {
+            const container = document.getElementById('workingHoursContainer');
+            if (!container) return;
+
+            const dayId = day || `day_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            const dayHtml = `
+                <div class="working-hours-day bg-gray-50 p-4 rounded-lg border border-gray-200" data-day="${dayId}">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex-1">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">اليوم</label>
+                            <select class="day-select w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500" required>
+                                <option value="">اختر اليوم</option>
+                                ${dayNamesEn.map(d => `<option value="${d}" ${d === day ? 'selected' : ''}>${dayNames[d]}</option>`).join('')}
+                            </select>
+                        </div>
+                        <button type="button" onclick="removeWorkingHoursDay(this)" class="mr-3 text-red-600 hover:text-red-700 mt-6">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="flex items-center mb-3">
+                        <input type="checkbox" class="is-closed-checkbox w-4 h-4 text-yellow-600 rounded" ${isClosed ? 'checked' : ''}>
+                        <label class="mr-2 text-sm font-semibold text-gray-700">مغلق</label>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">وقت البداية</label>
+                            <input type="time" class="start-time w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500" value="${startTime}" ${isClosed ? 'disabled' : ''}>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">وقت النهاية</label>
+                            <input type="time" class="end-time w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500" value="${endTime}" ${isClosed ? 'disabled' : ''}>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', dayHtml);
+
+            // Add event listener for isClosed checkbox
+            const dayElement = container.querySelector(`[data-day="${dayId}"]`);
+            const isClosedCheckbox = dayElement.querySelector('.is-closed-checkbox');
+            const startTimeInput = dayElement.querySelector('.start-time');
+            const endTimeInput = dayElement.querySelector('.end-time');
+            
+            isClosedCheckbox.addEventListener('change', function() {
+                const disabled = this.checked;
+                startTimeInput.disabled = disabled;
+                endTimeInput.disabled = disabled;
+                if (disabled) {
+                    startTimeInput.value = '';
+                    endTimeInput.value = '';
+                }
+            });
+        }
+
+        function removeWorkingHoursDay(button) {
+            button.closest('.working-hours-day').remove();
+        }
+
+        function loadWorkingHours(workingHours) {
+            const container = document.getElementById('workingHoursContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (workingHours && workingHours.days && workingHours.days.length > 0) {
+                workingHours.days.forEach(day => {
+                    addWorkingHoursDay(day.day, day.dayArabic, day.startTime || '', day.endTime || '', day.isClosed || false);
+                });
+            } else {
+                initializeDefaultWorkingHours();
+            }
+        }
+
+        function getWorkingHours() {
+            const container = document.getElementById('workingHoursContainer');
+            if (!container) return null;
+
+            const days = [];
+            const dayElements = container.querySelectorAll('.working-hours-day');
+            
+            dayElements.forEach(dayEl => {
+                const daySelect = dayEl.querySelector('.day-select');
+                const isClosedCheckbox = dayEl.querySelector('.is-closed-checkbox');
+                const startTimeInput = dayEl.querySelector('.start-time');
+                const endTimeInput = dayEl.querySelector('.end-time');
+
+                if (daySelect && daySelect.value) {
+                    days.push({
+                        day: daySelect.value,
+                        dayArabic: dayNames[daySelect.value] || '',
+                        startTime: isClosedCheckbox.checked ? null : (startTimeInput.value || null),
+                        endTime: isClosedCheckbox.checked ? null : (endTimeInput.value || null),
+                        isClosed: isClosedCheckbox.checked
+                    });
+                }
+            });
+
+            return days.length > 0 ? { days } : null;
+        }
+
+        function handleImageFileChange(input) {
+            const preview = document.getElementById('restaurantImagePreview');
+            const previewImg = document.getElementById('restaurantImagePreviewImg');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    preview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+                // Clear URL input when file is selected
+                document.getElementById('restaurantImageUrl').value = '';
+            }
+        }
+
+        function handleImageUrlChange(input) {
+            const url = input.value.trim();
+            const preview = document.getElementById('restaurantImagePreview');
+            const previewImg = document.getElementById('restaurantImagePreviewImg');
+            if (url) {
+                previewImg.src = url;
+                preview.classList.remove('hidden');
+                // Clear file input when URL is entered
+                document.getElementById('restaurantImageFile').value = '';
+            } else {
+                // If URL is cleared, show original image if exists
+                const originalUrl = document.getElementById('restaurantOriginalImageUrl').value;
+                if (originalUrl) {
+                    const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase')) || 'https://weenapp-001-site1.qtempurl.com';
+                    const resolveImageUrl = (url) => {
+                        if (!url || typeof url !== 'string' || url.trim() === '') return null;
+                        if (/^https?:\/\//i.test(url)) return url;
+                        if (url.startsWith('/')) return `${API_BASE}${url}`;
+                        return `${API_BASE}/${url}`;
+                    };
+                    previewImg.src = resolveImageUrl(originalUrl) || originalUrl;
+                    preview.classList.remove('hidden');
+                } else {
+                    preview.classList.add('hidden');
+                }
+            }
+        }
+
+        function clearImagePreview() {
+            document.getElementById('restaurantImageFile').value = '';
+            document.getElementById('restaurantImageUrl').value = '';
+            document.getElementById('restaurantImagePreview').classList.add('hidden');
+        }
+
         async function saveRestaurant(e) {
             e.preventDefault();
             const id = document.getElementById('restaurantId').value;
-            
-            // Check if there's a file to upload
             const imageFile = document.getElementById('restaurantImageFile').files[0];
-            const hasFile = imageFile && imageFile.size > 0;
+            const imageUrl = document.getElementById('restaurantImageUrl').value.trim();
+            const originalImageUrl = document.getElementById('restaurantOriginalImageUrl').value;
             
             // Get selected city IDs
             const citySelect = document.getElementById('restaurantCityIds');
             const selectedCityIds = Array.from(citySelect.selectedOptions).map(option => parseInt(option.value));
 
-            if (hasFile) {
-                // Use FormData to send file
-                const formData = new FormData();
-                formData.append('Name', document.getElementById('restaurantName').value);
-                formData.append('CategoryId', parseInt(document.getElementById('restaurantCategoryId').value));
-                formData.append('Description', document.getElementById('restaurantDescription').value);
-                formData.append('PhoneNumber', document.getElementById('restaurantPhoneNumber').value);
-                formData.append('Address', document.getElementById('restaurantAddress').value);
-                formData.append('City', document.getElementById('restaurantCity').value);
-                formData.append('ImageUrl', document.getElementById('restaurantImageUrl').value);
-                formData.append('IsActive', document.getElementById('restaurantIsActive').checked);
+            // Get selected category IDs
+            const categorySelect = document.getElementById('restaurantCategoryIds');
+            const selectedCategoryIds = Array.from(categorySelect.selectedOptions).map(option => parseInt(option.value));
+            
+            if (selectedCategoryIds.length === 0) {
+                showToast('يجب اختيار قسم واحد على الأقل', 'error');
+                return;
+            }
+
+            // Always use FormData for consistency
+            const formData = new FormData();
+            formData.append('Name', document.getElementById('restaurantName').value);
+            // Add CategoryIds as array
+            selectedCategoryIds.forEach((categoryId, index) => {
+                formData.append(`CategoryIds[${index}]`, categoryId);
+            });
+            formData.append('Description', document.getElementById('restaurantDescription').value);
+            formData.append('PhoneNumber', document.getElementById('restaurantPhoneNumber').value);
+            formData.append('Address', document.getElementById('restaurantAddress').value);
+            formData.append('City', document.getElementById('restaurantCity').value);
+            
+            // Handle image: only send if changed
+            if (imageFile) {
+                // New file uploaded
                 formData.append('imageFile', imageFile);
-                
-                // Add CityIds as array
-                selectedCityIds.forEach((cityId, index) => {
-                    formData.append(`CityIds[${index}]`, cityId);
-                });
+            } else if (imageUrl && imageUrl !== originalImageUrl) {
+                // URL changed
+                formData.append('ImageUrl', imageUrl);
+            } else if (!imageUrl && originalImageUrl) {
+                // Image was removed (URL cleared and no new file)
+                formData.append('ImageUrl', '');
+            }
+            // If neither file nor URL changed, don't send ImageUrl (backend will keep old one)
+            
+            const isActive = document.getElementById('restaurantIsActive').checked;
+            const hasDelivery = document.getElementById('restaurantHasDelivery').checked;
+            
+            formData.append('IsActive', isActive ? 'true' : 'false');
+            formData.append('HasDelivery', hasDelivery ? 'true' : 'false');
+            
+            console.log('Sending HasDelivery:', hasDelivery, 'as string:', hasDelivery ? 'true' : 'false');
+            
+            // Add CityIds as array
+            selectedCityIds.forEach((cityId, index) => {
+                formData.append(`CityIds[${index}]`, cityId);
+            });
 
-                try {
-                    const result = await apiCallFormData(
-                        id ? `/AdminDashboard/restaurants/${id}` : '/AdminDashboard/restaurants',
-                        id ? 'PUT' : 'POST',
-                        formData
-                    );
-                    if (result.success) {
-                        showToast(result.message, 'success');
-                        closeRestaurantModal();
-                        loadRestaurants();
-                    } else {
-                        showToast(result.message, 'error');
-                    }
-                } catch (error) {
-                    showToast('حدث خطأ في حفظ المطعم', 'error');
-                }
-            } else {
-                // Use JSON for URL only
-                const data = {
-                    name: document.getElementById('restaurantName').value,
-                    categoryId: parseInt(document.getElementById('restaurantCategoryId').value),
-                    description: document.getElementById('restaurantDescription').value,
-                    phoneNumber: document.getElementById('restaurantPhoneNumber').value,
-                    address: document.getElementById('restaurantAddress').value,
-                    city: document.getElementById('restaurantCity').value,
-                    imageUrl: document.getElementById('restaurantImageUrl').value,
-                    isActive: document.getElementById('restaurantIsActive').checked
-                };
+            // Add WorkingHours as JSON
+            const workingHours = getWorkingHours();
+            if (workingHours) {
+                formData.append('WorkingHours', JSON.stringify(workingHours));
+            }
 
-                try {
-                    const result = await apiCall(
-                        id ? `/AdminDashboard/restaurants/${id}` : '/AdminDashboard/restaurants',
-                        id ? 'PUT' : 'POST',
-                        data
-                    );
-                    if (result.success) {
-                        showToast(result.message, 'success');
-                        closeRestaurantModal();
-                        loadRestaurants();
-                    } else {
-                        showToast(result.message, 'error');
-                    }
-                } catch (error) {
-                    showToast('حدث خطأ في حفظ المطعم', 'error');
+            try {
+                const result = await apiCallFormData(
+                    id ? `/AdminDashboard/restaurants/${id}` : '/AdminDashboard/restaurants',
+                    id ? 'PUT' : 'POST',
+                    formData
+                );
+                if (result.success) {
+                    showToast(result.message, 'success');
+                    closeRestaurantModal();
+                    loadRestaurants();
+                } else {
+                    showToast(result.message, 'error');
                 }
+            } catch (error) {
+                showToast('حدث خطأ في حفظ المطعم', 'error');
             }
         }
 

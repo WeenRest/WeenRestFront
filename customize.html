@@ -19,7 +19,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const token = localStorage.getItem('token');
-            if (!token) { window.location.href = '/html/login.html'; return; }
+            if (!token) { window.location.href = 'login.html'; return; }
         });
 
         function goBack() { window.history.back(); }
@@ -46,18 +46,18 @@
 
                 <!-- Navigation Menu -->
                 <nav class="hidden md:flex items-center space-x-8 space-x-reverse">
-                    <a href="../index.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">الرئيسية</a>
-                    <a href="/html/places.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">أصناف الطعام</a>
-                    <a href="/html/jobs.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">وظائف</a>
-                    <a href="/html/customize.html" id="customize-restaurant-nav" class="text-white hover:text-yellow-400 transition duration-300 font-medium">خصص مطعمك</a>
+                    <a href="index.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">الرئيسية</a>
+                    <a href="places.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">أصناف الطعام</a>
+                    <a href="jobs.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">وظائف</a>
+                    <a href="customize.html" id="customize-restaurant-nav" class="text-white hover:text-yellow-400 transition duration-300 font-medium">خصص مطعمك</a>
                 </nav>
 
                 <!-- Login & Signup Buttons (Hidden when logged in) -->
                 <div class="flex items-center space-x-4 space-x-reverse" id="auth-buttons">
-                    <a href="/html/signup.html" class="border-2 border-yellow-600 text-yellow-600 px-6 py-2 rounded-full font-semibold hover:bg-yellow-600 hover:text-white transition duration-300">
+                    <a href="signup.html" class="border-2 border-yellow-600 text-yellow-600 px-6 py-2 rounded-full font-semibold hover:bg-yellow-600 hover:text-white transition duration-300">
                         إنشاء حساب
                     </a>
-                    <a href="/html/login.html" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-6 py-2 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-md">
+                    <a href="login.html" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-6 py-2 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-md">
                         تسجيل الدخول
                     </a>
                     <!-- Mobile Menu Button -->
@@ -93,10 +93,10 @@
             <!-- Mobile Menu -->
             <div class="md:hidden mt-4 hidden" id="mobile-menu">
                 <div class="flex flex-col space-y-4">
-                    <a href="../index.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">الرئيسية</a>
-                    <a href="/html/places.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">اصناف الطعام</a>
-                    <a href="/html/jobs.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">وظائف</a>
-                    <a href="/html/customize.html" id="customize-restaurant-mobile" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">خصص مطعمك</a>
+                    <a href="index.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">الرئيسية</a>
+                    <a href="places.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">اصناف الطعام</a>
+                    <a href="jobs.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">وظائف</a>
+                    <a href="customize.html" id="customize-restaurant-mobile" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">خصص مطعمك</a>
                 </div>
             </div>
         </div>
@@ -110,14 +110,14 @@
                 </button>
                 <h1 class="text-2xl md:text-3xl font-bold text-gray-800">خصص مطعمك</h1>
             </div>
-            <a href="/html/restaurant-owner-dashboard.html" class="text-sm text-gray-600 hover:text-gray-800">العودة للوحة التحكم</a>
+            <a href="restaurant-owner-dashboard.html" class="text-sm text-gray-600 hover:text-gray-800">العودة للوحة التحكم</a>
         </div>
 
         <p class="text-gray-600 mb-8">اختر نوع التخصيص الذي تريد العمل عليه لمطعمك.</p>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- تخصيص منيو -->
-            <a href="/html/menu-customization.html" class="block">
+            <a href="menu-customization.html" class="block">
                 <div class="card grad-1 rounded-xl p-6 border border-yellow-100 transition">
                     <div class="w-14 h-14 rounded-full bg-yellow-500 text-white flex items-center justify-center shadow mb-4">
                         <i class="fas fa-book-open text-xl"></i>
@@ -139,7 +139,7 @@
             </div>
 
             <!-- تخصيص ملابس الطاقم -->
-            <a href="/html/restaurant-owner-uniform-requests.html" class="block">
+            <a href="restaurant-owner-uniform-requests.html" class="block">
                 <div class="card grad-3 rounded-xl p-6 border border-rose-100 transition">
                     <div class="w-14 h-14 rounded-full bg-rose-500 text-white flex items-center justify-center shadow mb-4">
                         <i class="fas fa-user-tie text-xl"></i>
@@ -248,11 +248,11 @@
                     const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'المستخدم';
                     userName.textContent = fullName;
                     if (user.role === 'admin') {
-                        dashboardLink.href = '/html/admin-dashboard.html';
+                        dashboardLink.href = 'admin-dashboard.html';
                     } else if (user.role === 'stakeholder') {
-                        dashboardLink.href = '/html/restaurant-owner-dashboard.html';
+                        dashboardLink.href = 'restaurant-owner-dashboard.html';
                     } else {
-                        dashboardLink.href = '/html/user-dashboard.html';
+                        dashboardLink.href = 'user-dashboard.html';
                     }
                 } catch {
                     localStorage.removeItem('token');

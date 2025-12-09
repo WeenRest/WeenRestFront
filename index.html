@@ -12,6 +12,30 @@
         body {
             font-family: 'Cairo', sans-serif;
         }
+        
+        /* Ensure city select dropdown has proper styling and native scroll */
+        #city-select {
+            scrollbar-width: thin;
+            scrollbar-color: #f59e0b #fef3c7;
+        }
+        
+        #city-select::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        #city-select::-webkit-scrollbar-track {
+            background: #fef3c7;
+            border-radius: 4px;
+        }
+        
+        #city-select::-webkit-scrollbar-thumb {
+            background: #f59e0b;
+            border-radius: 4px;
+        }
+        
+        #city-select::-webkit-scrollbar-thumb:hover {
+            background: #d97706;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -29,18 +53,18 @@
 
                 <!-- Navigation Menu -->
                 <nav class="hidden md:flex items-center space-x-8 space-x-reverse">
-                    <a href="../index.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">الرئيسية</a>
-                    <a href="/html/places.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">أصناف الطعام</a>
-                    <a href="/html/jobs.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">وظائف</a>
-                    <a href="/html/customize.html" id="customize-restaurant-nav" class="text-white hover:text-yellow-400 transition duration-300 font-medium">خصص مطعمك</a>
+                    <a href="index.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">الرئيسية</a>
+                    <a href="places.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">أصناف الطعام</a>
+                    <a href="jobs.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">وظائف</a>
+                    <a href="customize.html" id="customize-restaurant-nav" class="text-white hover:text-yellow-400 transition duration-300 font-medium">خصص مطعمك</a>
                 </nav>
 
                 <!-- Login & Signup Buttons (Hidden when logged in) -->
                 <div class="flex items-center space-x-4 space-x-reverse" id="auth-buttons">
-                    <a href="/html/signup.html" class="border-2 border-yellow-600 text-yellow-600 px-6 py-2 rounded-full font-semibold hover:bg-yellow-600 hover:text-white transition duration-300">
+                    <a href="signup.html" class="border-2 border-yellow-600 text-yellow-600 px-6 py-2 rounded-full font-semibold hover:bg-yellow-600 hover:text-white transition duration-300">
                         إنشاء حساب
                     </a>
-                    <a href="/html/login.html" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-6 py-2 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-md">
+                    <a href="login.html" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-6 py-2 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-md">
                         تسجيل الدخول
                     </a>
                     <!-- Mobile Menu Button -->
@@ -58,7 +82,7 @@
                             <span class="font-semibold mr-1" id="user-name">المستخدم</span>
                         </div>
                     </div>
-                    <a href="/html/admin-dashboard.html" id="dashboard-link" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-5 py-2 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-md text-sm">
+                    <a href="admin-dashboard.html" id="dashboard-link" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-5 py-2 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-md text-sm">
                         <i class="fas fa-tachometer-alt mr-1"></i>
                         لوحة التحكم
                     </a>
@@ -76,10 +100,10 @@
             <!-- Mobile Menu -->
             <div class="md:hidden mt-4 hidden" id="mobile-menu">
                 <div class="flex flex-col space-y-4">
-                    <a href="../index.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">الرئيسية</a>
-                    <a href="/html/places.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">اصناف الطعام</a>
-                    <a href="/html/jobs.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">وظائف</a>
-                    <a href="/html/customize.html" id="customize-restaurant-mobile" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">خصص مطعمك</a>
+                    <a href="index.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">الرئيسية</a>
+                    <a href="places.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">اصناف الطعام</a>
+                    <a href="jobs.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">وظائف</a>
+                    <a href="customize.html" id="customize-restaurant-mobile" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">خصص مطعمك</a>
                 </div>
             </div>
         </div>
@@ -92,7 +116,7 @@
             <!-- Video Background -->
             <div class="absolute inset-0">
                 <video autoplay muted loop class="w-full h-full object-cover">
-                    <source src="/assets/dinner-table.mp4" type="video/mp4">
+                    <source src="/WeenRestFront/assets/dinner-table.mp4" type="video/mp4">
                 </video>
                 
                 <!-- Overlay for better text readability -->
@@ -106,37 +130,36 @@
                     <p class="text-lg text-gray-300 mb-6">العروض الحصرية والوجبات الشهية في انتظارك</p>
                     
                     <!-- Search Bar -->
-                    <div class="max-w-3xl mx-auto mb-6">
+                    <div class="max-w-4xl mx-auto mb-6">
                         <div class="bg-white/95 backdrop-blur-sm rounded-xl p-1.5 shadow-2xl">
                             <div class="flex flex-col md:flex-row gap-1.5">
                                 <!-- Search Input -->
                                 <div class="flex-1 relative">
                                     <input type="text" 
+                                           id="search-input"
                                            placeholder="ابحث عن المطاعم، الوجبات، أو الأطباق المفضلة..." 
-                                           class="w-full px-4 py-3 text-gray-700 placeholder-gray-500 focus:outline-none rounded-lg text-sm">
+                                           class="w-full px-4 py-3 pr-10 text-gray-700 placeholder-gray-500 focus:outline-none rounded-lg text-sm">
                                     <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+                                </div>
+                                
+                                <!-- Main Category Filter -->
+                                <div class="relative">
+                                    <select id="main-category-select" class="px-4 py-3 pr-10 text-gray-700 focus:outline-none rounded-lg bg-white border-0 min-w-[160px] text-sm">
+                                        <option value="">جميع الأقسام</option>
+                                    </select>
+                                    <i class="fas fa-tags absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
                                 </div>
                                 
                                 <!-- City Filter -->
                                 <div class="relative">
-                                    <select class="px-4 py-3 pr-10 text-gray-700 focus:outline-none rounded-lg bg-white border-0 min-w-[180px] text-sm">
-                                        <option value="">اختر مدينتك</option>
-                                        <option value="damascus">دمشق</option>
-                                        <option value="aleppo">حلب</option>
-                                        <option value="homs">حمص</option>
-                                        <option value="hama">حماة</option>
-                                        <option value="latakia">اللاذقية</option>
-                                        <option value="tartus">طرطوس</option>
-                                        <option value="deir-ez-zor">دير الزور</option>
-                                        <option value="raqqa">الرقة</option>
-                                        <option value="daraa">درعا</option>
-                                        <option value="sweida">السويداء</option>
+                                    <select id="city-select" class="px-4 py-3 pr-10 text-gray-700 focus:outline-none rounded-lg bg-white border-0 min-w-[180px] text-sm">
+                                        <option value="">جميع المدن</option>
                                     </select>
                                     <i class="fas fa-map-marker-alt absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
                                 </div>
                                 
                                 <!-- Search Button -->
-                                <button class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-lg text-sm">
+                                <button id="search-btn" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-lg text-sm">
                                     <i class="fas fa-search mr-1"></i>
                                     بحث
                                 </button>
@@ -146,13 +169,106 @@
                     
                     <!-- Action Buttons -->
                     <div class="flex justify-center space-x-3 space-x-reverse">
-                        <a href="/html/jobs.html" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-6 py-2.5 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-lg text-sm">
+                        <a href="jobs.html" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-6 py-2.5 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-lg text-sm">
                             استكشف الوظائف
                         </a>
                         <button id="add-restaurant-btn" class="border-2 border-yellow-600 text-yellow-600 px-6 py-2.5 rounded-full font-semibold hover:bg-yellow-600 hover:text-white transition duration-300 text-sm">
                             أضف مطعمك
                         </button>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search Results Section (Hidden by default) -->
+        <section id="search-results-section" class="py-16 bg-white hidden">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2" id="search-results-title">نتائج البحث</h3>
+                        <p class="text-gray-600 text-sm" id="search-results-count">0 نتيجة</p>
+                    </div>
+                    <button id="close-search-results" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Filters Bar -->
+                <div id="search-filters-bar" class="flex flex-wrap items-center gap-3 mb-6 p-4 bg-gray-50 rounded-lg">
+                    <span class="text-sm font-semibold text-gray-700">الفلاتر:</span>
+                    <div id="active-filters" class="flex flex-wrap gap-2">
+                        <!-- Active filters will be added here -->
+                    </div>
+                    <button id="clear-all-filters" class="text-sm text-red-600 hover:text-red-700 font-medium hidden">
+                        <i class="fas fa-times-circle mr-1"></i>
+                        إزالة جميع الفلاتر
+                    </button>
+                </div>
+
+                <!-- Results Tabs -->
+                <div class="flex items-center gap-4 mb-6 border-b border-gray-200">
+                    <button class="search-tab active px-4 py-2 font-semibold text-sm border-b-2 border-amber-600 text-amber-600 transition" data-tab="restaurants">
+                        <i class="fas fa-utensils ml-2"></i>
+                        المطاعم (<span id="restaurants-count">0</span>)
+                    </button>
+                    <button class="search-tab px-4 py-2 font-semibold text-sm text-gray-600 hover:text-amber-600 transition" data-tab="categories">
+                        <i class="fas fa-tags ml-2"></i>
+                        الأقسام (<span id="categories-count">0</span>)
+                    </button>
+                </div>
+
+                <!-- Restaurants Results -->
+                <div id="restaurants-results" class="search-results-content">
+                    <div id="restaurants-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <!-- Restaurant cards will be injected here -->
+                    </div>
+                    <div id="restaurants-pagination" class="mt-8 flex justify-center items-center gap-2">
+                        <!-- Pagination will be injected here -->
+                    </div>
+                </div>
+
+                <!-- Categories Results -->
+                <div id="categories-results" class="search-results-content hidden">
+                    <div id="categories-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <!-- Category cards will be injected here -->
+                    </div>
+                    <div id="categories-pagination" class="mt-8 flex justify-center items-center gap-2">
+                        <!-- Pagination will be injected here -->
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div id="search-empty-state" class="hidden text-center py-16">
+                    <div class="max-w-md mx-auto">
+                        <i class="fas fa-search text-6xl text-gray-300 mb-4"></i>
+                        <p class="text-xl font-semibold text-gray-600 mb-2">لا توجد نتائج</p>
+                        <p class="text-gray-500 mb-6">جرب البحث بكلمات مختلفة أو قم بإزالة بعض الفلاتر</p>
+                        <button onclick="document.getElementById('close-search-results').click()" class="inline-flex items-center px-6 py-2.5 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition">
+                            <i class="fas fa-arrow-right ml-2"></i>
+                            العودة للصفحة الرئيسية
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        
+        <!-- Latest Offers Section -->
+        <section class="py-16 bg-gradient-to-br from-amber-50 to-yellow-50" id="offers-section">
+            <div class="container mx-auto px-4">
+                <div class="flex items-end justify-between mb-8">
+                    <div>
+                        <h3 class="text-3xl font-bold text-gray-900 mb-2">آخر العروض</h3>
+                        <p class="text-gray-600 text-sm">أحدث العروض الحصرية من مطاعمنا</p>
+                    </div>
+                    <a href="#" class="hidden md:inline-flex items-center text-yellow-700 hover:text-yellow-800 font-semibold text-sm">
+                        عرض المزيد
+                        <i class="fas fa-arrow-left mr-2"></i>
+                    </a>
+                </div>
+
+                <div id="offers-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+                    <!-- Cards injected by JS -->
                 </div>
             </div>
         </section>
@@ -199,25 +315,44 @@
             </div>
         </section>
 
-        <!-- Latest Offers Section -->
-        <section class="py-16 bg-gradient-to-br from-amber-50 to-yellow-50" id="offers-section">
+        <!-- Restaurant Store Section -->
+        <section class="py-16 bg-gradient-to-br from-amber-50 to-yellow-50" id="restaurant-store-section">
             <div class="container mx-auto px-4">
                 <div class="flex items-end justify-between mb-8">
                     <div>
-                        <h3 class="text-3xl font-bold text-gray-900 mb-2">آخر العروض</h3>
-                        <p class="text-gray-600 text-sm">أحدث العروض الحصرية من مطاعمنا</p>
+                        <h3 class="text-3xl font-bold text-gray-900 mb-2">متجر للمطاعم</h3>
+                        <p class="text-gray-600 text-sm">كل ما تحتاجه لمطعمك في مكان واحد</p>
                     </div>
-                    <a href="#" class="hidden md:inline-flex items-center text-yellow-700 hover:text-yellow-800 font-semibold text-sm">
-                        عرض المزيد
-                        <i class="fas fa-arrow-left mr-2"></i>
-                    </a>
                 </div>
 
-                <div id="offers-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
-                    <!-- Cards injected by JS -->
+                <div class="flex items-center justify-center py-20">
+                    <div class="text-center">
+                        <i class="fas fa-store text-6xl text-gray-300 mb-4"></i>
+                        <p class="text-2xl font-semibold text-gray-500">قريباً</p>
+                    </div>
                 </div>
             </div>
         </section>
+
+        <!-- Suppliers Section -->
+        <section class="py-16 bg-white" id="suppliers-section">
+            <div class="container mx-auto px-4">
+                <div class="flex items-end justify-between mb-8">
+                    <div>
+                        <h3 class="text-3xl font-bold text-gray-900 mb-2">الموردون</h3>
+                        <p class="text-gray-600 text-sm">شبكة موثوقة من الموردين</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-center py-20">
+                    <div class="text-center">
+                        <i class="fas fa-truck text-6xl text-gray-300 mb-4"></i>
+                        <p class="text-2xl font-semibold text-gray-500">قريباً</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <!-- Footer -->
@@ -332,11 +467,11 @@
                     
                     // Set dashboard link based on user role
                     if (user.role === 'admin') {
-                        dashboardLink.href = '/html/admin-dashboard.html';
+                        dashboardLink.href = 'admin-dashboard.html';
                     } else if (user.role === 'stakeholder') {
-                        dashboardLink.href = '/html/restaurant-owner-dashboard.html';
+                        dashboardLink.href = 'restaurant-owner-dashboard.html';
                     } else {
-                        dashboardLink.href = '/html/user-dashboard.html';
+                        dashboardLink.href = 'user-dashboard.html';
                     }
 
                     // Show restaurant-specific buttons only for admin and stakeholders
@@ -429,7 +564,7 @@
 
         // Navigate to signup when clicking "Add Restaurant"
         document.getElementById('add-restaurant-btn')?.addEventListener('click', function() {
-            window.location.href = '/html/signup.html';
+            window.location.href = 'signup.html';
         });
 
         // Smooth scrolling for anchor links
@@ -455,7 +590,491 @@
                 header.classList.remove('shadow-xl');
             }
         });
+
+        // Load cities from API
+        (async function() {
+            const citySelect = document.getElementById('city-select');
+            if (!citySelect) return;
+
+            const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase'))
+                || 'https://weenapp-001-site1.qtempurl.com';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/Public/cities`, {
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (!response.ok) {
+                    throw new Error('فشل في تحميل المدن');
+                }
+
+                const result = await response.json();
+                
+                if (result.success && result.data && Array.isArray(result.data)) {
+                    // Clear existing options except the first one (placeholder)
+                    citySelect.innerHTML = '<option value="">جميع المدن</option>';
+                    
+                    // Add cities from API
+                    result.data.forEach(city => {
+                        const option = document.createElement('option');
+                        option.value = city.id;
+                        option.textContent = city.name;
+                        citySelect.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading cities:', error);
+                // Keep the default placeholder if loading fails
+            }
+        })();
+
+        // Search functionality
+        (function() {
+            const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase'))
+                || 'https://weenapp-001-site1.qtempurl.com';
+
+            const searchInput = document.getElementById('search-input');
+            const searchBtn = document.getElementById('search-btn');
+            const citySelect = document.getElementById('city-select');
+            const mainCategorySelect = document.getElementById('main-category-select');
+            const searchResultsSection = document.getElementById('search-results-section');
+            const closeSearchResults = document.getElementById('close-search-results');
+            const restaurantsGrid = document.getElementById('restaurants-grid');
+            const categoriesGrid = document.getElementById('categories-grid');
+            const restaurantsCount = document.getElementById('restaurants-count');
+            const categoriesCount = document.getElementById('categories-count');
+            const searchResultsCount = document.getElementById('search-results-count');
+            const searchResultsTitle = document.getElementById('search-results-title');
+            const activeFilters = document.getElementById('active-filters');
+            const clearAllFilters = document.getElementById('clear-all-filters');
+            const searchEmptyState = document.getElementById('search-empty-state');
+            const restaurantsResults = document.getElementById('restaurants-results');
+            const categoriesResults = document.getElementById('categories-results');
+
+            let currentPage = 1;
+            let currentTab = 'restaurants';
+            let searchParams = {
+                search: '',
+                cityId: null,
+                categoryId: null,
+                mainCategoryId: null
+            };
+
+            // Load main categories
+            async function loadMainCategories() {
+                try {
+                    const response = await fetch(`${API_BASE}/api/Public/main-categories`, {
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    if (!response.ok) throw new Error('فشل في تحميل الأقسام');
+                    const result = await response.json();
+                    if (result.success && result.data) {
+                        mainCategorySelect.innerHTML = '<option value="">جميع الأقسام</option>';
+                        result.data.forEach(mc => {
+                            const option = document.createElement('option');
+                            option.value = mc.id;
+                            option.textContent = mc.name;
+                            mainCategorySelect.appendChild(option);
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error loading main categories:', error);
+                }
+            }
+
+            // Build restaurant card
+            function buildRestaurantCard(restaurant) {
+                const resolveImageUrl = (url) => {
+                    if (!url || typeof url !== 'string' || url.trim() === '') return null;
+                    if (/^https?:\/\//i.test(url)) return url;
+                    if (url.startsWith('/')) return `${API_BASE}${url}`;
+                    return `${API_BASE}/${url}`;
+                };
+
+                const imageUrl = resolveImageUrl(restaurant.imageUrl) || 'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1200&auto=format&fit=crop';
+                return `
+                    <div class="group bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition duration-300">
+                        <div class="relative">
+                            <img src="${imageUrl}" alt="${restaurant.name}" class="w-full h-52 object-contain group-hover:scale-[1.02] transition-transform duration-300" />
+                            <div class="absolute top-3 left-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-semibold text-gray-800 shadow">
+                                <i class="fas fa-fire text-amber-600 ml-1"></i>
+                                ${restaurant.visitors || 0} زائر
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="text-lg font-bold text-gray-900 truncate">${restaurant.name}</h4>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-500 mb-2">
+                                <i class="fas fa-tag ml-1 text-gray-400"></i>
+                                <span>${restaurant.categoryName || ''}</span>
+                            </div>
+                            ${restaurant.cityNames && restaurant.cityNames.length > 0 ? `
+                                <div class="flex items-center text-sm text-gray-500 mb-2">
+                                    <i class="fas fa-map-marker-alt ml-1 text-gray-400"></i>
+                                    <span>${restaurant.cityNames.join(', ')}</span>
+                                </div>
+                            ` : ''}
+                            <div class="flex items-center text-sm mb-4 ${restaurant.hasDelivery ? 'text-green-600' : 'text-gray-500'}">
+                                <i class="fas fa-truck ml-1"></i>
+                                <span class="font-semibold">${restaurant.hasDelivery ? 'خدمة التوصيل متاحة' : 'خدمة التوصيل غير متاحة'}</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <a href="./restaurant.html?id=${restaurant.id}" class="inline-flex items-center bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-4 py-2 rounded-full text-xs font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow">
+                                    عرض التفاصيل
+                                    <i class="fas fa-arrow-left mr-2"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Build category card
+            function buildCategoryCard(category) {
+                const resolveImageUrl = (url) => {
+                    if (!url || typeof url !== 'string' || url.trim() === '') return null;
+                    if (/^https?:\/\//i.test(url)) return url;
+                    if (url.startsWith('/')) return `${API_BASE}${url}`;
+                    return `${API_BASE}/${url}`;
+                };
+
+                const imageUrl = resolveImageUrl(category.imageUrl) || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1200&auto=format&fit=crop';
+                return `
+                    <a href="places.html?category=${category.id}" class="group bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition duration-300 block">
+                        <div class="relative">
+                            <img src="${imageUrl}" alt="${category.name}" class="w-full h-48 object-contain group-hover:scale-[1.02] transition-transform duration-300" />
+                        </div>
+                        <div class="p-4">
+                            <h4 class="text-lg font-bold text-gray-900 mb-2">${category.name}</h4>
+                            ${category.description ? `<p class="text-sm text-gray-600 mb-3 line-clamp-2">${category.description}</p>` : ''}
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-amber-600 font-semibold">
+                                    <i class="fas fa-store ml-1"></i>
+                                    ${category.restaurantsCount || 0} مطعم
+                                </span>
+                                <span class="text-xs text-gray-500">${category.mainCategoryName || ''}</span>
+                            </div>
+                        </div>
+                    </a>
+                `;
+            }
+
+            // Search restaurants
+            async function searchRestaurants(page = 1) {
+                try {
+                    const restaurantsGrid = document.getElementById('restaurants-grid');
+                    const restaurantsPagination = document.getElementById('restaurants-pagination');
+                    
+                    // Show loading state
+                    restaurantsGrid.innerHTML = Array.from({ length: 8 }).map(() => `
+                        <div class="animate-pulse bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                            <div class="h-52 bg-gray-200"></div>
+                            <div class="p-4 space-y-3">
+                                <div class="h-4 bg-gray-200 rounded w-2/3"></div>
+                                <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+                                <div class="h-8 bg-gray-200 rounded w-28 mt-2"></div>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    const url = new URL(`${API_BASE}/api/Public/restaurants`);
+                    url.searchParams.set('page', page);
+                    url.searchParams.set('pageSize', '12');
+                    if (searchParams.search) url.searchParams.set('search', searchParams.search);
+                    if (searchParams.cityId) url.searchParams.set('cityId', searchParams.cityId);
+                    if (searchParams.categoryId) url.searchParams.set('categoryId', searchParams.categoryId);
+
+                    const response = await fetch(url.toString(), {
+                        headers: { 'Accept': 'application/json' }
+                    });
+
+                    if (!response.ok) throw new Error('فشل في البحث');
+                    const result = await response.json();
+
+                    if (result.success && result.data) {
+                        const restaurants = result.data;
+                        currentPage = page;
+                        
+                        if (restaurants.length === 0) {
+                            restaurantsGrid.innerHTML = '<div class="col-span-full text-center py-12"><i class="fas fa-utensils text-4xl text-gray-300 mb-3"></i><p class="text-gray-500">لا توجد مطاعم</p></div>';
+                            restaurantsPagination.innerHTML = '';
+                        } else {
+                            restaurantsGrid.innerHTML = restaurants.map(buildRestaurantCard).join('');
+                            
+                            // Simple pagination (you can enhance this with total count from API if available)
+                            if (restaurants.length === 12) {
+                                restaurantsPagination.innerHTML = `
+                                    <button onclick="window.searchRestaurantsPage(${page + 1})" class="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition">
+                                        عرض المزيد
+                                        <i class="fas fa-arrow-left mr-2"></i>
+                                    </button>
+                                `;
+                            } else {
+                                restaurantsPagination.innerHTML = '';
+                            }
+                        }
+                        
+                        // Update count (this is approximate since we don't have total count)
+                        restaurantsCount.textContent = restaurants.length >= 12 ? `${restaurants.length}+` : restaurants.length;
+                    }
+                } catch (error) {
+                    console.error('Error searching restaurants:', error);
+                    showToast('حدث خطأ في البحث', 'error');
+                    document.getElementById('restaurants-grid').innerHTML = '<div class="col-span-full text-center py-12"><i class="fas fa-exclamation-circle text-4xl text-red-300 mb-3"></i><p class="text-red-500">حدث خطأ في البحث</p></div>';
+                }
+            }
+
+            // Make searchRestaurants accessible globally for pagination
+            window.searchRestaurantsPage = searchRestaurants;
+
+            // Search categories
+            async function searchCategories() {
+                try {
+                    const categoriesGrid = document.getElementById('categories-grid');
+                    
+                    if (!searchParams.mainCategoryId && !searchParams.search) {
+                        categoriesGrid.innerHTML = '<div class="col-span-full text-center py-12"><i class="fas fa-tags text-4xl text-gray-300 mb-3"></i><p class="text-gray-500">اختر قسم رئيسي للبحث</p></div>';
+                        categoriesCount.textContent = '0';
+                        return;
+                    }
+
+                    // Show loading state
+                    categoriesGrid.innerHTML = Array.from({ length: 8 }).map(() => `
+                        <div class="animate-pulse bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                            <div class="h-48 bg-gray-200"></div>
+                            <div class="p-4 space-y-3">
+                                <div class="h-4 bg-gray-200 rounded w-2/3"></div>
+                                <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    // If we have mainCategoryId, search in that category
+                    if (searchParams.mainCategoryId) {
+                        const url = new URL(`${API_BASE}/api/Public/categories`);
+                        url.searchParams.set('mainCategoryId', searchParams.mainCategoryId);
+                        url.searchParams.set('page', '1');
+                        url.searchParams.set('pageSize', '100');
+                        if (searchParams.search) url.searchParams.set('search', searchParams.search);
+
+                        const response = await fetch(url.toString(), {
+                            headers: { 'Accept': 'application/json' }
+                        });
+
+                        if (!response.ok) throw new Error('فشل في البحث');
+                        const result = await response.json();
+
+                        if (result.success && result.data) {
+                            const categories = result.data;
+                            categoriesCount.textContent = categories.length;
+                            
+                            if (categories.length === 0) {
+                                categoriesGrid.innerHTML = '<div class="col-span-full text-center py-12"><i class="fas fa-tags text-4xl text-gray-300 mb-3"></i><p class="text-gray-500">لا توجد أقسام</p></div>';
+                            } else {
+                                categoriesGrid.innerHTML = categories.map(buildCategoryCard).join('');
+                            }
+                        }
+                    } else {
+                        // If no mainCategoryId but we have search, try to search all main categories
+                        const url = new URL(`${API_BASE}/api/Public/main-categories`);
+                        url.searchParams.set('page', '1');
+                        url.searchParams.set('pageSize', '100');
+                        if (searchParams.search) url.searchParams.set('search', searchParams.search);
+
+                        const response = await fetch(url.toString(), {
+                            headers: { 'Accept': 'application/json' }
+                        });
+
+                        if (!response.ok) throw new Error('فشل في البحث');
+                        const result = await response.json();
+
+                        if (result.success && result.data) {
+                            const mainCategories = result.data;
+                            categoriesCount.textContent = mainCategories.length;
+                            
+                            if (mainCategories.length === 0) {
+                                categoriesGrid.innerHTML = '<div class="col-span-full text-center py-12"><i class="fas fa-tags text-4xl text-gray-300 mb-3"></i><p class="text-gray-500">لا توجد أقسام</p></div>';
+                            } else {
+                                // Build cards for main categories
+                                categoriesGrid.innerHTML = mainCategories.map(mc => {
+                                    const resolveImageUrl = (url) => {
+                                        if (!url || typeof url !== 'string' || url.trim() === '') return null;
+                                        if (/^https?:\/\//i.test(url)) return url;
+                                        if (url.startsWith('/')) return `${API_BASE}${url}`;
+                                        return `${API_BASE}/${url}`;
+                                    };
+                                    const imageUrl = resolveImageUrl(mc.imageUrl) || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1200&auto=format&fit=crop';
+                                    return `
+                                        <a href="places.html?mainCategory=${mc.id}" class="group bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition duration-300 block">
+                                            <div class="relative">
+                                                <img src="${imageUrl}" alt="${mc.name}" class="w-full h-48 object-contain group-hover:scale-[1.02] transition-transform duration-300" />
+                                            </div>
+                                            <div class="p-4">
+                                                <h4 class="text-lg font-bold text-gray-900 mb-2">${mc.name}</h4>
+                                                ${mc.description ? `<p class="text-sm text-gray-600 mb-3 line-clamp-2">${mc.description}</p>` : ''}
+                                                <div class="flex items-center justify-between">
+                                                    <span class="text-sm text-amber-600 font-semibold">
+                                                        <i class="fas fa-folder ml-1"></i>
+                                                        ${mc.categoriesCount || 0} قسم فرعي
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    `;
+                                }).join('');
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error searching categories:', error);
+                    showToast('حدث خطأ في البحث', 'error');
+                    document.getElementById('categories-grid').innerHTML = '<div class="col-span-full text-center py-12"><i class="fas fa-exclamation-circle text-4xl text-red-300 mb-3"></i><p class="text-red-500">حدث خطأ في البحث</p></div>';
+                }
+            }
+
+            // Update active filters display
+            function updateActiveFilters() {
+                activeFilters.innerHTML = '';
+                let hasFilters = false;
+
+                if (searchParams.search) {
+                    hasFilters = true;
+                    const filter = document.createElement('span');
+                    filter.className = 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800';
+                    filter.innerHTML = `بحث: "${searchParams.search}" <button class="mr-2 hover:text-amber-900" onclick="removeFilter('search')"><i class="fas fa-times"></i></button>`;
+                    activeFilters.appendChild(filter);
+                }
+
+                if (searchParams.cityId) {
+                    hasFilters = true;
+                    const cityName = citySelect.options[citySelect.selectedIndex]?.text || 'مدينة';
+                    const filter = document.createElement('span');
+                    filter.className = 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800';
+                    filter.innerHTML = `مدينة: ${cityName} <button class="mr-2 hover:text-blue-900" onclick="removeFilter('city')"><i class="fas fa-times"></i></button>`;
+                    activeFilters.appendChild(filter);
+                }
+
+                if (searchParams.mainCategoryId) {
+                    hasFilters = true;
+                    const categoryName = mainCategorySelect.options[mainCategorySelect.selectedIndex]?.text || 'قسم';
+                    const filter = document.createElement('span');
+                    filter.className = 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800';
+                    filter.innerHTML = `قسم: ${categoryName} <button class="mr-2 hover:text-green-900" onclick="removeFilter('mainCategory')"><i class="fas fa-times"></i></button>`;
+                    activeFilters.appendChild(filter);
+                }
+
+                clearAllFilters.classList.toggle('hidden', !hasFilters);
+            }
+
+            // Remove filter
+            window.removeFilter = function(type) {
+                if (type === 'search') {
+                    searchParams.search = '';
+                    searchInput.value = '';
+                } else if (type === 'city') {
+                    searchParams.cityId = null;
+                    citySelect.value = '';
+                } else if (type === 'mainCategory') {
+                    searchParams.mainCategoryId = null;
+                    searchParams.categoryId = null;
+                    mainCategorySelect.value = '';
+                }
+                updateActiveFilters();
+                performSearch();
+            };
+
+            // Perform search
+            async function performSearch() {
+                searchParams.search = searchInput.value.trim();
+                searchParams.cityId = citySelect.value || null;
+                searchParams.mainCategoryId = mainCategorySelect.value || null;
+
+                updateActiveFilters();
+
+                // Show search results section
+                searchResultsSection.classList.remove('hidden');
+                searchResultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                // Update title
+                if (searchParams.search) {
+                    searchResultsTitle.textContent = `نتائج البحث عن "${searchParams.search}"`;
+                } else {
+                    searchResultsTitle.textContent = 'نتائج البحث';
+                }
+
+                // Search both
+                await Promise.all([
+                    searchRestaurants(1),
+                    searchCategories()
+                ]);
+
+                // Update total count
+                const totalRestaurants = parseInt(restaurantsCount.textContent) || 0;
+                const totalCategories = parseInt(categoriesCount.textContent) || 0;
+                const total = totalRestaurants + totalCategories;
+                searchResultsCount.textContent = `${total} نتيجة`;
+
+                // Show/hide empty state
+                if (total === 0) {
+                    searchEmptyState.classList.remove('hidden');
+                    restaurantsResults.classList.add('hidden');
+                    categoriesResults.classList.add('hidden');
+                } else {
+                    searchEmptyState.classList.add('hidden');
+                    restaurantsResults.classList.remove('hidden');
+                    if (currentTab === 'categories') {
+                        categoriesResults.classList.remove('hidden');
+                    }
+                }
+            }
+
+            // Tab switching
+            document.querySelectorAll('.search-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.search-tab').forEach(t => {
+                        t.classList.remove('active', 'border-amber-600', 'text-amber-600');
+                        t.classList.add('text-gray-600');
+                    });
+                    this.classList.add('active', 'border-amber-600', 'text-amber-600');
+                    this.classList.remove('text-gray-600');
+
+                    currentTab = this.dataset.tab;
+                    if (currentTab === 'restaurants') {
+                        restaurantsResults.classList.remove('hidden');
+                        categoriesResults.classList.add('hidden');
+                    } else {
+                        restaurantsResults.classList.add('hidden');
+                        categoriesResults.classList.remove('hidden');
+                    }
+                });
+            });
+
+            // Event listeners
+            searchBtn?.addEventListener('click', performSearch);
+            searchInput?.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+
+            closeSearchResults?.addEventListener('click', function() {
+                searchResultsSection.classList.add('hidden');
+            });
+
+            clearAllFilters?.addEventListener('click', function() {
+                searchParams = { search: '', cityId: null, categoryId: null, mainCategoryId: null };
+                searchInput.value = '';
+                citySelect.value = '';
+                mainCategorySelect.value = '';
+                updateActiveFilters();
+                performSearch();
+            });
+
+            // Load main categories on page load
+            loadMainCategories();
+        })();
     </script>
-    <script src="../js/home.js"></script>
+    <script src="js/home.js"></script>
 </body>
 </html>

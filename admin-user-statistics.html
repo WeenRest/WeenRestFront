@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إحصائيات المستخدمين الأكثر تفاعلاً - WeenRest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111'/%3E%3Cpath fill='%23f59e0b' d='M22 10h4v20c0 6-4 8-4 8s-4-2-4-8V10h4zM38 10h4v14h6v4h-6v10h-4V10z'/%3E%3C/svg%3E">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-8 flex flex-col items-center">
+            <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-yellow-600 mb-4"></div>
+            <p class="text-gray-700 font-semibold">جاري التحميل...</p>
+        </div>
+    </div>
+
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gradient-to-b from-gray-900 to-black text-white shadow-2xl">
+            <div class="flex flex-col h-full">
+                <!-- Logo -->
+                <div class="p-6 border-b border-gray-700">
+                    <div class="flex items-center space-x-3 space-x-reverse">
+                        <div class="w-12 h-12 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-utensils text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold">WeenRest</h1>
+                            <p class="text-xs text-gray-400">لوحة التحكم</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+                    <a href="admin-dashboard.html" class="flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
+                        <i class="fas fa-home w-5"></i>
+                        <span>لوحة التحكم</span>
+                    </a>
+                    <a href="admin-dashboard.html#users" class="flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
+                        <i class="fas fa-users w-5"></i>
+                        <span>المستخدمين</span>
+                    </a>
+                    <a href="admin-user-statistics.html" class="flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer bg-gray-800">
+                        <i class="fas fa-chart-line w-5"></i>
+                        <span>إحصائيات التفاعل</span>
+                    </a>
+                    <a href="admin-dashboard.html#restaurants" class="flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
+                        <i class="fas fa-utensils w-5"></i>
+                        <span>المطاعم</span>
+                    </a>
+                    <a href="admin-dashboard.html#offers" class="flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
+                        <i class="fas fa-bullhorn w-5"></i>
+                        <span>العروض</span>
+                    </a>
+                </nav>
+
+                <!-- User Info -->
+                <div class="p-4 border-t border-gray-700">
+                    <div class="flex items-center space-x-3 space-x-reverse mb-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-white"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p id="sidebarUserName" class="text-sm font-semibold truncate">المستخدم</p>
+                            <p class="text-xs text-gray-400 truncate" id="sidebarUserEmail">البريد الإلكتروني</p>
+                        </div>
+                    </div>
+                    <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm font-semibold transition duration-300">
+                        <i class="fas fa-sign-out-alt mr-2"></i>تسجيل الخروج
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto">
+            <div class="p-8">
+                <!-- Header -->
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">إحصائيات المستخدمين الأكثر تفاعلاً</h1>
+                    <p class="text-gray-600">عرض المستخدمين الأكثر تفاعلاً مع الموقع بناءً على زيارات الصفحات والإجراءات</p>
+                </div>
+
+                <!-- Filters -->
+                <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                    <div class="flex flex-wrap gap-4 items-end">
+                        <div class="flex-1 min-w-64">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">الفترة الزمنية</label>
+                            <select id="periodFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                                <option value="all">جميع الفترات</option>
+                                <option value="day">آخر 24 ساعة</option>
+                                <option value="week">آخر أسبوع</option>
+                                <option value="month">آخر شهر</option>
+                            </select>
+                        </div>
+                        <div>
+                            <button onclick="loadMostActiveUsers()" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-6 py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300 font-semibold">
+                                <i class="fas fa-sync-alt mr-2"></i>تحديث
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600 mb-1">إجمالي التفاعلات</p>
+                                <p class="text-3xl font-bold text-gray-800" id="totalActivities">0</p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-mouse-pointer text-blue-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600 mb-1">زيارات الصفحات</p>
+                                <p class="text-3xl font-bold text-gray-800" id="totalPageVisits">0</p>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-eye text-green-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600 mb-1">إضافات للمفضلة</p>
+                                <p class="text-3xl font-bold text-gray-800" id="totalFavorites">0</p>
+                            </div>
+                            <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-heart text-yellow-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600 mb-1">طلبات الوظائف</p>
+                                <p class="text-3xl font-bold text-gray-800" id="totalJobApplications">0</p>
+                            </div>
+                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-briefcase text-purple-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Table -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="p-6 border-b border-gray-200">
+                        <h2 class="text-2xl font-bold text-gray-800">المستخدمين الأكثر تفاعلاً</h2>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الترتيب</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">المستخدم</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">البريد الإلكتروني</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">إجمالي التفاعلات</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">زيارات الصفحات</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">إضافات للمفضلة</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">طلبات الوظائف</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">مشاهدات المطاعم</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">مشاهدات العروض</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">آخر نشاط</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody" class="bg-white divide-y divide-gray-200">
+                                <!-- Users will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="p-4 border-t border-gray-200 text-center text-gray-600" id="emptyState" style="display: none;">
+                        <i class="fas fa-inbox text-4xl mb-2 text-gray-400"></i>
+                        <p>لا توجد بيانات للعرض</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Message Toast -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-white rounded-lg shadow-2xl border border-gray-200 p-4 hidden z-50 max-w-sm">
+        <div class="flex items-center space-x-3 space-x-reverse">
+            <div id="toastIcon" class="flex-shrink-0"></div>
+            <p id="toastMessage" class="text-sm font-semibold text-gray-800"></p>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        const API_BASE_URL = 'https://weenapp-001-site1.qtempurl.com/api';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check authentication
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Load user profile
+            loadUserProfile();
+
+            // Load most active users
+            loadMostActiveUsers();
+
+            // Setup filter handler
+            document.getElementById('periodFilter').addEventListener('change', loadMostActiveUsers);
+        });
+
+        // API Call Helper
+        async function apiCall(endpoint, method = 'GET', body = null) {
+            const token = localStorage.getItem('token');
+            const options = {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            };
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+            const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+            if (!response.ok) {
+                if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    window.location.href = 'login.html';
+                    return null;
+                }
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return await response.json();
+        }
+
+        // Show/Hide Loading
+        function showLoading(show) {
+            document.getElementById('loadingOverlay').classList.toggle('hidden', !show);
+        }
+
+        // Show Toast
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toastIcon');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            
+            if (type === 'success') {
+                toastIcon.innerHTML = '<i class="fas fa-check-circle text-green-500 text-xl"></i>';
+            } else if (type === 'error') {
+                toastIcon.innerHTML = '<i class="fas fa-exclamation-circle text-red-500 text-xl"></i>';
+            } else {
+                toastIcon.innerHTML = '<i class="fas fa-info-circle text-blue-500 text-xl"></i>';
+            }
+            
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Load User Profile
+        async function loadUserProfile() {
+            try {
+                const data = await apiCall('/AdminDashboard/profile');
+                if (data && data.success) {
+                    const user = data.data;
+                    document.getElementById('sidebarUserName').textContent = `${user.firstName} ${user.lastName}`;
+                    document.getElementById('sidebarUserEmail').textContent = user.email;
+                }
+            } catch (error) {
+                console.error('Error loading user profile:', error);
+            }
+        }
+
+        // Load Most Active Users
+        async function loadMostActiveUsers() {
+            showLoading(true);
+            try {
+                const period = document.getElementById('periodFilter').value;
+                const data = await apiCall(`/AdminDashboard/most-active-users?period=${period}&pageSize=100`);
+                
+                if (data && data.success) {
+                    const users = data.data || [];
+                    renderUsers(users);
+                    updateStatistics(users);
+                } else {
+                    showToast('حدث خطأ في تحميل البيانات', 'error');
+                    renderUsers([]);
+                }
+            } catch (error) {
+                console.error('Error loading most active users:', error);
+                showToast('حدث خطأ في تحميل البيانات', 'error');
+                renderUsers([]);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Render Users Table
+        function renderUsers(users) {
+            const tbody = document.getElementById('usersTableBody');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (users.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            tbody.innerHTML = '';
+
+            users.forEach((user, index) => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50 transition duration-200';
+                
+                const roleColors = {
+                    'admin': 'bg-purple-100 text-purple-800',
+                    'stakeholder': 'bg-blue-100 text-blue-800',
+                    'user': 'bg-green-100 text-green-800'
+                };
+
+                const roleNames = {
+                    'admin': 'أدمن',
+                    'stakeholder': 'صاحب مطعم',
+                    'user': 'مستخدم'
+                };
+
+                const lastActivity = user.lastActivityDate 
+                    ? new Date(user.lastActivityDate).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' })
+                    : '-';
+
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center justify-center">
+                            <span class="px-3 py-1 rounded-full text-sm font-bold ${index < 3 ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'}">
+                                ${index + 1}
+                            </span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center space-x-3 space-x-reverse">
+                            <div class="flex-shrink-0 h-10 w-10">
+                                <div class="h-10 w-10 rounded-full bg-gradient-to-r from-yellow-600 to-amber-600 flex items-center justify-center">
+                                    <span class="text-white font-semibold">${user.firstName.charAt(0)}${user.lastName.charAt(0)}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="text-sm font-medium text-gray-900">${user.firstName} ${user.lastName}</div>
+                                <div class="text-xs text-gray-500">
+                                    <span class="px-2 py-0.5 rounded-full text-xs font-semibold ${roleColors[user.role] || 'bg-gray-100 text-gray-800'}">${roleNames[user.role] || user.role}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${user.email}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">${user.totalActivities}</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${user.pageVisits}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${user.favoriteAdds}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${user.jobApplications}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${user.restaurantViews}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${user.offerViews}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${lastActivity}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update Statistics
+        function updateStatistics(users) {
+            const totalActivities = users.reduce((sum, u) => sum + u.totalActivities, 0);
+            const totalPageVisits = users.reduce((sum, u) => sum + u.pageVisits, 0);
+            const totalFavorites = users.reduce((sum, u) => sum + u.favoriteAdds, 0);
+            const totalJobApplications = users.reduce((sum, u) => sum + u.jobApplications, 0);
+
+            document.getElementById('totalActivities').textContent = totalActivities.toLocaleString('ar-SA');
+            document.getElementById('totalPageVisits').textContent = totalPageVisits.toLocaleString('ar-SA');
+            document.getElementById('totalFavorites').textContent = totalFavorites.toLocaleString('ar-SA');
+            document.getElementById('totalJobApplications').textContent = totalJobApplications.toLocaleString('ar-SA');
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>
+

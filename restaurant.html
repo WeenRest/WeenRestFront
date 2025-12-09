@@ -16,7 +16,7 @@
     <!-- Header (simple back to home) -->
     <header class="bg-gradient-to-r from-gray-900 to-black shadow-lg sticky top-0 z-50">
         <div class="container mx-auto px-4 py-4 flex items-center justify-between">
-            <a href="../index.html" class="inline-flex items-center text-yellow-400 hover:text-white font-semibold">
+            <a href="index.html" class="inline-flex items-center text-yellow-400 hover:text-white font-semibold">
                 <i class="fas fa-arrow-right ml-2"></i>
                 العودة للرئيسية
             </a>
@@ -59,10 +59,23 @@
                                     <span>اتصال</span>
                                     <span id="restaurant-phone-text" class="mr-2 text-amber-800/90"></span>
                                 </a>
+                                <span id="delivery-badge" class="inline-flex items-center px-3 py-1 rounded-full">
+                                    <i class="fas fa-truck ml-1"></i>
+                                    <span id="delivery-badge-text">خدمة التوصيل</span>
+                                </span>
                             </div>
                         </div>
                     </div>
                     <p id="restaurant-description" class="text-gray-700 mt-4 leading-7"></p>
+                    
+                    <!-- Working Hours -->
+                    <div id="working-hours-section" class="mt-6 pt-6 border-t border-gray-200">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                            <i class="fas fa-clock ml-2 text-amber-600"></i>
+                            ساعات العمل
+                        </h3>
+                        <div id="working-hours-list" class="space-y-2"></div>
+                    </div>
                 </div>
             </div>
 
@@ -107,7 +120,7 @@
         </div>
     </div>
 
-    <script src="../js/restaurant.js"></script>
+    <script src="js/restaurant.js"></script>
 </body>
 </html>
 

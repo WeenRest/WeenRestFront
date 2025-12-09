@@ -3,22 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أنواع المنيو - WeenRest</title>
+    <title>ستايلات ملابس الطاقم - WeenRest</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111'/%3E%3Cpath fill='%23f59e0b' d='M22 10h4v20c0 6-4 8-4 8s-4-2-4-8V10h4zM38 10h4v14h6v4h-6v10h-4V10z'/%3E%3C/svg%3E">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111'/%3E%3Cpath fill='%23f59e0b' d='M22 10h4v20c0 6-4 8-4 8s-4-2-4-8V10h4zM38 10h4v14h6v4h-6v10h-4V10z'/%3E%3C/svg%3E">
     <style> body{font-family:'Cairo',sans-serif;} </style>
-</head>
+    <style>
+        .thumb{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid #eee}
+    </style>
+    </head>
 <body class="bg-gray-50">
-    <div class="max-w-5xl mx-auto px-4 py-8">
+    <div class="max-w-6xl mx-auto px-4 py-8">
         <div class="flex items-center justify-between mb-6">
             <div class="flex items-center gap-3">
                 <a href="admin-dashboard.html" class="w-10 h-10 rounded-full bg-white shadow flex items-center justify-center hover:bg-gray-100"><i class="fas fa-arrow-right"></i></a>
-                <h1 class="text-2xl md:text-3xl font-bold text-gray-800">أنواع المنيو</h1>
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-800">ستايلات ملابس الطاقم</h1>
             </div>
-            <button onclick="openCreate()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg"><i class="fas fa-plus ml-2"></i>إضافة نوع</button>
+            <button onclick="openCreate()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg"><i class="fas fa-plus ml-2"></i>إضافة ستايل</button>
         </div>
 
         <div class="bg-white rounded-xl shadow-md overflow-hidden">
@@ -26,8 +29,8 @@
                 <table class="w-full">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">الاسم</th>
-                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">الوصف</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">الصورة</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">العنوان</th>
                             <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">الحالة</th>
                             <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">التاريخ</th>
                             <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">إجراءات</th>
@@ -41,6 +44,7 @@
 
     <script>
         const API_BASE_URL = 'https://weenapp-001-site1.qtempurl.com/api';
+        const API_ORIGIN = 'https://weenapp-001-site1.qtempurl.com/';
         document.addEventListener('DOMContentLoaded', ()=>{
             const token = localStorage.getItem('token');
             if(!token){ window.location.href='login.html'; return; }
@@ -49,19 +53,19 @@
 
         async function loadStyles(){
             const token = localStorage.getItem('token');
-            const resp = await fetch(`${API_BASE_URL}/MenuStyles`, { headers:{'Authorization':`Bearer ${token}`}});
+            const resp = await fetch(`${API_BASE_URL}/StaffUniformStyles`, { headers:{'Authorization':`Bearer ${token}`}});
             const data = await resp.json();
             const tbody = document.getElementById('stylesTable');
             tbody.innerHTML = '';
             if(!data.success || !data.data || data.data.length===0){
-                tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-6 text-center text-gray-500">لا توجد أنواع</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-6 text-center text-gray-500">لا توجد ستايلات</td></tr>';
                 return;
             }
             data.data.forEach(s=>{
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td class="px-4 py-3">${escapeHtml(s.name)}</td>
-                    <td class="px-4 py-3">${escapeHtml(s.description||'')}</td>
+                    <td class="px-4 py-3">${s.imageUrl ? `<img class="thumb" src="${resolveImageUrl(s.imageUrl)}" alt="">` : '-'}</td>
+                    <td class="px-4 py-3">${escapeHtml(s.title)}</td>
                     <td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs ${s.isActive?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${s.isActive?'مفعّل':'معطّل'}</span></td>
                     <td class="px-4 py-3">${new Date(s.createdAt).toLocaleDateString('ar-EG')}</td>
                     <td class="px-4 py-3">
@@ -75,52 +79,77 @@
         }
 
         function escapeHtml(x){return (x||'').toString().replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+        function resolveImageUrl(u){
+            if(!u) return '';
+            if(/^https?:\/\//i.test(u)) return u;
+            // ensure leading slash
+            const path = u.startsWith('/') ? u : `/${u}`;
+            // remove trailing slash from API_ORIGIN to avoid double slashes
+            const base = API_ORIGIN.endsWith('/') ? API_ORIGIN.slice(0, -1) : API_ORIGIN;
+            return `${base}${path}`;
+        }
 
         async function openCreate(){
             const { value: formValues } = await Swal.fire({
-                title: 'إضافة نوع منيو',
+                title: 'إضافة ستايل ملابس',
                 html: `
-                    <input id="swal-name" class="swal2-input" placeholder="الاسم" required>
-                    <textarea id="swal-desc" class="swal2-textarea" placeholder="الوصف"></textarea>
+                    <input id="swal-title" class="swal2-input" placeholder="العنوان" required>
+                    <input id="swal-image" type="file" accept="image/*" class="swal2-file">
                     <label class="swal2-checkbox"><input type="checkbox" id="swal-active" checked> مفعّل</label>
                 `,
                 confirmButtonText: 'حفظ', showCancelButton: true,
-                preConfirm: ()=>({ name: document.getElementById('swal-name').value, description: document.getElementById('swal-desc').value, isActive: document.getElementById('swal-active').checked })
+                preConfirm: ()=>({ title: document.getElementById('swal-title').value, isActive: document.getElementById('swal-active').checked })
             });
             if(!formValues) return;
             const token = localStorage.getItem('token');
-            const resp = await fetch(`${API_BASE_URL}/MenuStyles`, { method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`}, body: JSON.stringify(formValues)});
+            const fd = new FormData();
+            fd.append('Title', formValues.title);
+            fd.append('IsActive', String(formValues.isActive));
+            const file = document.getElementById('swal-image').files[0];
+            if(file) fd.append('image', file);
+
+            const resp = await fetch(`${API_BASE_URL}/StaffUniformStyles`, { method:'POST', headers:{'Authorization':`Bearer ${token}`}, body: fd });
             const data = await resp.json();
             if(data.success){ Swal.fire({icon:'success',title:'تم الإنشاء'}); loadStyles(); } else { Swal.fire({icon:'error',title:'تعذر الإنشاء',text:data.message||''}); }
         }
 
         async function editStyle(id){
             const token = localStorage.getItem('token');
-            const resp = await fetch(`${API_BASE_URL}/MenuStyles/${id}`, { headers:{'Authorization':`Bearer ${token}`}});
+            const resp = await fetch(`${API_BASE_URL}/StaffUniformStyles/${id}`, { headers:{'Authorization':`Bearer ${token}`}});
             const data = await resp.json();
             if(!data.success){ return Swal.fire({icon:'error',title:'تعذر الجلب',text:data.message||''}); }
             const s = data.data;
             const { value: formValues } = await Swal.fire({
-                title: 'تعديل نوع منيو',
+                title: 'تعديل ستايل',
                 html: `
-                    <input id="swal-name" class="swal2-input" placeholder="الاسم" value="${escapeHtml(s.name)}">
-                    <textarea id="swal-desc" class="swal2-textarea" placeholder="الوصف">${(s.description||'').toString().replace(/</g,'&lt;')}</textarea>
+                    <input id="swal-title" class="swal2-input" placeholder="العنوان" value="${escapeHtml(s.title)}">
+                    <div class="text-sm text-gray-600">الصورة الحالية: ${s.imageUrl ? `<a href="${resolveImageUrl(s.imageUrl)}" target="_blank" class="text-emerald-700">عرض</a>` : '-'}</div>
+                    <input id="swal-image" type="file" accept="image/*" class="swal2-file mt-2">
+                    <input id="swal-imageurl" class="swal2-input" placeholder="أو رابط صورة" value="${s.imageUrl||''}">
                     <label class="swal2-checkbox"><input type="checkbox" id="swal-active" ${s.isActive?'checked':''}> مفعّل</label>
                 `,
                 confirmButtonText: 'حفظ', showCancelButton: true,
-                preConfirm: ()=>({ name: document.getElementById('swal-name').value, description: document.getElementById('swal-desc').value, isActive: document.getElementById('swal-active').checked })
+                preConfirm: ()=>({ title: document.getElementById('swal-title').value, imageUrl: document.getElementById('swal-imageurl').value, isActive: document.getElementById('swal-active').checked })
             });
             if(!formValues) return;
-            const upd = await fetch(`${API_BASE_URL}/MenuStyles/${id}`, { method:'PUT', headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`}, body: JSON.stringify(formValues)});
+
+            const fd = new FormData();
+            fd.append('Title', formValues.title);
+            fd.append('ImageUrl', formValues.imageUrl||'');
+            fd.append('IsActive', String(formValues.isActive));
+            const file = document.getElementById('swal-image').files[0];
+            if(file) fd.append('image', file);
+
+            const upd = await fetch(`${API_BASE_URL}/StaffUniformStyles/${id}`, { method:'PUT', headers:{'Authorization':`Bearer ${token}`}, body: fd });
             const updData = await upd.json();
             if(updData.success){ Swal.fire({icon:'success',title:'تم الحفظ'}); loadStyles(); } else { Swal.fire({icon:'error',title:'تعذر الحفظ',text:updData.message||''}); }
         }
 
         async function deleteStyle(id){
-            const ok = await Swal.fire({title:'هل أنت متأكد؟',text:'سيتم حذف النوع',icon:'warning',showCancelButton:true,confirmButtonText:'حذف'});
+            const ok = await Swal.fire({title:'هل أنت متأكد؟',text:'سيتم حذف الستايل',icon:'warning',showCancelButton:true,confirmButtonText:'حذف'});
             if(!ok.isConfirmed) return;
             const token = localStorage.getItem('token');
-            const resp = await fetch(`${API_BASE_URL}/MenuStyles/${id}`, { method:'DELETE', headers:{'Authorization':`Bearer ${token}`}});
+            const resp = await fetch(`${API_BASE_URL}/StaffUniformStyles/${id}`, { method:'DELETE', headers:{'Authorization':`Bearer ${token}`}});
             const data = await resp.json();
             if(data.success){ Swal.fire({icon:'success',title:'تم الحذف'}); loadStyles(); } else { Swal.fire({icon:'error',title:'تعذر الحذف',text:data.message||''}); }
         }
