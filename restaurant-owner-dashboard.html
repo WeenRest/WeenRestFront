@@ -21,6 +21,26 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
+        
+        /* Mobile sidebar overlay */
+        @media (max-width: 768px) {
+            .sidebar-overlay {
+                transition: opacity 0.3s ease;
+            }
+            .sidebar-overlay.hidden {
+                opacity: 0;
+                pointer-events: none;
+            }
+        }
+        
+        /* Hide scrollbar on mobile for better UX */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -33,59 +53,66 @@
     </div>
 
     <div class="flex h-screen overflow-hidden">
+        <!-- Mobile Sidebar Overlay -->
+        <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden sidebar-overlay" onclick="toggleSidebar()"></div>
+        
         <!-- Sidebar -->
-        <aside class="w-64 bg-gradient-to-b from-gray-900 to-black text-white shadow-2xl">
+        <aside id="sidebar" class="fixed md:relative right-0 md:right-auto w-64 bg-gradient-to-b from-gray-900 to-black text-white shadow-2xl z-50 md:z-auto h-full transform translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
             <div class="flex flex-col h-full">
                 <!-- Logo -->
-                <div class="p-6 border-b border-gray-700">
+                <div class="p-4 sm:p-6 border-b border-gray-700 flex items-center justify-between">
                     <div class="flex items-center space-x-3 space-x-reverse">
-                        <div class="w-12 h-12 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
-                            <i class="fas fa-utensils text-white text-xl"></i>
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-utensils text-white text-lg sm:text-xl"></i>
                         </div>
                         <div>
-                            <h1 class="text-xl font-bold">WeenRest</h1>
+                            <h1 class="text-lg sm:text-xl font-bold">WeenRest</h1>
                             <p class="text-xs text-gray-400">لوحة صاحب المطعم</p>
                         </div>
                     </div>
+                    <!-- Close button for mobile -->
+                    <button onclick="toggleSidebar()" class="md:hidden text-white hover:text-yellow-400 text-xl">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
 
                 <!-- Navigation -->
-                <nav class="flex-1 p-4 space-y-2">
-                    <a href="#" onclick="showSection('dashboard'); return false;" class="sidebar-link active flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer">
-                        <i class="fas fa-home w-5"></i>
+                <nav class="flex-1 p-3 sm:p-4 space-y-1 sm:space-y-2 overflow-y-auto no-scrollbar">
+                    <a href="#" onclick="showSection('dashboard'); return false;" class="sidebar-link active flex items-center space-x-2 sm:space-x-3 space-x-reverse p-2.5 sm:p-3 rounded-lg transition duration-300 cursor-pointer text-sm sm:text-base">
+                        <i class="fas fa-home w-4 sm:w-5"></i>
                         <span>لوحة التحكم</span>
                     </a>
-                    <a href="#" onclick="showSection('restaurant'); return false;" class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
-                        <i class="fas fa-store w-5"></i>
+                    <a href="#" onclick="showSection('restaurant'); return false;" class="sidebar-link flex items-center space-x-2 sm:space-x-3 space-x-reverse p-2.5 sm:p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800 text-sm sm:text-base">
+                        <i class="fas fa-store w-4 sm:w-5"></i>
                         <span>إدارة المطعم</span>
                     </a>
-                    <a href="#" onclick="showSection('offers'); loadOffers(); return false;" class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
-                        <i class="fas fa-bullhorn w-5"></i>
+                    <a href="#" onclick="showSection('offers'); loadOffers(); return false;" class="sidebar-link flex items-center space-x-2 sm:space-x-3 space-x-reverse p-2.5 sm:p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800 text-sm sm:text-base">
+                        <i class="fas fa-bullhorn w-4 sm:w-5"></i>
                         <span>العروض</span>
                     </a>
-                    <a href="#" onclick="showSection('menus'); loadMenus(); return false;" class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
-                        <i class="fas fa-book-open w-5"></i>
+                    <a href="#" onclick="showSection('menus'); loadMenus(); return false;" class="sidebar-link flex items-center space-x-2 sm:space-x-3 space-x-reverse p-2.5 sm:p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800 text-sm sm:text-base">
+                        <i class="fas fa-book-open w-4 sm:w-5"></i>
                         <span>قائمة المنيو</span>
                     </a>
-                    <a href="#" onclick="showSection('profile'); return false;" class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
-                        <i class="fas fa-user-circle w-5"></i>
+                    <a href="#" onclick="showSection('profile'); return false;" class="sidebar-link flex items-center space-x-2 sm:space-x-3 space-x-reverse p-2.5 sm:p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800 text-sm sm:text-base">
+                        <i class="fas fa-user-circle w-4 sm:w-5"></i>
                         <span>الملف الشخصي</span>
                     </a>
                 </nav>
 
                 <!-- User Info -->
-                <div class="p-4 border-t border-gray-700">
-                    <div class="flex items-center space-x-3 space-x-reverse mb-3">
-                        <div class="w-10 h-10 bg-yellow-600 rounded-full flex items-center justify-center">
-                            <i class="fas fa-user text-white"></i>
+                <div class="p-3 sm:p-4 border-t border-gray-700">
+                    <div class="flex items-center space-x-2 sm:space-x-3 space-x-reverse mb-2 sm:mb-3">
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-yellow-600 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-user text-white text-xs sm:text-sm"></i>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm font-semibold truncate" id="userName">صاحب المطعم</p>
-                            <p class="text-xs text-gray-400 truncate" id="userEmail">owner@weenrest.com</p>
+                            <p class="text-xs sm:text-sm font-semibold truncate" id="userName">صاحب المطعم</p>
+                            <p class="text-[10px] sm:text-xs text-gray-400 truncate" id="userEmail">owner@weenrest.com</p>
                         </div>
                     </div>
-                    <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg transition duration-300 text-sm font-semibold">
-                        <i class="fas fa-sign-out-alt mr-2"></i>
+                    <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white py-1.5 sm:py-2 rounded-lg transition duration-300 text-xs sm:text-sm font-semibold">
+                        <i class="fas fa-sign-out-alt mr-1 sm:mr-2"></i>
                         تسجيل الخروج
                     </button>
                 </div>
@@ -93,65 +120,72 @@
         </aside>
 
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col overflow-hidden">
+        <div class="flex-1 flex flex-col overflow-hidden md:mr-0">
             <!-- Top Header -->
             <header class="bg-white shadow-md border-b border-gray-200">
-                <div class="flex items-center justify-between px-6 py-4">
-                    <h2 class="text-2xl font-bold text-gray-800" id="pageTitle">لوحة التحكم</h2>
-                    <div class="flex items-center space-x-4 space-x-reverse">
-                        <div class="flex items-center space-x-2 space-x-reverse bg-gray-100 px-4 py-2 rounded-lg">
-                            <i class="fas fa-calendar text-gray-600"></i>
-                            <span class="text-sm text-gray-700" id="currentDate"></span>
+                <div class="flex items-center justify-between px-3 sm:px-4 md:px-6 py-3 sm:py-4">
+                    <div class="flex items-center space-x-3 space-x-reverse">
+                        <!-- Mobile menu button -->
+                        <button onclick="toggleSidebar()" class="md:hidden text-gray-700 hover:text-yellow-600 text-xl">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <h2 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-800" id="pageTitle">لوحة التحكم</h2>
+                    </div>
+                    <div class="flex items-center space-x-2 sm:space-x-4 space-x-reverse">
+                        <div class="flex items-center space-x-1.5 sm:space-x-2 space-x-reverse bg-gray-100 px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg">
+                            <i class="fas fa-calendar text-gray-600 text-xs sm:text-sm"></i>
+                            <span class="text-xs sm:text-sm text-gray-700 hidden sm:inline" id="currentDate"></span>
+                            <span class="text-xs text-gray-700 sm:hidden" id="currentDateMobile"></span>
                         </div>
                     </div>
                 </div>
             </header>
 
             <!-- Dashboard Content -->
-            <main class="flex-1 overflow-y-auto p-6">
+            <main class="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6">
                 <!-- Dashboard Section -->
                 <div id="dashboard" class="section">
                     <!-- Welcome Card -->
-                    <div class="bg-gradient-to-r from-yellow-600 to-amber-600 rounded-xl p-8 text-white mb-6 card-hover transition duration-300">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <h3 class="text-2xl font-bold mb-2">مرحباً بك في لوحة التحكم</h3>
-                                <p class="text-yellow-100">يمكنك إدارة مطعمك وملفك الشخصي من هنا</p>
+                    <div class="bg-gradient-to-r from-yellow-600 to-amber-600 rounded-xl p-4 sm:p-6 md:p-8 text-white mb-4 sm:mb-6 card-hover transition duration-300">
+                        <div class="flex items-center justify-between flex-wrap gap-3">
+                            <div class="flex-1 min-w-0">
+                                <h3 class="text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2">مرحباً بك في لوحة التحكم</h3>
+                                <p class="text-yellow-100 text-sm sm:text-base">يمكنك إدارة مطعمك وملفك الشخصي من هنا</p>
                             </div>
-                            <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center">
-                                <i class="fas fa-store text-3xl"></i>
+                            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-store text-2xl sm:text-3xl"></i>
                             </div>
                         </div>
                     </div>
 
                     <!-- Stats Cards -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6" id="statsCards">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6" id="statsCards">
                         <!-- Stats will be loaded here -->
                     </div>
 
                     <!-- Quick Actions -->
-                    <div class="bg-white rounded-xl shadow-md p-6 mb-6">
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">إجراءات سريعة</h3>
-                        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-                            <button onclick="showSection('restaurant')" class="flex flex-col items-center p-4 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-lg hover:from-yellow-100 hover:to-amber-100 transition duration-300 cursor-pointer">
-                                <i class="fas fa-store text-yellow-600 text-2xl mb-2"></i>
-                                <span class="text-sm font-semibold text-gray-700">إدارة المطعم</span>
+                    <div class="bg-white rounded-xl shadow-md p-4 sm:p-6 mb-4 sm:mb-6">
+                        <h3 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">إجراءات سريعة</h3>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
+                            <button onclick="showSection('restaurant')" class="flex flex-col items-center p-3 sm:p-4 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-lg hover:from-yellow-100 hover:to-amber-100 transition duration-300 cursor-pointer">
+                                <i class="fas fa-store text-yellow-600 text-xl sm:text-2xl mb-1 sm:mb-2"></i>
+                                <span class="text-xs sm:text-sm font-semibold text-gray-700 text-center">إدارة المطعم</span>
                             </button>
-                            <button onclick="editRestaurant()" class="flex flex-col items-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg hover:from-blue-100 hover:to-indigo-100 transition duration-300 cursor-pointer">
-                                <i class="fas fa-edit text-blue-600 text-2xl mb-2"></i>
-                                <span class="text-sm font-semibold text-gray-700">تعديل المطعم</span>
+                            <button onclick="editRestaurant()" class="flex flex-col items-center p-3 sm:p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg hover:from-blue-100 hover:to-indigo-100 transition duration-300 cursor-pointer">
+                                <i class="fas fa-edit text-blue-600 text-xl sm:text-2xl mb-1 sm:mb-2"></i>
+                                <span class="text-xs sm:text-sm font-semibold text-gray-700 text-center">تعديل المطعم</span>
                             </button>
-                            <button onclick="window.location.href='customize.html'" class="flex flex-col items-center p-4 bg-gradient-to-br from-pink-50 to-rose-50 rounded-lg hover:from-pink-100 hover:to-rose-100 transition duration-300 cursor-pointer">
-                                <i class="fas fa-magic text-pink-600 text-2xl mb-2"></i>
-                                <span class="text-sm font-semibold text-gray-700">خصص مطعمك</span>
+                            <button onclick="window.location.href='customize.html'" class="flex flex-col items-center p-3 sm:p-4 bg-gradient-to-br from-pink-50 to-rose-50 rounded-lg hover:from-pink-100 hover:to-rose-100 transition duration-300 cursor-pointer">
+                                <i class="fas fa-magic text-pink-600 text-xl sm:text-2xl mb-1 sm:mb-2"></i>
+                                <span class="text-xs sm:text-sm font-semibold text-gray-700 text-center">خصص مطعمك</span>
                             </button>
-                            <button onclick="showSection('profile')" class="flex flex-col items-center p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg hover:from-green-100 hover:to-emerald-100 transition duration-300 cursor-pointer">
-                                <i class="fas fa-user-cog text-green-600 text-2xl mb-2"></i>
-                                <span class="text-sm font-semibold text-gray-700">الملف الشخصي</span>
+                            <button onclick="showSection('profile')" class="flex flex-col items-center p-3 sm:p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg hover:from-green-100 hover:to-emerald-100 transition duration-300 cursor-pointer">
+                                <i class="fas fa-user-cog text-green-600 text-xl sm:text-2xl mb-1 sm:mb-2"></i>
+                                <span class="text-xs sm:text-sm font-semibold text-gray-700 text-center">الملف الشخصي</span>
                             </button>
-                            <button onclick="window.location.href='index.html'" class="flex flex-col items-center p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-lg hover:from-gray-100 hover:to-slate-100 transition duration-300 cursor-pointer">
-                                <i class="fas fa-globe text-gray-600 text-2xl mb-2"></i>
-                                <span class="text-sm font-semibold text-gray-700">الموقع الرئيسي</span>
+                            <button onclick="window.location.href='index.html'" class="flex flex-col items-center p-3 sm:p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-lg hover:from-gray-100 hover:to-slate-100 transition duration-300 cursor-pointer">
+                                <i class="fas fa-globe text-gray-600 text-xl sm:text-2xl mb-1 sm:mb-2"></i>
+                                <span class="text-xs sm:text-sm font-semibold text-gray-700 text-center">الموقع الرئيسي</span>
                             </button>
                         </div>
                     </div>
@@ -161,56 +195,56 @@
                 <div id="restaurant" class="section hidden">
                     <div class="bg-white rounded-xl shadow-md overflow-hidden">
                         <!-- Header -->
-                        <div class="p-6 border-b border-gray-200">
-                            <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-                                <h3 class="text-2xl font-bold text-gray-800">إدارة المطعم</h3>
-                                <div class="flex space-x-3 space-x-reverse">
-                                    <button onclick="editRestaurant()" id="editRestaurantBtn" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-4 py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300">
-                                        <i class="fas fa-edit mr-2"></i>تعديل المطعم
+                        <div class="p-4 sm:p-6 border-b border-gray-200">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 sm:gap-4">
+                                <h3 class="text-xl sm:text-2xl font-bold text-gray-800">إدارة المطعم</h3>
+                                <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 space-x-0 sm:space-x-reverse">
+                                    <button onclick="editRestaurant()" id="editRestaurantBtn" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300 text-sm sm:text-base">
+                                        <i class="fas fa-edit mr-1 sm:mr-2"></i>تعديل المطعم
                                     </button>
-                                    <button onclick="openRestaurantModal()" id="createRestaurantBtn" class="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-4 py-2 rounded-lg hover:from-green-700 hover:to-emerald-700 transition duration-300">
-                                        <i class="fas fa-plus mr-2"></i>إنشاء مطعم
+                                    <button onclick="openRestaurantModal()" id="createRestaurantBtn" class="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:from-green-700 hover:to-emerald-700 transition duration-300 text-sm sm:text-base">
+                                        <i class="fas fa-plus mr-1 sm:mr-2"></i>إنشاء مطعم
                                     </button>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Restaurant Info -->
-                        <div class="p-6" id="restaurantInfo">
-                            <div class="text-center py-12" id="noRestaurantMsg">
-                                <i class="fas fa-store text-6xl text-gray-300 mb-4"></i>
-                                <h4 class="text-xl font-bold text-gray-600 mb-2">لا يوجد مطعم مرتبط بحسابك</h4>
-                                <p class="text-gray-500 mb-6">قم بإنشاء مطعم جديد للبدء</p>
-                                <button onclick="openRestaurantModal()" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-6 py-3 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300">
-                                    <i class="fas fa-plus mr-2"></i>إنشاء مطعم جديد
+                        <div class="p-4 sm:p-6" id="restaurantInfo">
+                            <div class="text-center py-8 sm:py-12" id="noRestaurantMsg">
+                                <i class="fas fa-store text-4xl sm:text-5xl md:text-6xl text-gray-300 mb-3 sm:mb-4"></i>
+                                <h4 class="text-lg sm:text-xl font-bold text-gray-600 mb-2">لا يوجد مطعم مرتبط بحسابك</h4>
+                                <p class="text-sm sm:text-base text-gray-500 mb-4 sm:mb-6">قم بإنشاء مطعم جديد للبدء</p>
+                                <button onclick="openRestaurantModal()" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300 text-sm sm:text-base">
+                                    <i class="fas fa-plus mr-1 sm:mr-2"></i>إنشاء مطعم جديد
                                 </button>
                             </div>
 
                             <div id="restaurantDetails" class="hidden">
-                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                                     <!-- Restaurant Image -->
                                     <div>
-                                        <img id="restaurantImage" src="" alt="صورة المطعم" class="w-full h-64 object-contain rounded-lg shadow-md mb-4">
+                                        <img id="restaurantImage" src="" alt="صورة المطعم" class="w-full h-48 sm:h-56 md:h-64 object-contain rounded-lg shadow-md mb-3 sm:mb-4">
                                     </div>
 
                                     <!-- Restaurant Info -->
-                                    <div class="space-y-4">
+                                    <div class="space-y-3 sm:space-y-4">
                                         <div>
-                                            <label class="block text-sm font-semibold text-gray-700 mb-1">اسم المطعم</label>
-                                            <p id="restaurantName" class="text-lg font-bold text-gray-800"></p>
+                                            <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">اسم المطعم</label>
+                                            <p id="restaurantName" class="text-base sm:text-lg font-bold text-gray-800"></p>
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-semibold text-gray-700 mb-1">الوصف</label>
-                                            <p id="restaurantDescription" class="text-gray-600"></p>
+                                            <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">الوصف</label>
+                                            <p id="restaurantDescription" class="text-sm sm:text-base text-gray-600"></p>
                                         </div>
-                                        <div class="grid grid-cols-2 gap-4">
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                                             <div>
-                                                <label class="block text-sm font-semibold text-gray-700 mb-1">رقم الهاتف</label>
-                                                <p id="restaurantPhone" class="text-gray-600"></p>
+                                                <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">رقم الهاتف</label>
+                                                <p id="restaurantPhone" class="text-sm sm:text-base text-gray-600 break-all"></p>
                                             </div>
                                             <div>
-                                                <label class="block text-sm font-semibold text-gray-700 mb-1">القسم</label>
-                                                <p id="restaurantCategory" class="text-gray-600"></p>
+                                                <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">القسم</label>
+                                                <p id="restaurantCategory" class="text-sm sm:text-base text-gray-600"></p>
                                             </div>
                                         </div>
                                         <div>
@@ -228,12 +262,12 @@
                                     </div>
                                 </div>
 
-                                <div class="mt-6 flex space-x-3 space-x-reverse">
-                                    <button onclick="editRestaurant()" class="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-2 rounded-lg transition duration-300">
-                                        <i class="fas fa-edit mr-2"></i>تعديل
+                                <div class="mt-4 sm:mt-6 flex flex-col sm:flex-row gap-2 sm:gap-3 space-x-0 sm:space-x-reverse">
+                                    <button onclick="editRestaurant()" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 sm:px-6 py-2 rounded-lg transition duration-300 text-sm sm:text-base">
+                                        <i class="fas fa-edit mr-1 sm:mr-2"></i>تعديل
                                     </button>
-                                    <button onclick="deleteRestaurant()" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition duration-300">
-                                        <i class="fas fa-trash mr-2"></i>حذف المطعم
+                                    <button onclick="deleteRestaurant()" class="bg-red-600 hover:bg-red-700 text-white px-4 sm:px-6 py-2 rounded-lg transition duration-300 text-sm sm:text-base">
+                                        <i class="fas fa-trash mr-1 sm:mr-2"></i>حذف المطعم
                                     </button>
                                 </div>
                             </div>
@@ -244,14 +278,14 @@
                 <!-- Offers Section -->
                 <div id="offers" class="section hidden">
                     <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                        <div class="p-6 border-b border-gray-200 flex justify-between items-center">
-                            <h3 class="text-2xl font-bold text-gray-800">عروض المطعم</h3>
-                            <button onclick="openOfferModal()" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-4 py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300">
-                                <i class="fas fa-plus mr-2"></i>إضافة عرض
+                        <div class="p-4 sm:p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                            <h3 class="text-xl sm:text-2xl font-bold text-gray-800">عروض المطعم</h3>
+                            <button onclick="openOfferModal()" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300 text-sm sm:text-base w-full sm:w-auto">
+                                <i class="fas fa-plus mr-1 sm:mr-2"></i>إضافة عرض
                             </button>
                         </div>
-                        <div class="p-6">
-                            <div id="offersList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="p-4 sm:p-6">
+                            <div id="offersList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                                 <!-- Offers will be loaded here -->
                             </div>
                         </div>
@@ -261,14 +295,14 @@
                 <!-- Menus Section -->
                 <div id="menus" class="section hidden">
                     <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                        <div class="p-6 border-b border-gray-200 flex justify-between items-center">
-                            <h3 class="text-2xl font-bold text-gray-800">المنيو</h3>
-                            <button onclick="openMenuModal()" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-4 py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300">
-                                <i class="fas fa-plus mr-2"></i>إضافة منيو
+                        <div class="p-4 sm:p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                            <h3 class="text-xl sm:text-2xl font-bold text-gray-800">المنيو</h3>
+                            <button onclick="openMenuModal()" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300 text-sm sm:text-base w-full sm:w-auto">
+                                <i class="fas fa-plus mr-1 sm:mr-2"></i>إضافة منيو
                             </button>
                         </div>
-                        <div class="p-6">
-                            <div id="menusList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                        <div class="p-4 sm:p-6">
+                            <div id="menusList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4"></div>
                         </div>
                     </div>
                 </div>
@@ -277,12 +311,12 @@
                 <div id="profile" class="section hidden">
                     <div class="max-w-4xl mx-auto">
                         <!-- Profile Info Card -->
-                        <div class="bg-white rounded-xl shadow-md p-6 mb-6">
-                            <h3 class="text-2xl font-bold text-gray-800 mb-6">الملف الشخصي</h3>
+                        <div class="bg-white rounded-xl shadow-md p-4 sm:p-6 mb-4 sm:mb-6">
+                            <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">الملف الشخصي</h3>
                             
                             <!-- Profile Form -->
-                            <form id="profileForm" class="space-y-6">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <form id="profileForm" class="space-y-4 sm:space-y-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                                     <div>
                                         <label class="block text-sm font-semibold text-gray-700 mb-2">الاسم الأول</label>
                                         <input type="text" id="profileFirstName" required
@@ -314,10 +348,10 @@
                         </div>
 
                         <!-- Change Password Card -->
-                        <div class="bg-white rounded-xl shadow-md p-6 mb-6">
-                            <h3 class="text-2xl font-bold text-gray-800 mb-6">تغيير كلمة المرور</h3>
+                        <div class="bg-white rounded-xl shadow-md p-4 sm:p-6 mb-4 sm:mb-6">
+                            <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">تغيير كلمة المرور</h3>
                             
-                            <form id="passwordForm" class="space-y-6">
+                            <form id="passwordForm" class="space-y-4 sm:space-y-6">
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">كلمة المرور الحالية</label>
                                     <input type="password" id="currentPassword" required
@@ -342,27 +376,32 @@
     </div>
 
     <!-- Restaurant Modal -->
-    <div id="restaurantModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div class="p-6 border-b border-gray-200">
-                <h3 class="text-2xl font-bold text-gray-800" id="restaurantModalTitle">إنشاء مطعم</h3>
+    <div id="restaurantModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-2 sm:p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+            <div class="p-4 sm:p-6 border-b border-gray-200 sticky top-0 bg-white z-10">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl sm:text-2xl font-bold text-gray-800" id="restaurantModalTitle">إنشاء مطعم</h3>
+                    <button onclick="closeRestaurantModal()" class="md:hidden text-gray-500 hover:text-gray-700 text-xl">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
             </div>
-            <form id="restaurantForm" class="p-6 space-y-4">
+            <form id="restaurantForm" class="p-4 sm:p-6 space-y-3 sm:space-y-4">
                 <input type="hidden" id="restaurantId">
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">اسم المطعم *</label>
+                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">اسم المطعم *</label>
                         <input type="text" id="restaurantNameInput" required
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                               class="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">الأقسام *</label>
+                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">الأقسام *</label>
                         <select id="restaurantCategoryIds" multiple required
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500" style="min-height: 100px;">
+                                class="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500" style="min-height: 80px;">
                             <!-- Categories will be loaded here -->
                         </select>
-                        <p class="text-xs text-gray-500 mt-1">اضغط Ctrl (أو Cmd على Mac) للاختيار المتعدد - يجب اختيار قسم واحد على الأقل</p>
+                        <p class="text-[10px] sm:text-xs text-gray-500 mt-1">اضغط Ctrl (أو Cmd على Mac) للاختيار المتعدد - يجب اختيار قسم واحد على الأقل</p>
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-sm font-semibold text-gray-700 mb-2">الوصف</label>
@@ -457,12 +496,17 @@
     </div>
 
     <!-- Offer Modal -->
-    <div id="offerModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-xl shadow-2xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div class="p-6 border-b border-gray-200">
-                <h3 class="text-2xl font-bold text-gray-800" id="offerModalTitle">إضافة عرض</h3>
+    <div id="offerModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-2 sm:p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+            <div class="p-4 sm:p-6 border-b border-gray-200 sticky top-0 bg-white z-10">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl sm:text-2xl font-bold text-gray-800" id="offerModalTitle">إضافة عرض</h3>
+                    <button onclick="closeOfferModal()" class="md:hidden text-gray-500 hover:text-gray-700 text-xl">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
             </div>
-            <form id="offerForm" class="p-6 space-y-4">
+            <form id="offerForm" class="p-4 sm:p-6 space-y-3 sm:space-y-4">
                 <input type="hidden" id="offerId">
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -513,12 +557,17 @@
     </div>
 
     <!-- Menu Modal -->
-    <div id="menuModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-xl shadow-2xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div class="p-6 border-b border-gray-200">
-                <h3 class="text-2xl font-bold text-gray-800" id="menuModalTitle">إضافة منيو</h3>
+    <div id="menuModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-2 sm:p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+            <div class="p-4 sm:p-6 border-b border-gray-200 sticky top-0 bg-white z-10">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl sm:text-2xl font-bold text-gray-800" id="menuModalTitle">إضافة منيو</h3>
+                    <button onclick="closeMenuModal()" class="md:hidden text-gray-500 hover:text-gray-700 text-xl">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
             </div>
-            <form id="menuForm" class="p-6 space-y-4">
+            <form id="menuForm" class="p-4 sm:p-6 space-y-3 sm:space-y-4">
                 <input type="hidden" id="menuId">
                 <div class="space-y-4">
                     <div>
@@ -559,7 +608,10 @@
             const dayName = days[now.getDay()];
             const monthName = months[now.getMonth()];
             const dateStr = `${dayName}، ${now.getDate()} ${monthName} ${now.getFullYear()}`;
+            const dateStrShort = `${now.getDate()}/${now.getMonth() + 1}`;
             document.getElementById('currentDate').textContent = dateStr;
+            const dateMobileEl = document.getElementById('currentDateMobile');
+            if (dateMobileEl) dateMobileEl.textContent = dateStrShort;
 
             // Check authentication
             const token = localStorage.getItem('token');
@@ -583,12 +635,28 @@
             document.getElementById('menuForm').addEventListener('submit', saveMenu);
         });
 
+        // Toggle Sidebar (Mobile)
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            // On mobile: sidebar is hidden with translate-x-full (to the right in RTL)
+            // Toggling will bring it in (remove translate-x-full) or hide it (add it back)
+            sidebar.classList.toggle('translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
         // Navigation
         function showSection(sectionName) {
             document.querySelectorAll('.section').forEach(section => {
                 section.classList.add('hidden');
             });
             document.getElementById(sectionName).classList.remove('hidden');
+            
+            // Close sidebar on mobile after navigation
+            if (window.innerWidth < 768) {
+                toggleSidebar();
+            }
 
             document.querySelectorAll('.sidebar-link').forEach(link => {
                 link.classList.remove('active');
@@ -840,39 +908,43 @@
 
         function updateStats() {
             const statsCards = document.getElementById('statsCards');
+            const restaurantName = currentRestaurant?.name || 'غير محدد';
+            const categoryNames = (currentRestaurant?.categoryNames && currentRestaurant.categoryNames.length > 0) ? currentRestaurant.categoryNames.join(', ') : 'غير محدد';
+            const status = currentRestaurant?.isActive ? 'مفعّل' : 'معطّل';
+            
             statsCards.innerHTML = `
-                <div class="bg-gradient-to-r from-yellow-500 to-amber-500 rounded-xl p-6 text-white card-hover transition duration-300">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-yellow-100 text-sm font-semibold">اسم المطعم</p>
-                            <p class="text-2xl font-bold mt-2">${currentRestaurant?.name || 'غير محدد'}</p>
+                <div class="bg-gradient-to-r from-yellow-500 to-amber-500 rounded-xl p-4 sm:p-5 md:p-6 text-white card-hover transition duration-300">
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="flex-1 min-w-0">
+                            <p class="text-yellow-100 text-xs sm:text-sm font-semibold">اسم المطعم</p>
+                            <p class="text-lg sm:text-xl md:text-2xl font-bold mt-1 sm:mt-2 truncate">${restaurantName}</p>
                         </div>
-                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-                            <i class="fas fa-store text-2xl"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl p-6 text-white card-hover transition duration-300">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-green-100 text-sm font-semibold">القسم</p>
-                            <p class="text-2xl font-bold mt-2">${(currentRestaurant?.categoryNames && currentRestaurant.categoryNames.length > 0) ? currentRestaurant.categoryNames.join(', ') : 'غير محدد'}</p>
-                        </div>
-                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-                            <i class="fas fa-tags text-2xl"></i>
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-store text-lg sm:text-xl md:text-2xl"></i>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl p-6 text-white card-hover transition duration-300">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-blue-100 text-sm font-semibold">الحالة</p>
-                            <p class="text-2xl font-bold mt-2">${currentRestaurant?.isActive ? 'مفعّل' : 'معطّل'}</p>
+                <div class="bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl p-4 sm:p-5 md:p-6 text-white card-hover transition duration-300">
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="flex-1 min-w-0">
+                            <p class="text-green-100 text-xs sm:text-sm font-semibold">القسم</p>
+                            <p class="text-lg sm:text-xl md:text-2xl font-bold mt-1 sm:mt-2 truncate">${categoryNames}</p>
                         </div>
-                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-                            <i class="fas fa-check-circle text-2xl"></i>
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-tags text-lg sm:text-xl md:text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl p-4 sm:p-5 md:p-6 text-white card-hover transition duration-300">
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="flex-1 min-w-0">
+                            <p class="text-blue-100 text-xs sm:text-sm font-semibold">الحالة</p>
+                            <p class="text-lg sm:text-xl md:text-2xl font-bold mt-1 sm:mt-2">${status}</p>
+                        </div>
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-check-circle text-lg sm:text-xl md:text-2xl"></i>
                         </div>
                     </div>
                 </div>
@@ -1254,24 +1326,24 @@
                     container.innerHTML = '';
                     const offers = data.data;
                     if (!offers || offers.length === 0) {
-                        container.innerHTML = '<div class="col-span-1 md:col-span-2 lg:col-span-3 text-center text-gray-500 py-8">لا توجد عروض بعد</div>';
+                        container.innerHTML = '<div class="col-span-1 sm:col-span-2 lg:col-span-3 text-center text-gray-500 py-8 text-sm sm:text-base">لا توجد عروض بعد</div>';
                         return;
                     }
                     offers.forEach(o => {
                         const card = document.createElement('div');
-                        card.className = 'bg-white border border-gray-200 rounded-lg p-4 shadow-sm';
-                        const imgTag = o.imageUrl ? `<img src="${o.imageUrl.startsWith('http') ? o.imageUrl : API_BASE_URL.replace('/api','') + o.imageUrl}" alt="${o.name}" class="w-full h-40 object-contain rounded mb-3">` : '';
+                        card.className = 'bg-white border border-gray-200 rounded-lg p-3 sm:p-4 shadow-sm';
+                        const imgTag = o.imageUrl ? `<img src="${o.imageUrl.startsWith('http') ? o.imageUrl : API_BASE_URL.replace('/api','') + o.imageUrl}" alt="${o.name}" class="w-full h-32 sm:h-40 object-contain rounded mb-2 sm:mb-3">` : '';
                         card.innerHTML = `
                             ${imgTag}
-                            <h4 class="text-lg font-bold text-gray-800 mb-1">${o.name}</h4>
-                            <p class="text-sm text-gray-600 mb-2">${o.description || ''}</p>
-                            <div class="flex items-center justify-between text-sm mb-3">
+                            <h4 class="text-base sm:text-lg font-bold text-gray-800 mb-1 truncate">${o.name}</h4>
+                            <p class="text-xs sm:text-sm text-gray-600 mb-2 line-clamp-2">${o.description || ''}</p>
+                            <div class="flex items-center justify-between text-xs sm:text-sm mb-2 sm:mb-3 flex-wrap gap-1">
                                 <span class="text-gray-700">ينتهي في: ${new Date(o.expirationDate).toLocaleDateString('ar-EG')}</span>
-                                <span class="${o.isActive ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'} px-2 py-0.5 rounded-full">${o.isActive ? 'مفعّل' : 'معطّل'}</span>
+                                <span class="${o.isActive ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'} px-2 py-0.5 rounded-full text-xs">${o.isActive ? 'مفعّل' : 'معطّل'}</span>
                             </div>
-                            <div class="flex space-x-2 space-x-reverse">
-                                <button class="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-2 rounded" onclick="openOfferModal(${o.id})"><i class="fas fa-edit mr-1"></i>تعديل</button>
-                                <button class="flex-1 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded" onclick="deleteOffer(${o.id})"><i class="fas fa-trash mr-1"></i>حذف</button>
+                            <div class="flex flex-col sm:flex-row gap-2 space-x-0 sm:space-x-reverse">
+                                <button class="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1.5 sm:py-2 rounded text-xs sm:text-sm" onclick="openOfferModal(${o.id})"><i class="fas fa-edit mr-1"></i>تعديل</button>
+                                <button class="flex-1 bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 sm:py-2 rounded text-xs sm:text-sm" onclick="deleteOffer(${o.id})"><i class="fas fa-trash mr-1"></i>حذف</button>
                             </div>
                         `;
                         container.appendChild(card);
@@ -1358,25 +1430,25 @@
                 const data = await apiCall('/RestaurantOwnerDashboard/menus');
                 const container = document.getElementById('menusList');
                 container.innerHTML = '';
-                if (!data.success) { container.innerHTML = '<div class="col-span-1 md:col-span-2 lg:col-span-3 text-center text-gray-500 py-8">تعذر تحميل المنيو</div>'; return; }
+                if (!data.success) { container.innerHTML = '<div class="col-span-1 sm:col-span-2 lg:col-span-3 text-center text-gray-500 py-8 text-sm sm:text-base">تعذر تحميل المنيو</div>'; return; }
                 const menus = data.data || [];
                 if (menus.length === 0) {
-                    container.innerHTML = '<div class="col-span-1 md:col-span-2 lg:col-span-3 text-center text-gray-500 py-8">لا توجد منيو بعد</div>';
+                    container.innerHTML = '<div class="col-span-1 sm:col-span-2 lg:col-span-3 text-center text-gray-500 py-8 text-sm sm:text-base">لا توجد منيو بعد</div>';
                     return;
                 }
                 menus.forEach(m => {
                     const card = document.createElement('div');
-                    card.className = 'bg-white border border-gray-200 rounded-lg p-4 shadow-sm';
-                    const gallery = (m.images || []).slice(0, 3).map(i => `<img src="${resolveImageUrl(i.imageUrl)}" class="w-full h-30 object-contain rounded">`).join('');
+                    card.className = 'bg-white border border-gray-200 rounded-lg p-3 sm:p-4 shadow-sm';
+                    const gallery = (m.images || []).slice(0, 3).map(i => `<img src="${resolveImageUrl(i.imageUrl)}" class="w-full h-24 sm:h-30 object-contain rounded">`).join('');
                     card.innerHTML = `
-                        <div class="grid gap-2 mb-3">${gallery}</div>
-                        <div class="flex items-center justify-between text-sm mb-3">
+                        <div class="grid grid-cols-3 gap-2 mb-2 sm:mb-3">${gallery}</div>
+                        <div class="flex items-center justify-between text-xs sm:text-sm mb-2 sm:mb-3 flex-wrap gap-1">
                             <span class="${m.isActive ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'} px-2 py-0.5 rounded-full">${m.isActive ? 'مفعّل' : 'معطّل'}</span>
-                            <span class="text-gray-500">${new Date(m.createdAt).toLocaleDateString('ar-EG')}</span>
+                            <span class="text-gray-500 text-xs">${new Date(m.createdAt).toLocaleDateString('ar-EG')}</span>
                         </div>
-                        <div class="flex space-x-2 space-x-reverse">
-                            <button class="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-2 rounded" data-menu='${encodeURIComponent(JSON.stringify(m))}' onclick="openMenuModal(${m.id}, decodeURIComponent(this.dataset.menu))"><i class="fas fa-edit mr-1"></i>تعديل</button>
-                            <button class="flex-1 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded" onclick="deleteMenu(${m.id})"><i class="fas fa-trash mr-1"></i>حذف</button>
+                        <div class="flex flex-col sm:flex-row gap-2 space-x-0 sm:space-x-reverse">
+                            <button class="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1.5 sm:py-2 rounded text-xs sm:text-sm" data-menu='${encodeURIComponent(JSON.stringify(m))}' onclick="openMenuModal(${m.id}, decodeURIComponent(this.dataset.menu))"><i class="fas fa-edit mr-1"></i>تعديل</button>
+                            <button class="flex-1 bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 sm:py-2 rounded text-xs sm:text-sm" onclick="deleteMenu(${m.id})"><i class="fas fa-trash mr-1"></i>حذف</button>
                         </div>`;
                     container.appendChild(card);
                 });

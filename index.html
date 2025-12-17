@@ -36,19 +36,31 @@
         #city-select::-webkit-scrollbar-thumb:hover {
             background: #d97706;
         }
+        
+        /* Responsive improvements */
+        @media (max-width: 640px) {
+            /* Hide scrollbar on mobile for better UX */
+            .no-scrollbar::-webkit-scrollbar {
+                display: none;
+            }
+            .no-scrollbar {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50 overflow-x-hidden">
     <!-- Header -->
     <header class="bg-gradient-to-r from-gray-900 to-black shadow-lg sticky top-0 z-50 overflow-hidden">
-        <div class="container mx-auto px-4 py-4">
-            <div class="flex items-center justify-between">
+        <div class="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
+            <div class="flex items-center justify-between flex-wrap gap-2">
                 <!-- Logo -->
-                <div class="flex items-center space-x-4 space-x-reverse">
-                    <div class="w-12 h-12 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
-                        <i class="fas fa-utensils text-white text-xl"></i>
+                <div class="flex items-center space-x-2 sm:space-x-4 space-x-reverse flex-shrink-0">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
+                        <i class="fas fa-utensils text-white text-lg sm:text-xl"></i>
                     </div>
-                    <h1 class="text-white text-2xl font-bold">WeenRest</h1>
+                    <h1 class="text-white text-xl sm:text-2xl font-bold">WeenRest</h1>
                 </div>
 
                 <!-- Navigation Menu -->
@@ -56,54 +68,70 @@
                     <a href="index.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">الرئيسية</a>
                     <a href="places.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">أصناف الطعام</a>
                     <a href="jobs.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">وظائف</a>
-                    <a href="customize.html" id="customize-restaurant-nav" class="text-white hover:text-yellow-400 transition duration-300 font-medium">خصص مطعمك</a>
                 </nav>
 
                 <!-- Login & Signup Buttons (Hidden when logged in) -->
-                <div class="flex items-center space-x-4 space-x-reverse" id="auth-buttons">
-                    <a href="signup.html" class="border-2 border-yellow-600 text-yellow-600 px-6 py-2 rounded-full font-semibold hover:bg-yellow-600 hover:text-white transition duration-300">
+                <div class="flex items-center space-x-2 sm:space-x-4 space-x-reverse" id="auth-buttons">
+                    <a href="signup.html" class="hidden sm:inline-block border-2 border-yellow-600 text-yellow-600 px-4 sm:px-6 py-1.5 sm:py-2 rounded-full font-semibold hover:bg-yellow-600 hover:text-white transition duration-300 text-sm sm:text-base">
                         إنشاء حساب
                     </a>
-                    <a href="login.html" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-6 py-2 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-md">
+                    <a href="login.html" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-4 sm:px-6 py-1.5 sm:py-2 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-md text-sm sm:text-base">
                         تسجيل الدخول
                     </a>
                     <!-- Mobile Menu Button -->
-                    <button class="md:hidden text-white text-2xl" id="mobile-menu-btn">
+                    <button class="md:hidden text-white text-xl sm:text-2xl ml-2 sm:ml-0" id="mobile-menu-btn">
                         <i class="fas fa-bars"></i>
                     </button>
                 </div>
 
                 <!-- User Info (Shown when logged in) -->
-                <div class="flex items-center space-x-4 space-x-reverse hidden" id="user-info">
-                    <div class="flex items-center space-x-3 space-x-reverse text-white">
-                        <i class="fas fa-user-circle text-2xl text-yellow-400"></i>
-                        <div class="hidden md:block">
-                            <span class="text-sm text-gray-300">مرحباً،</span>
-                            <span class="font-semibold mr-1" id="user-name">المستخدم</span>
+                <div class="flex items-center space-x-2 sm:space-x-4 space-x-reverse hidden" id="user-info">
+                    <div class="flex items-center space-x-2 sm:space-x-3 space-x-reverse text-white">
+                        <i class="fas fa-user-circle text-xl sm:text-2xl text-yellow-400"></i>
+                        <div class="hidden lg:block">
+                            <span class="text-xs sm:text-sm text-gray-300">مرحباً،</span>
+                            <span class="font-semibold mr-1 text-xs sm:text-sm" id="user-name">المستخدم</span>
                         </div>
                     </div>
-                    <a href="admin-dashboard.html" id="dashboard-link" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-5 py-2 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-md text-sm">
+                    <a href="admin-dashboard.html" id="dashboard-link" class="hidden sm:inline-flex items-center bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-3 sm:px-5 py-1.5 sm:py-2 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-md text-xs sm:text-sm">
                         <i class="fas fa-tachometer-alt mr-1"></i>
-                        لوحة التحكم
+                        <span class="hidden md:inline">لوحة التحكم</span>
                     </a>
-                    <button id="logout-btn" class="border-2 border-yellow-600 text-yellow-600 px-5 py-2 rounded-full font-semibold hover:bg-yellow-600 hover:text-white transition duration-300 text-sm">
+                    <button id="logout-btn" class="hidden sm:inline-flex items-center border-2 border-yellow-600 text-yellow-600 px-3 sm:px-5 py-1.5 sm:py-2 rounded-full font-semibold hover:bg-yellow-600 hover:text-white transition duration-300 text-xs sm:text-sm">
                         <i class="fas fa-sign-out-alt mr-1"></i>
-                        تسجيل الخروج
+                        <span class="hidden md:inline">تسجيل الخروج</span>
                     </button>
                     <!-- Mobile Menu Button -->
-                    <button class="md:hidden text-white text-2xl" id="mobile-menu-btn-auth">
+                    <button class="md:hidden text-white text-xl sm:text-2xl" id="mobile-menu-btn-auth">
                         <i class="fas fa-bars"></i>
                     </button>
                 </div>
             </div>
 
             <!-- Mobile Menu -->
-            <div class="md:hidden mt-4 hidden" id="mobile-menu">
-                <div class="flex flex-col space-y-4">
-                    <a href="index.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">الرئيسية</a>
-                    <a href="places.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">اصناف الطعام</a>
-                    <a href="jobs.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">وظائف</a>
-                    <a href="customize.html" id="customize-restaurant-mobile" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">خصص مطعمك</a>
+            <div class="md:hidden mt-3 hidden" id="mobile-menu">
+                <div class="flex flex-col space-y-3 pb-2">
+                    <a href="index.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2 text-sm">الرئيسية</a>
+                    <a href="places.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2 text-sm">اصناف الطعام</a>
+                    <a href="jobs.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2 text-sm">وظائف</a>
+                    <a href="customize.html" id="customize-restaurant-mobile" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2 text-sm">خصص مطعمك</a>
+                    <!-- Mobile auth buttons when logged in -->
+                    <div class="flex flex-col space-y-2 pt-2 border-t border-gray-700" id="mobile-auth-actions" style="display: none;">
+                        <a href="admin-dashboard.html" id="mobile-dashboard-link" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-4 py-2 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 text-sm text-center">
+                            <i class="fas fa-tachometer-alt ml-2"></i>
+                            لوحة التحكم
+                        </a>
+                        <button id="mobile-logout-btn" class="border-2 border-yellow-600 text-yellow-600 px-4 py-2 rounded-lg font-semibold hover:bg-yellow-600 hover:text-white transition duration-300 text-sm">
+                            <i class="fas fa-sign-out-alt ml-2"></i>
+                            تسجيل الخروج
+                        </button>
+                    </div>
+                    <!-- Mobile signup button when not logged in -->
+                    <div class="pt-2 border-t border-gray-700" id="mobile-signup-action" style="display: none;">
+                        <a href="signup.html" class="block border-2 border-yellow-600 text-yellow-600 px-4 py-2 rounded-lg font-semibold hover:bg-yellow-600 hover:text-white transition duration-300 text-sm text-center">
+                            إنشاء حساب
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -112,7 +140,7 @@
     <!-- Main Content Sections (Placeholder for now) -->
     <main>
         <!-- Hero Section -->
-        <section class="relative py-20 overflow-hidden">
+        <section class="relative py-12 sm:py-16 md:py-20 overflow-hidden">
             <!-- Video Background -->
             <div class="absolute inset-0">
                 <video autoplay muted loop class="w-full h-full object-cover">
@@ -123,43 +151,43 @@
             </div>
             
             <!-- Content -->
-            <div class="relative z-10 container mx-auto px-4">
-                <div class="text-center mb-8">
-                    <h2 class="text-4xl font-bold text-white mb-4">اكتشف أفضل المطاعم</h2>
-                    <p class="text-lg text-gray-300 mb-6">العروض الحصرية والوجبات الشهية في انتظارك</p>
+            <div class="relative z-10 container mx-auto px-3 sm:px-4">
+                <div class="text-center mb-6 sm:mb-8">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4 px-2">اكتشف أفضل المطاعم</h2>
+                    <p class="text-base sm:text-lg text-gray-300 mb-4 sm:mb-6 px-2">العروض الحصرية والوجبات الشهية في انتظارك</p>
                     
                     <!-- Search Bar -->
-                    <div class="max-w-4xl mx-auto mb-6">
-                        <div class="bg-white/95 backdrop-blur-sm rounded-xl p-1.5 shadow-2xl">
+                    <div class="max-w-4xl mx-auto mb-4 sm:mb-6">
+                        <div class="bg-white/95 backdrop-blur-sm rounded-xl p-1 sm:p-1.5 shadow-2xl">
                             <div class="flex flex-col md:flex-row gap-1.5">
                                 <!-- Search Input -->
                                 <div class="flex-1 relative">
                                     <input type="text" 
                                            id="search-input"
-                                           placeholder="ابحث عن المطاعم، الوجبات، أو الأطباق المفضلة..." 
-                                           class="w-full px-4 py-3 pr-10 text-gray-700 placeholder-gray-500 focus:outline-none rounded-lg text-sm">
-                                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+                                           placeholder="ابحث عن المطاعم، الوجبات..." 
+                                           class="w-full px-3 sm:px-4 py-2.5 sm:py-3 pr-8 sm:pr-10 text-gray-700 placeholder-gray-500 focus:outline-none rounded-lg text-sm">
+                                    <i class="fas fa-search absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
                                 </div>
                                 
                                 <!-- Main Category Filter -->
-                                <div class="relative">
-                                    <select id="main-category-select" class="px-4 py-3 pr-10 text-gray-700 focus:outline-none rounded-lg bg-white border-0 min-w-[160px] text-sm">
+                                <div class="relative w-full md:w-auto">
+                                    <select id="main-category-select" class="w-full md:min-w-[140px] lg:min-w-[160px] px-3 sm:px-4 py-2.5 sm:py-3 pr-8 sm:pr-10 text-gray-700 focus:outline-none rounded-lg bg-white border-0 text-sm">
                                         <option value="">جميع الأقسام</option>
                                     </select>
-                                    <i class="fas fa-tags absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+                                    <i class="fas fa-tags absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm pointer-events-none"></i>
                                 </div>
                                 
                                 <!-- City Filter -->
-                                <div class="relative">
-                                    <select id="city-select" class="px-4 py-3 pr-10 text-gray-700 focus:outline-none rounded-lg bg-white border-0 min-w-[180px] text-sm">
+                                <div class="relative w-full md:w-auto">
+                                    <select id="city-select" class="w-full md:min-w-[140px] lg:min-w-[180px] px-3 sm:px-4 py-2.5 sm:py-3 pr-8 sm:pr-10 text-gray-700 focus:outline-none rounded-lg bg-white border-0 text-sm">
                                         <option value="">جميع المدن</option>
                                     </select>
-                                    <i class="fas fa-map-marker-alt absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+                                    <i class="fas fa-map-marker-alt absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm pointer-events-none"></i>
                                 </div>
                                 
                                 <!-- Search Button -->
-                                <button id="search-btn" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-lg text-sm">
-                                    <i class="fas fa-search mr-1"></i>
+                                <button id="search-btn" class="w-full md:w-auto bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-lg text-sm">
+                                    <i class="fas fa-search ml-1"></i>
                                     بحث
                                 </button>
                             </div>
@@ -167,11 +195,11 @@
                     </div>
                     
                     <!-- Action Buttons -->
-                    <div class="flex justify-center space-x-3 space-x-reverse">
-                        <a href="jobs.html" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-6 py-2.5 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-lg text-sm">
+                    <div class="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-2 sm:gap-3 space-x-0 sm:space-x-reverse px-2">
+                        <a id="primary-cta-btn" href="jobs.html" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-lg text-sm text-center">
                             استكشف الوظائف
                         </a>
-                        <button id="add-restaurant-btn" class="border-2 border-yellow-600 text-yellow-600 px-6 py-2.5 rounded-full font-semibold hover:bg-yellow-600 hover:text-white transition duration-300 text-sm">
+                        <button id="add-restaurant-btn" class="border-2 border-yellow-600 text-yellow-600 px-4 sm:px-6 py-2 sm:py-2.5 rounded-full font-semibold hover:bg-yellow-600 hover:text-white transition duration-300 text-sm">
                             أضف مطعمك
                         </button>
                     </div>
@@ -180,70 +208,70 @@
         </section>
 
         <!-- Search Results Section (Hidden by default) -->
-        <section id="search-results-section" class="py-16 bg-white hidden">
-            <div class="container mx-auto px-4">
-                <div class="flex items-center justify-between mb-6">
-                    <div>
-                        <h3 class="text-2xl font-bold text-gray-900 mb-2" id="search-results-title">نتائج البحث</h3>
-                        <p class="text-gray-600 text-sm" id="search-results-count">0 نتيجة</p>
+        <section id="search-results-section" class="py-10 sm:py-12 md:py-16 bg-white hidden">
+            <div class="container mx-auto px-3 sm:px-4">
+                <div class="flex items-start sm:items-center justify-between mb-4 sm:mb-6 gap-3">
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-2 truncate" id="search-results-title">نتائج البحث</h3>
+                        <p class="text-gray-600 text-xs sm:text-sm" id="search-results-count">0 نتيجة</p>
                     </div>
-                    <button id="close-search-results" class="text-gray-500 hover:text-gray-700">
-                        <i class="fas fa-times text-xl"></i>
+                    <button id="close-search-results" class="text-gray-500 hover:text-gray-700 flex-shrink-0">
+                        <i class="fas fa-times text-lg sm:text-xl"></i>
                     </button>
                 </div>
 
                 <!-- Filters Bar -->
-                <div id="search-filters-bar" class="flex flex-wrap items-center gap-3 mb-6 p-4 bg-gray-50 rounded-lg">
-                    <span class="text-sm font-semibold text-gray-700">الفلاتر:</span>
-                    <div id="active-filters" class="flex flex-wrap gap-2">
+                <div id="search-filters-bar" class="flex flex-wrap items-center gap-2 sm:gap-3 mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 rounded-lg">
+                    <span class="text-xs sm:text-sm font-semibold text-gray-700 w-full sm:w-auto">الفلاتر:</span>
+                    <div id="active-filters" class="flex flex-wrap gap-2 flex-1">
                         <!-- Active filters will be added here -->
                     </div>
-                    <button id="clear-all-filters" class="text-sm text-red-600 hover:text-red-700 font-medium hidden">
+                    <button id="clear-all-filters" class="text-xs sm:text-sm text-red-600 hover:text-red-700 font-medium hidden mt-2 sm:mt-0">
                         <i class="fas fa-times-circle mr-1"></i>
                         إزالة جميع الفلاتر
                     </button>
                 </div>
 
                 <!-- Results Tabs -->
-                <div class="flex items-center gap-4 mb-6 border-b border-gray-200">
-                    <button class="search-tab active px-4 py-2 font-semibold text-sm border-b-2 border-amber-600 text-amber-600 transition" data-tab="restaurants">
-                        <i class="fas fa-utensils ml-2"></i>
+                <div class="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6 border-b border-gray-200 overflow-x-auto no-scrollbar">
+                    <button class="search-tab active px-3 sm:px-4 py-1.5 sm:py-2 font-semibold text-xs sm:text-sm border-b-2 border-amber-600 text-amber-600 transition whitespace-nowrap" data-tab="restaurants">
+                        <i class="fas fa-utensils ml-1 sm:ml-2"></i>
                         المطاعم (<span id="restaurants-count">0</span>)
                     </button>
-                    <button class="search-tab px-4 py-2 font-semibold text-sm text-gray-600 hover:text-amber-600 transition" data-tab="categories">
-                        <i class="fas fa-tags ml-2"></i>
+                    <button class="search-tab px-3 sm:px-4 py-1.5 sm:py-2 font-semibold text-xs sm:text-sm text-gray-600 hover:text-amber-600 transition whitespace-nowrap" data-tab="categories">
+                        <i class="fas fa-tags ml-1 sm:ml-2"></i>
                         الأقسام (<span id="categories-count">0</span>)
                     </button>
                 </div>
 
                 <!-- Restaurants Results -->
                 <div id="restaurants-results" class="search-results-content">
-                    <div id="restaurants-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div id="restaurants-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
                         <!-- Restaurant cards will be injected here -->
                     </div>
-                    <div id="restaurants-pagination" class="mt-8 flex justify-center items-center gap-2">
+                    <div id="restaurants-pagination" class="mt-6 sm:mt-8 flex justify-center items-center gap-2">
                         <!-- Pagination will be injected here -->
                     </div>
                 </div>
 
                 <!-- Categories Results -->
                 <div id="categories-results" class="search-results-content hidden">
-                    <div id="categories-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div id="categories-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
                         <!-- Category cards will be injected here -->
                     </div>
-                    <div id="categories-pagination" class="mt-8 flex justify-center items-center gap-2">
+                    <div id="categories-pagination" class="mt-6 sm:mt-8 flex justify-center items-center gap-2">
                         <!-- Pagination will be injected here -->
                     </div>
                 </div>
 
                 <!-- Empty State -->
-                <div id="search-empty-state" class="hidden text-center py-16">
-                    <div class="max-w-md mx-auto">
-                        <i class="fas fa-search text-6xl text-gray-300 mb-4"></i>
-                        <p class="text-xl font-semibold text-gray-600 mb-2">لا توجد نتائج</p>
-                        <p class="text-gray-500 mb-6">جرب البحث بكلمات مختلفة أو قم بإزالة بعض الفلاتر</p>
-                        <button onclick="document.getElementById('close-search-results').click()" class="inline-flex items-center px-6 py-2.5 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition">
-                            <i class="fas fa-arrow-right ml-2"></i>
+                <div id="search-empty-state" class="hidden text-center py-12 sm:py-16">
+                    <div class="max-w-md mx-auto px-4">
+                        <i class="fas fa-search text-4xl sm:text-5xl md:text-6xl text-gray-300 mb-3 sm:mb-4"></i>
+                        <p class="text-lg sm:text-xl font-semibold text-gray-600 mb-2">لا توجد نتائج</p>
+                        <p class="text-sm sm:text-base text-gray-500 mb-4 sm:mb-6">جرب البحث بكلمات مختلفة أو قم بإزالة بعض الفلاتر</p>
+                        <button onclick="document.getElementById('close-search-results').click()" class="inline-flex items-center px-4 sm:px-6 py-2 sm:py-2.5 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition text-sm sm:text-base">
+                            <i class="fas fa-arrow-right ml-2 text-xs sm:text-sm"></i>
                             العودة للصفحة الرئيسية
                         </button>
                     </div>
@@ -253,12 +281,12 @@
 
         
         <!-- Latest Offers Section -->
-        <section class="py-16 bg-gradient-to-br from-amber-50 to-yellow-50" id="offers-section">
-            <div class="container mx-auto px-4">
-                <div class="flex items-end justify-between mb-8">
+        <section class="py-10 sm:py-12 md:py-16 bg-gradient-to-br from-amber-50 to-yellow-50" id="offers-section">
+            <div class="container mx-auto px-3 sm:px-4">
+                <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-6 sm:mb-8 gap-3">
                     <div>
-                        <h3 class="text-3xl font-bold text-gray-900 mb-2">آخر العروض</h3>
-                        <p class="text-gray-600 text-sm">أحدث العروض الحصرية من مطاعمنا</p>
+                        <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">آخر العروض</h3>
+                        <p class="text-gray-600 text-xs sm:text-sm">أحدث العروض الحصرية من مطاعمنا</p>
                     </div>
                     <a href="#" class="hidden md:inline-flex items-center text-yellow-700 hover:text-yellow-800 font-semibold text-sm">
                         عرض المزيد
@@ -266,19 +294,19 @@
                     </a>
                 </div>
 
-                <div id="offers-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+                <div id="offers-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
                     <!-- Cards injected by JS -->
                 </div>
             </div>
         </section>
 
         <!-- Top Advertisers Slider Section -->
-        <section class="py-16 bg-gradient-to-br from-amber-50/60 to-yellow-50/40" id="top-advertisers-section">
-            <div class="container mx-auto px-4">
-                <div class="flex items-end justify-between mb-8">
+        <section class="py-10 sm:py-12 md:py-16 bg-gradient-to-br from-amber-50/60 to-yellow-50/40" id="top-advertisers-section">
+            <div class="container mx-auto px-3 sm:px-4">
+                <div class="flex items-end justify-between mb-6 sm:mb-8">
                     <div>
-                        <h3 class="text-3xl font-bold text-gray-900 mb-2">أهم المعلنين</h3>
-                        <p class="text-gray-600 text-sm">المطاعم الرائجه والمعلنه في المنصه</p>
+                        <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">أهم المعلنين</h3>
+                        <p class="text-gray-600 text-xs sm:text-sm">المطاعم الرائجه والمعلنه في المنصه</p>
                     </div>
                     
                 </div>
@@ -295,12 +323,12 @@
         </section>
 
         <!-- Trending Restaurants Section -->
-        <section class="py-16 bg-white" id="trending-section">
-            <div class="container mx-auto px-4">
-                <div class="flex items-end justify-between mb-8">
+        <section class="py-10 sm:py-12 md:py-16 bg-white" id="trending-section">
+            <div class="container mx-auto px-3 sm:px-4">
+                <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-6 sm:mb-8 gap-3">
                     <div>
-                        <h3 class="text-3xl font-bold text-gray-900 mb-2">المطاعم الرائجة</h3>
-                        <p class="text-gray-600 text-sm">الأكثر زيارة هذا الأسبوع</p>
+                        <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">المطاعم الرائجة</h3>
+                        <p class="text-gray-600 text-xs sm:text-sm">الأكثر زيارة هذا الأسبوع</p>
                     </div>
                     <a href="#" class="hidden md:inline-flex items-center text-yellow-700 hover:text-yellow-800 font-semibold text-sm">
                         عرض المزيد
@@ -308,45 +336,45 @@
                     </a>
                 </div>
 
-                <div id="trending-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+                <div id="trending-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
                     <!-- Cards injected by JS -->
                 </div>
             </div>
         </section>
 
         <!-- Restaurant Store Section -->
-        <section class="py-16 bg-gradient-to-br from-amber-50 to-yellow-50" id="restaurant-store-section">
-            <div class="container mx-auto px-4">
-                <div class="flex items-end justify-between mb-8">
+        <section class="py-10 sm:py-12 md:py-16 bg-gradient-to-br from-amber-50 to-yellow-50" id="restaurant-store-section">
+            <div class="container mx-auto px-3 sm:px-4">
+                <div class="flex items-end justify-between mb-6 sm:mb-8">
                     <div>
-                        <h3 class="text-3xl font-bold text-gray-900 mb-2">متجر للمطاعم</h3>
-                        <p class="text-gray-600 text-sm">كل ما تحتاجه لمطعمك في مكان واحد</p>
+                        <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">متجر للمطاعم</h3>
+                        <p class="text-gray-600 text-xs sm:text-sm">كل ما تحتاجه لمطعمك في مكان واحد</p>
                     </div>
                 </div>
 
-                <div class="flex items-center justify-center py-20">
+                <div class="flex items-center justify-center py-12 sm:py-16 md:py-20">
                     <div class="text-center">
-                        <i class="fas fa-store text-6xl text-gray-300 mb-4"></i>
-                        <p class="text-2xl font-semibold text-gray-500">قريباً</p>
+                        <i class="fas fa-store text-4xl sm:text-5xl md:text-6xl text-gray-300 mb-3 sm:mb-4"></i>
+                        <p class="text-xl sm:text-2xl font-semibold text-gray-500">قريباً</p>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Suppliers Section -->
-        <section class="py-16 bg-white" id="suppliers-section">
-            <div class="container mx-auto px-4">
-                <div class="flex items-end justify-between mb-8">
+        <section class="py-10 sm:py-12 md:py-16 bg-white" id="suppliers-section">
+            <div class="container mx-auto px-3 sm:px-4">
+                <div class="flex items-end justify-between mb-6 sm:mb-8">
                     <div>
-                        <h3 class="text-3xl font-bold text-gray-900 mb-2">الموردون</h3>
-                        <p class="text-gray-600 text-sm">شبكة موثوقة من الموردين</p>
+                        <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">الموردون</h3>
+                        <p class="text-gray-600 text-xs sm:text-sm">شبكة موثوقة من الموردين</p>
                     </div>
                 </div>
 
-                <div class="flex items-center justify-center py-20">
+                <div class="flex items-center justify-center py-12 sm:py-16 md:py-20">
                     <div class="text-center">
-                        <i class="fas fa-truck text-6xl text-gray-300 mb-4"></i>
-                        <p class="text-2xl font-semibold text-gray-500">قريباً</p>
+                        <i class="fas fa-truck text-4xl sm:text-5xl md:text-6xl text-gray-300 mb-3 sm:mb-4"></i>
+                        <p class="text-xl sm:text-2xl font-semibold text-gray-500">قريباً</p>
                     </div>
                 </div>
             </div>
@@ -355,77 +383,77 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gradient-to-r from-gray-900 to-black text-white py-12">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer class="bg-gradient-to-r from-gray-900 to-black text-white py-8 sm:py-10 md:py-12">
+        <div class="container mx-auto px-3 sm:px-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
                 <!-- Company Info -->
-                <div class="col-span-1 md:col-span-2">
-                    <div class="flex items-center space-x-3 space-x-reverse mb-4">
-                        <div class="w-10 h-10 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
-                            <i class="fas fa-utensils text-white"></i>
+                <div class="col-span-1 sm:col-span-2 lg:col-span-2">
+                    <div class="flex items-center space-x-2 sm:space-x-3 space-x-reverse mb-3 sm:mb-4">
+                        <div class="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-utensils text-white text-sm sm:text-base"></i>
                         </div>
-                        <h3 class="text-2xl font-bold">WeenRest</h3>
+                        <h3 class="text-xl sm:text-2xl font-bold">WeenRest</h3>
                     </div>
-                    <p class="text-gray-300 mb-4 max-w-md">
+                    <p class="text-gray-300 mb-3 sm:mb-4 max-w-md text-sm sm:text-base leading-relaxed">
                         منصة المطاعم الرائدة في سوريا. اكتشف أفضل المطاعم والعروض، أو أضف مطعمك وابدأ رحلتك معنا.
                     </p>
-                    <div class="flex space-x-4 space-x-reverse">
+                    <div class="flex space-x-3 sm:space-x-4 space-x-reverse">
                         <a href="#" class="text-yellow-400 hover:text-white transition duration-300">
-                            <i class="fab fa-facebook text-2xl"></i>
+                            <i class="fab fa-facebook text-xl sm:text-2xl"></i>
                         </a>
                         <a href="#" class="text-yellow-400 hover:text-white transition duration-300">
-                            <i class="fab fa-twitter text-2xl"></i>
+                            <i class="fab fa-twitter text-xl sm:text-2xl"></i>
                         </a>
                         <a href="#" class="text-yellow-400 hover:text-white transition duration-300">
-                            <i class="fab fa-instagram text-2xl"></i>
+                            <i class="fab fa-instagram text-xl sm:text-2xl"></i>
                         </a>
                         <a href="#" class="text-yellow-400 hover:text-white transition duration-300">
-                            <i class="fab fa-linkedin text-2xl"></i>
+                            <i class="fab fa-linkedin text-xl sm:text-2xl"></i>
                         </a>
                     </div>
                 </div>
 
                 <!-- Quick Links -->
                 <div>
-                    <h4 class="text-lg font-semibold mb-4">روابط سريعة</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-yellow-400 hover:text-white transition duration-300">عن الموقع</a></li>
-                        <li><a href="#" class="text-yellow-400 hover:text-white transition duration-300">كيفية الاستخدام</a></li>
-                        <li><a href="#" class="text-yellow-400 hover:text-white transition duration-300">الشروط والأحكام</a></li>
-                        <li><a href="#" class="text-yellow-400 hover:text-white transition duration-300">سياسة الخصوصية</a></li>
+                    <h4 class="text-base sm:text-lg font-semibold mb-3 sm:mb-4">روابط سريعة</h4>
+                    <ul class="space-y-1.5 sm:space-y-2">
+                        <li><a href="#" class="text-yellow-400 hover:text-white transition duration-300 text-sm sm:text-base">عن الموقع</a></li>
+                        <li><a href="#" class="text-yellow-400 hover:text-white transition duration-300 text-sm sm:text-base">كيفية الاستخدام</a></li>
+                        <li><a href="#" class="text-yellow-400 hover:text-white transition duration-300 text-sm sm:text-base">الشروط والأحكام</a></li>
+                        <li><a href="#" class="text-yellow-400 hover:text-white transition duration-300 text-sm sm:text-base">سياسة الخصوصية</a></li>
                     </ul>
                 </div>
 
                 <!-- Contact Info -->
                 <div>
-                    <h4 class="text-lg font-semibold mb-4">تواصل معنا</h4>
-                    <ul class="space-y-2">
+                    <h4 class="text-base sm:text-lg font-semibold mb-3 sm:mb-4">تواصل معنا</h4>
+                    <ul class="space-y-1.5 sm:space-y-2">
                         <li class="flex items-center space-x-2 space-x-reverse">
-                            <i class="fas fa-phone text-yellow-400"></i>
-                            <span class="text-yellow-400">+20 123 456 7890</span>
+                            <i class="fas fa-phone text-yellow-400 text-sm"></i>
+                            <span class="text-yellow-400 text-sm sm:text-base break-all">+20 123 456 7890</span>
                         </li>
                         <li class="flex items-center space-x-2 space-x-reverse">
-                            <i class="fas fa-envelope text-yellow-400"></i>
-                            <span class="text-yellow-400">info@weenrest.com</span>
+                            <i class="fas fa-envelope text-yellow-400 text-sm"></i>
+                            <span class="text-yellow-400 text-sm sm:text-base break-all">info@weenrest.com</span>
                         </li>
                         <li class="flex items-center space-x-2 space-x-reverse">
-                            <i class="fas fa-map-marker-alt text-yellow-400"></i>
-                            <span class="text-yellow-400">دمشق، سوريا</span>
+                            <i class="fas fa-map-marker-alt text-yellow-400 text-sm"></i>
+                            <span class="text-yellow-400 text-sm sm:text-base">دمشق، سوريا</span>
                         </li>
                     </ul>
                 </div>
             </div>
 
             <!-- Bottom Bar -->
-            <div class="border-t border-yellow-600 mt-8 pt-8">
-                <div class="flex flex-col md:flex-row justify-between items-center">
-                    <p class="text-yellow-400 text-sm">
+            <div class="border-t border-yellow-600 mt-6 sm:mt-8 pt-6 sm:pt-8">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-3">
+                    <p class="text-yellow-400 text-xs sm:text-sm text-center md:text-right">
                         © 2024 WeenRest. جميع الحقوق محفوظة.
                     </p>
-                    <div class="flex space-x-6 space-x-reverse mt-4 md:mt-0">
-                        <a href="#" class="text-yellow-400 hover:text-white text-sm transition duration-300">سياسة الخصوصية</a>
-                        <a href="#" class="text-yellow-400 hover:text-white text-sm transition duration-300">الشروط والأحكام</a>
-                        <a href="#" class="text-yellow-400 hover:text-white text-sm transition duration-300">تواصل معنا</a>
+                    <div class="flex flex-wrap justify-center md:justify-end gap-3 sm:gap-4 md:gap-6 space-x-0 sm:space-x-reverse">
+                        <a href="#" class="text-yellow-400 hover:text-white text-xs sm:text-sm transition duration-300">سياسة الخصوصية</a>
+                        <a href="#" class="text-yellow-400 hover:text-white text-xs sm:text-sm transition duration-300">الشروط والأحكام</a>
+                        <a href="#" class="text-yellow-400 hover:text-white text-xs sm:text-sm transition duration-300">تواصل معنا</a>
                     </div>
                 </div>
             </div>
@@ -433,10 +461,10 @@
     </footer>
 
     <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-4 right-4 bg-white rounded-lg shadow-2xl border border-gray-200 p-4 hidden z-50 max-w-sm transform transition-all duration-300">
-        <div class="flex items-center space-x-3 space-x-reverse">
+    <div id="toast" class="fixed bottom-4 right-3 sm:right-4 bg-white rounded-lg shadow-2xl border border-gray-200 p-3 sm:p-4 hidden z-50 max-w-[calc(100vw-1.5rem)] sm:max-w-sm transform transition-all duration-300">
+        <div class="flex items-center space-x-2 sm:space-x-3 space-x-reverse">
             <div id="toastIcon" class="flex-shrink-0"></div>
-            <p id="toastMessage" class="text-sm font-semibold text-gray-800"></p>
+            <p id="toastMessage" class="text-xs sm:text-sm font-semibold text-gray-800"></p>
         </div>
     </div>
 
@@ -450,6 +478,9 @@
             const userInfo = document.getElementById('user-info');
             const userName = document.getElementById('user-name');
             const dashboardLink = document.getElementById('dashboard-link');
+            const primaryCtaBtn = document.getElementById('primary-cta-btn');
+            const restaurantStoreSection = document.getElementById('restaurant-store-section');
+            const suppliersSection = document.getElementById('suppliers-section');
             
             // Check if user is authenticated
             if (token && userData) {
@@ -460,18 +491,29 @@
                     authButtons.classList.add('hidden');
                     userInfo.classList.remove('hidden');
                     
-                    // Set user name
-                    const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'المستخدم';
-                    userName.textContent = fullName;
+                    // Show mobile auth actions and hide mobile signup
+                    const mobileAuthActions = document.getElementById('mobile-auth-actions');
+                    const mobileSignupAction = document.getElementById('mobile-signup-action');
+                    const mobileDashboardLink = document.getElementById('mobile-dashboard-link');
+                    
+                    if (mobileAuthActions) mobileAuthActions.style.display = 'flex';
+                    if (mobileSignupAction) mobileSignupAction.style.display = 'none';
                     
                     // Set dashboard link based on user role
                     if (user.role === 'admin') {
                         dashboardLink.href = 'admin-dashboard.html';
+                        if (mobileDashboardLink) mobileDashboardLink.href = 'admin-dashboard.html';
                     } else if (user.role === 'stakeholder') {
                         dashboardLink.href = 'restaurant-owner-dashboard.html';
+                        if (mobileDashboardLink) mobileDashboardLink.href = 'restaurant-owner-dashboard.html';
                     } else {
                         dashboardLink.href = 'user-dashboard.html';
+                        if (mobileDashboardLink) mobileDashboardLink.href = 'user-dashboard.html';
                     }
+                    
+                    // Set user name
+                    const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'المستخدم';
+                    userName.textContent = fullName;
 
                     // Show restaurant-specific buttons only for admin and stakeholders
                     const customizeNav = document.getElementById('customize-restaurant-nav');
@@ -483,6 +525,21 @@
                     if (customizeMobile) customizeMobile.style.display = isPrivileged ? '' : 'none';
                     // keep "add restaurant" visible only for stakeholders
                     if (addRestaurantBtn) addRestaurantBtn.style.display = user.role === 'stakeholder' ? '' : 'none';
+
+                    // Show/hide restaurant store & suppliers sections based on role (only admin & restaurant owners)
+                    if (restaurantStoreSection) restaurantStoreSection.style.display = isPrivileged ? '' : 'none';
+                    if (suppliersSection) suppliersSection.style.display = isPrivileged ? '' : 'none';
+
+                    // Update main hero CTA for restaurant owners
+                    if (primaryCtaBtn) {
+                        if (user.role === 'stakeholder') {
+                            primaryCtaBtn.href = 'customize.html';
+                            primaryCtaBtn.textContent = 'خصص مطعمك';
+                        } else {
+                            primaryCtaBtn.href = 'jobs.html';
+                            primaryCtaBtn.textContent = 'استكشف الوظائف';
+                        }
+                    }
                 } catch (error) {
                     console.error('Error parsing user data:', error);
                     // Clear invalid data
@@ -494,6 +551,13 @@
                 authButtons.classList.remove('hidden');
                 userInfo.classList.add('hidden');
                 
+                // Show mobile signup and hide mobile auth actions
+                const mobileAuthActions = document.getElementById('mobile-auth-actions');
+                const mobileSignupAction = document.getElementById('mobile-signup-action');
+                
+                if (mobileAuthActions) mobileAuthActions.style.display = 'none';
+                if (mobileSignupAction) mobileSignupAction.style.display = 'block';
+                
                 // When not logged in, hide restaurant-specific buttons
                 const customizeNav = document.getElementById('customize-restaurant-nav');
                 const customizeMobile = document.getElementById('customize-restaurant-mobile');
@@ -502,6 +566,16 @@
                 if (customizeNav) customizeNav.style.display = 'none';
                 if (customizeMobile) customizeMobile.style.display = 'none';
                 if (addRestaurantBtn) addRestaurantBtn.style.display = '';
+
+                // Reset main hero CTA to default for guests
+                if (primaryCtaBtn) {
+                    primaryCtaBtn.href = 'jobs.html';
+                    primaryCtaBtn.textContent = 'استكشف الوظائف';
+                }
+
+                // Hide restaurant store & suppliers for guests
+                if (restaurantStoreSection) restaurantStoreSection.style.display = 'none';
+                if (suppliersSection) suppliersSection.style.display = 'none';
             }
         })();
 
@@ -559,6 +633,16 @@
         document.getElementById('mobile-menu-btn-auth')?.addEventListener('click', function() {
             const mobileMenu = document.getElementById('mobile-menu');
             mobileMenu.classList.toggle('hidden');
+        });
+
+        // Mobile logout button handler
+        document.getElementById('mobile-logout-btn')?.addEventListener('click', function() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            showToast('تم تسجيل الخروج بنجاح', 'success');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1000);
         });
 
         // Navigate to signup when clicking "Add Restaurant"
@@ -692,36 +776,36 @@
 
                 const imageUrl = resolveImageUrl(restaurant.imageUrl) || 'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1200&auto=format&fit=crop';
                 return `
-                    <div class="group bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition duration-300">
+                    <div class="group bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition duration-300">
                         <div class="relative">
-                            <img src="${imageUrl}" alt="${restaurant.name}" class="w-full h-52 object-contain group-hover:scale-[1.02] transition-transform duration-300" />
-                            <div class="absolute top-3 left-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-semibold text-gray-800 shadow">
+                            <img src="${imageUrl}" alt="${restaurant.name}" class="w-full h-40 sm:h-48 md:h-52 object-contain group-hover:scale-[1.02] transition-transform duration-300" />
+                            <div class="absolute top-2 left-2 sm:top-3 sm:left-3 bg-white/90 backdrop-blur px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold text-gray-800 shadow">
                                 <i class="fas fa-fire text-amber-600 ml-1"></i>
                                 ${restaurant.visitors || 0} زائر
                             </div>
                         </div>
-                        <div class="p-4">
+                        <div class="p-3 sm:p-4">
                             <div class="flex items-center justify-between mb-2">
-                                <h4 class="text-lg font-bold text-gray-900 truncate">${restaurant.name}</h4>
+                                <h4 class="text-base sm:text-lg font-bold text-gray-900 truncate">${restaurant.name}</h4>
                             </div>
-                            <div class="flex items-center text-sm text-gray-500 mb-2">
-                                <i class="fas fa-tag ml-1 text-gray-400"></i>
-                                <span>${restaurant.categoryName || ''}</span>
+                            <div class="flex items-center text-xs sm:text-sm text-gray-500 mb-1.5 sm:mb-2">
+                                <i class="fas fa-tag ml-1 text-gray-400 text-xs"></i>
+                                <span class="truncate">${restaurant.categoryName || ''}</span>
                             </div>
                             ${restaurant.cityNames && restaurant.cityNames.length > 0 ? `
-                                <div class="flex items-center text-sm text-gray-500 mb-2">
-                                    <i class="fas fa-map-marker-alt ml-1 text-gray-400"></i>
-                                    <span>${restaurant.cityNames.join(', ')}</span>
+                                <div class="flex items-center text-xs sm:text-sm text-gray-500 mb-1.5 sm:mb-2">
+                                    <i class="fas fa-map-marker-alt ml-1 text-gray-400 text-xs"></i>
+                                    <span class="truncate">${restaurant.cityNames.join(', ')}</span>
                                 </div>
                             ` : ''}
-                            <div class="flex items-center text-sm mb-4 ${restaurant.hasDelivery ? 'text-green-600' : 'text-gray-500'}">
-                                <i class="fas fa-truck ml-1"></i>
-                                <span class="font-semibold">${restaurant.hasDelivery ? 'خدمة التوصيل متاحة' : 'خدمة التوصيل غير متاحة'}</span>
+                            <div class="flex items-center text-xs sm:text-sm mb-3 sm:mb-4 ${restaurant.hasDelivery ? 'text-green-600' : 'text-gray-500'}">
+                                <i class="fas fa-truck ml-1 text-xs"></i>
+                                <span class="font-semibold truncate">${restaurant.hasDelivery ? 'خدمة التوصيل متاحة' : 'خدمة التوصيل غير متاحة'}</span>
                             </div>
                             <div class="flex items-center justify-between">
-                                <a href="./restaurant.html?id=${restaurant.id}" class="inline-flex items-center bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-4 py-2 rounded-full text-xs font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow">
+                                <a href="./restaurant.html?id=${restaurant.id}" class="inline-flex items-center bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow">
                                     عرض التفاصيل
-                                    <i class="fas fa-arrow-left mr-2"></i>
+                                    <i class="fas fa-arrow-left mr-1 sm:mr-2 text-xs"></i>
                                 </a>
                             </div>
                         </div>
@@ -740,19 +824,19 @@
 
                 const imageUrl = resolveImageUrl(category.imageUrl) || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1200&auto=format&fit=crop';
                 return `
-                    <a href="places.html?category=${category.id}" class="group bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition duration-300 block">
+                    <a href="places.html?category=${category.id}" class="group bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition duration-300 block">
                         <div class="relative">
-                            <img src="${imageUrl}" alt="${category.name}" class="w-full h-48 object-contain group-hover:scale-[1.02] transition-transform duration-300" />
+                            <img src="${imageUrl}" alt="${category.name}" class="w-full h-36 sm:h-44 md:h-48 object-contain group-hover:scale-[1.02] transition-transform duration-300" />
                         </div>
-                        <div class="p-4">
-                            <h4 class="text-lg font-bold text-gray-900 mb-2">${category.name}</h4>
-                            ${category.description ? `<p class="text-sm text-gray-600 mb-3 line-clamp-2">${category.description}</p>` : ''}
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm text-amber-600 font-semibold">
-                                    <i class="fas fa-store ml-1"></i>
+                        <div class="p-3 sm:p-4">
+                            <h4 class="text-base sm:text-lg font-bold text-gray-900 mb-1.5 sm:mb-2">${category.name}</h4>
+                            ${category.description ? `<p class="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3 line-clamp-2">${category.description}</p>` : ''}
+                            <div class="flex items-center justify-between flex-wrap gap-1">
+                                <span class="text-xs sm:text-sm text-amber-600 font-semibold">
+                                    <i class="fas fa-store ml-1 text-xs"></i>
                                     ${category.restaurantsCount || 0} مطعم
                                 </span>
-                                <span class="text-xs text-gray-500">${category.mainCategoryName || ''}</span>
+                                <span class="text-[10px] sm:text-xs text-gray-500 truncate">${category.mainCategoryName || ''}</span>
                             </div>
                         </div>
                     </a>
@@ -796,7 +880,7 @@
                         currentPage = page;
                         
                         if (restaurants.length === 0) {
-                            restaurantsGrid.innerHTML = '<div class="col-span-full text-center py-12"><i class="fas fa-utensils text-4xl text-gray-300 mb-3"></i><p class="text-gray-500">لا توجد مطاعم</p></div>';
+                            restaurantsGrid.innerHTML = '<div class="col-span-full text-center py-12"><i class="fas fa-utensils text-3xl sm:text-4xl text-gray-300 mb-3"></i><p class="text-gray-500 text-sm sm:text-base">لا توجد مطاعم</p></div>';
                             restaurantsPagination.innerHTML = '';
                         } else {
                             restaurantsGrid.innerHTML = restaurants.map(buildRestaurantCard).join('');
@@ -820,7 +904,7 @@
                 } catch (error) {
                     console.error('Error searching restaurants:', error);
                     showToast('حدث خطأ في البحث', 'error');
-                    document.getElementById('restaurants-grid').innerHTML = '<div class="col-span-full text-center py-12"><i class="fas fa-exclamation-circle text-4xl text-red-300 mb-3"></i><p class="text-red-500">حدث خطأ في البحث</p></div>';
+                    document.getElementById('restaurants-grid').innerHTML = '<div class="col-span-full text-center py-12"><i class="fas fa-exclamation-circle text-3xl sm:text-4xl text-red-300 mb-3"></i><p class="text-red-500 text-sm sm:text-base">حدث خطأ في البحث</p></div>';
                 }
             }
 
@@ -833,17 +917,17 @@
                     const categoriesGrid = document.getElementById('categories-grid');
                     
                     if (!searchParams.mainCategoryId && !searchParams.search) {
-                        categoriesGrid.innerHTML = '<div class="col-span-full text-center py-12"><i class="fas fa-tags text-4xl text-gray-300 mb-3"></i><p class="text-gray-500">اختر قسم رئيسي للبحث</p></div>';
+                        categoriesGrid.innerHTML = '<div class="col-span-full text-center py-12"><i class="fas fa-tags text-3xl sm:text-4xl text-gray-300 mb-3"></i><p class="text-gray-500 text-sm sm:text-base">اختر قسم رئيسي للبحث</p></div>';
                         categoriesCount.textContent = '0';
                         return;
                     }
 
                     // Show loading state
                     categoriesGrid.innerHTML = Array.from({ length: 8 }).map(() => `
-                        <div class="animate-pulse bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                            <div class="h-48 bg-gray-200"></div>
-                            <div class="p-4 space-y-3">
-                                <div class="h-4 bg-gray-200 rounded w-2/3"></div>
+                        <div class="animate-pulse bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                            <div class="h-36 sm:h-44 md:h-48 bg-gray-200"></div>
+                            <div class="p-3 sm:p-4 space-y-2 sm:space-y-3">
+                                <div class="h-3.5 sm:h-4 bg-gray-200 rounded w-2/3"></div>
                                 <div class="h-3 bg-gray-200 rounded w-1/2"></div>
                             </div>
                         </div>
@@ -869,7 +953,7 @@
                             categoriesCount.textContent = categories.length;
                             
                             if (categories.length === 0) {
-                                categoriesGrid.innerHTML = '<div class="col-span-full text-center py-12"><i class="fas fa-tags text-4xl text-gray-300 mb-3"></i><p class="text-gray-500">لا توجد أقسام</p></div>';
+                                categoriesGrid.innerHTML = '<div class="col-span-full text-center py-12"><i class="fas fa-tags text-3xl sm:text-4xl text-gray-300 mb-3"></i><p class="text-gray-500 text-sm sm:text-base">لا توجد أقسام</p></div>';
                             } else {
                                 categoriesGrid.innerHTML = categories.map(buildCategoryCard).join('');
                             }
@@ -893,7 +977,7 @@
                             categoriesCount.textContent = mainCategories.length;
                             
                             if (mainCategories.length === 0) {
-                                categoriesGrid.innerHTML = '<div class="col-span-full text-center py-12"><i class="fas fa-tags text-4xl text-gray-300 mb-3"></i><p class="text-gray-500">لا توجد أقسام</p></div>';
+                                categoriesGrid.innerHTML = '<div class="col-span-full text-center py-12"><i class="fas fa-tags text-3xl sm:text-4xl text-gray-300 mb-3"></i><p class="text-gray-500 text-sm sm:text-base">لا توجد أقسام</p></div>';
                             } else {
                                 // Build cards for main categories
                                 categoriesGrid.innerHTML = mainCategories.map(mc => {
@@ -905,16 +989,16 @@
                                     };
                                     const imageUrl = resolveImageUrl(mc.imageUrl) || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1200&auto=format&fit=crop';
                                     return `
-                                        <a href="places.html?mainCategory=${mc.id}" class="group bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition duration-300 block">
+                                        <a href="places.html?mainCategory=${mc.id}" class="group bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition duration-300 block">
                                             <div class="relative">
-                                                <img src="${imageUrl}" alt="${mc.name}" class="w-full h-48 object-contain group-hover:scale-[1.02] transition-transform duration-300" />
+                                                <img src="${imageUrl}" alt="${mc.name}" class="w-full h-36 sm:h-44 md:h-48 object-contain group-hover:scale-[1.02] transition-transform duration-300" />
                                             </div>
-                                            <div class="p-4">
-                                                <h4 class="text-lg font-bold text-gray-900 mb-2">${mc.name}</h4>
-                                                ${mc.description ? `<p class="text-sm text-gray-600 mb-3 line-clamp-2">${mc.description}</p>` : ''}
+                                            <div class="p-3 sm:p-4">
+                                                <h4 class="text-base sm:text-lg font-bold text-gray-900 mb-1.5 sm:mb-2">${mc.name}</h4>
+                                                ${mc.description ? `<p class="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3 line-clamp-2">${mc.description}</p>` : ''}
                                                 <div class="flex items-center justify-between">
-                                                    <span class="text-sm text-amber-600 font-semibold">
-                                                        <i class="fas fa-folder ml-1"></i>
+                                                    <span class="text-xs sm:text-sm text-amber-600 font-semibold">
+                                                        <i class="fas fa-folder ml-1 text-xs"></i>
                                                         ${mc.categoriesCount || 0} قسم فرعي
                                                     </span>
                                                 </div>
@@ -928,7 +1012,7 @@
                 } catch (error) {
                     console.error('Error searching categories:', error);
                     showToast('حدث خطأ في البحث', 'error');
-                    document.getElementById('categories-grid').innerHTML = '<div class="col-span-full text-center py-12"><i class="fas fa-exclamation-circle text-4xl text-red-300 mb-3"></i><p class="text-red-500">حدث خطأ في البحث</p></div>';
+                    document.getElementById('categories-grid').innerHTML = '<div class="col-span-full text-center py-12"><i class="fas fa-exclamation-circle text-3xl sm:text-4xl text-red-300 mb-3"></i><p class="text-red-500 text-sm sm:text-base">حدث خطأ في البحث</p></div>';
                 }
             }
 
