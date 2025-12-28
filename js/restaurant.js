@@ -2,7 +2,7 @@
   const qs = new URLSearchParams(window.location.search);
   const id = parseInt(qs.get('id') || '', 10);
   const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase'))
-    || 'https://weenapp-001-site1.qtempurl.com';
+    || '  https://weenapp-001-site1.qtempurl.com';
 
   const toast = (message, type = 'info') => {
     const toastEl = document.getElementById('toast');
@@ -123,6 +123,22 @@
       }
     }
 
+    // Add OpenStreetMap link if location is available
+    const mapLink = document.getElementById('restaurant-map-link');
+    if (mapLink) {
+      const lat = data.latitude || data.Latitude;
+      const lng = data.longitude || data.Longitude;
+      if (lat && lng) {
+        // Create OpenStreetMap URL (يمكن أيضاً استخدام Google Maps)
+        const mapsUrl = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}&zoom=15`;
+        // أو يمكن استخدام Google Maps: `https://www.google.com/maps?q=${lat},${lng}`
+        mapLink.href = mapsUrl;
+        mapLink.classList.remove('hidden');
+      } else {
+        mapLink.classList.add('hidden');
+      }
+    }
+
     // Render working hours
     renderWorkingHours(data.workingHours);
   };
@@ -159,17 +175,71 @@
       gallery.innerHTML = '<div class="col-span-full bg-gray-50 border border-gray-200 rounded-xl p-6 text-center text-gray-700 font-semibold">لا توجد صور للمنيو حالياً</div>';
       return;
     }
-    gallery.innerHTML = images.map(img => {
+    gallery.innerHTML = images.map((img, idx) => {
       const src = resolveImageUrl(img.imageUrl) || '';
-      return `<button type="button" class="group bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition focus:outline-none">
+      return `<button type="button" class="group bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition focus:outline-none relative cursor-pointer" data-menu-image="${idx}">
         <img src="${src}" data-full="${src}" alt="menu" class="w-full h-44 object-cover group-hover:scale-[1.02] transition-transform duration-300" />
+        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+          <i class="fas fa-expand text-white opacity-0 group-hover:opacity-100 transition-opacity text-2xl"></i>
+        </div>
       </button>`;
     }).join('');
 
-    // Bind modal open on click
-    gallery.querySelectorAll('img[data-full]').forEach(imgEl => {
-      imgEl.parentElement.addEventListener('click', () => openImageModal(imgEl.getAttribute('data-full')));
+    // Bind modal open on click - more robust binding
+    gallery.querySelectorAll('button[data-menu-image]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const imgEl = btn.querySelector('img[data-full]');
+        if (imgEl) {
+          const fullSrc = imgEl.getAttribute('data-full');
+          if (fullSrc) {
+            openImageModal(fullSrc);
+          }
+        }
+      });
     });
+  };
+
+  const renderPosts = (posts) => {
+    const container = document.getElementById('posts-list');
+    if (!container) return;
+    if (!posts || posts.length === 0) {
+      container.innerHTML = '<div class="bg-gray-50 border border-gray-200 rounded-xl p-6 text-center text-gray-700 font-semibold">لا توجد منشورات حالياً</div>';
+      return;
+    }
+    container.innerHTML = posts.map(post => {
+      const description = post.description ? `<p class="text-gray-700 mb-4 leading-7">${post.description}</p>` : '';
+      const mediaHtml = (post.media || []).map(media => {
+        const src = resolveImageUrl(media.mediaUrl) || '';
+        if (media.mediaType === 'video') {
+          return `
+            <div class="rounded-xl overflow-hidden">
+              <video src="${src}" controls class="w-full h-auto max-h-96 object-contain bg-gray-50" preload="metadata"></video>
+            </div>
+          `;
+        }
+        return `
+          <button type="button" class="group bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition focus:outline-none relative cursor-pointer" onclick="openImageModal('${src}')">
+            <img src="${src}" alt="post media" class="w-full h-auto max-h-96 object-contain group-hover:scale-[1.02] transition-transform duration-300" />
+            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+              <i class="fas fa-expand text-white opacity-0 group-hover:opacity-100 transition-opacity text-2xl"></i>
+            </div>
+          </button>
+        `;
+      }).join('');
+      return `
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div class="p-6">
+            ${description}
+            ${mediaHtml ? `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">${mediaHtml}</div>` : ''}
+            <div class="mt-4 text-xs text-gray-500 flex items-center">
+              <i class="far fa-clock ml-1"></i>
+              ${new Date(post.createdAt).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' })}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
   };
 
   // Image modal viewer state
@@ -188,6 +258,7 @@
     const img = modalImg();
     if (!img) return;
     img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${zoom})`;
+    img.style.transition = 'transform 0.1s ease-out';
   };
 
   const clampZoom = (z) => Math.max(0.5, Math.min(5, z));
@@ -196,8 +267,24 @@
     const m = modal();
     const img = modalImg();
     if (!m || !img) return;
+    
+    // Reset state
+    zoom = 1;
+    translateX = 0;
+    translateY = 0;
+    
+    // Load image and set initial size
     img.src = src || '';
-    zoom = 1; translateX = 0; translateY = 0; applyTransform();
+    img.onload = () => {
+      // Reset transform and center image initially
+      zoom = 1;
+      translateX = 0;
+      translateY = 0;
+      applyTransform();
+      // Prevent body scroll when modal is open
+      document.body.style.overflow = 'hidden';
+    };
+    
     m.classList.remove('hidden');
     document.addEventListener('keydown', onKeyDown);
   };
@@ -207,6 +294,8 @@
     if (!m) return;
     m.classList.add('hidden');
     document.removeEventListener('keydown', onKeyDown);
+    // Restore body scroll
+    document.body.style.overflow = '';
   };
 
   const onKeyDown = (e) => {
@@ -246,8 +335,23 @@
       applyTransform();
     }, { passive: false });
 
+    // Double-click to zoom in/out
+    st.addEventListener('dblclick', (e) => {
+      e.preventDefault();
+      if (zoom === 1) {
+        zoom = clampZoom(2);
+      } else {
+        zoom = 1;
+        translateX = 0;
+        translateY = 0;
+      }
+      applyTransform();
+    });
+
     // Drag to pan
     st.addEventListener('mousedown', (e) => {
+      // Don't start panning on double-click
+      if (e.detail > 1) return;
       isPanning = true;
       startX = e.clientX - translateX;
       startY = e.clientY - translateY;
@@ -259,14 +363,32 @@
       applyTransform();
     });
     window.addEventListener('mouseup', () => { isPanning = false; });
-    // Touch support
+    // Touch support with double-tap zoom
+    let lastTap = 0;
     st.addEventListener('touchstart', (e) => {
       if (e.touches.length === 1) {
+        const currentTime = new Date().getTime();
+        const tapLength = currentTime - lastTap;
+        if (tapLength < 300 && tapLength > 0) {
+          // Double tap detected
+          e.preventDefault();
+          if (zoom === 1) {
+            zoom = clampZoom(2);
+          } else {
+            zoom = 1;
+            translateX = 0;
+            translateY = 0;
+          }
+          applyTransform();
+          lastTap = 0;
+          return;
+        }
+        lastTap = currentTime;
         isPanning = true;
         startX = e.touches[0].clientX - translateX;
         startY = e.touches[0].clientY - translateY;
       }
-    }, { passive: true });
+    }, { passive: false });
     st.addEventListener('touchmove', (e) => {
       if (!isPanning || e.touches.length !== 1) return;
       translateX = e.touches[0].clientX - startX;
@@ -293,6 +415,7 @@
       setHero(data);
       renderOffers(data.activeOffers || []);
       renderMenus(data.menus || []);
+      renderPosts(data.posts || []);
     } catch (e) {
       console.error(e);
       toast(e.message || 'تعذر تحميل البيانات', 'error');

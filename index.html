@@ -185,11 +185,37 @@
                                     <i class="fas fa-map-marker-alt absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm pointer-events-none"></i>
                                 </div>
                                 
+                                <!-- Location Button -->
+                                <button id="location-btn" class="w-full md:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition duration-300 shadow-lg text-sm relative" title="تحديد موقعي للبحث عن أقرب المطاعم">
+                                    <i class="fas fa-crosshairs ml-1"></i>
+                                    <span class="hidden sm:inline">موقعي</span>
+                                    <span id="location-status" class="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white hidden"></span>
+                                </button>
+                                
                                 <!-- Search Button -->
                                 <button id="search-btn" class="w-full md:w-auto bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-lg text-sm">
                                     <i class="fas fa-search ml-1"></i>
                                     بحث
                                 </button>
+                            </div>
+                            <!-- Location Info (shown when location is set) -->
+                            <div id="location-info" class="hidden mt-2 px-2 py-1.5 bg-blue-50 rounded-lg text-xs text-blue-700 flex items-center justify-between">
+                                <span>
+                                    <i class="fas fa-map-marker-alt ml-1"></i>
+                                    البحث عن المطاعم في نطاق <span id="radius-display">10</span> كم من موقعك
+                                </span>
+                                <div class="flex items-center gap-2">
+                                    <input type="range" id="radius-slider" min="1" max="50" value="10" class="w-20 sm:w-24 h-1.5 bg-blue-200 rounded-lg appearance-none cursor-pointer">
+                                    <button id="clear-location" class="text-blue-600 hover:text-blue-800">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Location Place Name (shown when location is set) -->
+                            <div id="location-place" class="hidden mt-2 px-2 py-1.5 bg-green-50 rounded-lg text-xs text-green-800 flex items-center gap-2">
+                                <i class="fas fa-map-pin"></i>
+                                <span class="font-semibold">اسم المكان:</span>
+                                <span id="location-place-text" class="font-medium"></span>
                             </div>
                         </div>
                     </div>
@@ -680,7 +706,7 @@
             if (!citySelect) return;
 
             const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase'))
-                || 'https://weenapp-001-site1.qtempurl.com';
+                || '  https://weenapp-001-site1.qtempurl.com';
 
             try {
                 const response = await fetch(`${API_BASE}/api/Public/cities`, {
@@ -714,7 +740,8 @@
         // Search functionality
         (function() {
             const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase'))
-                || 'https://weenapp-001-site1.qtempurl.com';
+                || '  https://weenapp-001-site1.qtempurl.com';
+            const API_BASE_CLEAN = (API_BASE || '').trim();
 
             const searchInput = document.getElementById('search-input');
             const searchBtn = document.getElementById('search-btn');
@@ -736,11 +763,16 @@
 
             let currentPage = 1;
             let currentTab = 'restaurants';
+            let userLocation = null; // { lat, lng }
+            let searchRadius = 10; // kilometers
             let searchParams = {
                 search: '',
                 cityId: null,
                 categoryId: null,
-                mainCategoryId: null
+                mainCategoryId: null,
+                latitude: null,
+                longitude: null,
+                radiusKm: null
             };
 
             // Load main categories
@@ -798,6 +830,12 @@
                                     <span class="truncate">${restaurant.cityNames.join(', ')}</span>
                                 </div>
                             ` : ''}
+                            ${restaurant.distanceKm !== null && restaurant.distanceKm !== undefined ? `
+                                <div class="flex items-center text-xs sm:text-sm text-blue-600 mb-1.5 sm:mb-2 font-semibold">
+                                    <i class="fas fa-route ml-1 text-xs"></i>
+                                    <span class="truncate">على بعد ${restaurant.distanceKm.toFixed(1)} كم</span>
+                                </div>
+                            ` : ''}
                             <div class="flex items-center text-xs sm:text-sm mb-3 sm:mb-4 ${restaurant.hasDelivery ? 'text-green-600' : 'text-gray-500'}">
                                 <i class="fas fa-truck ml-1 text-xs"></i>
                                 <span class="font-semibold truncate">${restaurant.hasDelivery ? 'خدمة التوصيل متاحة' : 'خدمة التوصيل غير متاحة'}</span>
@@ -843,6 +881,96 @@
                 `;
             }
 
+            // Get user location
+            const locationBtn = document.getElementById('location-btn');
+            const locationInfo = document.getElementById('location-info');
+            const locationStatus = document.getElementById('location-status');
+            const radiusSlider = document.getElementById('radius-slider');
+            const radiusDisplay = document.getElementById('radius-display');
+            const clearLocationBtn = document.getElementById('clear-location');
+            const locationPlace = document.getElementById('location-place');
+            const locationPlaceText = document.getElementById('location-place-text');
+
+            async function resolvePlaceName(lat, lng) {
+                if (!locationPlace || !locationPlaceText) return;
+                locationPlace.classList.remove('hidden');
+                locationPlaceText.textContent = 'جاري تحديد اسم المكان...';
+                try {
+                    const url = new URL(`${API_BASE_CLEAN}/api/Public/reverse-geocode`);
+                    url.searchParams.set('latitude', String(lat));
+                    url.searchParams.set('longitude', String(lng));
+                    url.searchParams.set('lang', 'ar');
+                    const res = await fetch(url.toString(), { headers: { 'Accept': 'application/json' } });
+                    const payload = await res.json().catch(() => null);
+                    if (res.ok && payload?.success && payload?.data) {
+                        locationPlaceText.textContent = payload.data;
+                    } else {
+                        // Fallback to coordinates so user knows it's correct
+                        locationPlaceText.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                    }
+                } catch (e) {
+                    // Fallback to coordinates so user knows it's correct
+                    locationPlaceText.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                }
+            }
+
+            locationBtn?.addEventListener('click', function() {
+                if (navigator.geolocation) {
+                    locationBtn.disabled = true;
+                    locationBtn.innerHTML = '<i class="fas fa-spinner fa-spin ml-1"></i><span class="hidden sm:inline">جاري التحديد...</span>';
+                    
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            userLocation = {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude
+                            };
+                            searchParams.latitude = userLocation.lat;
+                            searchParams.longitude = userLocation.lng;
+                            searchParams.radiusKm = searchRadius;
+                            
+                            locationBtn.disabled = false;
+                            locationBtn.innerHTML = '<i class="fas fa-crosshairs ml-1"></i><span class="hidden sm:inline">موقعي</span>';
+                            locationStatus.classList.remove('hidden');
+                            locationInfo.classList.remove('hidden');
+                            if (locationPlace) locationPlace.classList.remove('hidden');
+                            
+                            showToast('تم تحديد موقعك بنجاح', 'success');
+                            // Show place name (or coordinates fallback) so user confirms the location
+                            resolvePlaceName(userLocation.lat, userLocation.lng);
+                        },
+                        (error) => {
+                            locationBtn.disabled = false;
+                            locationBtn.innerHTML = '<i class="fas fa-crosshairs ml-1"></i><span class="hidden sm:inline">موقعي</span>';
+                            showToast('فشل في تحديد موقعك. تأكد من تفعيل خدمات الموقع', 'error');
+                        }
+                    );
+                } else {
+                    showToast('المتصفح لا يدعم تحديد الموقع', 'error');
+                }
+            });
+
+            // Update radius
+            radiusSlider?.addEventListener('input', function() {
+                searchRadius = parseInt(this.value);
+                radiusDisplay.textContent = searchRadius;
+                if (userLocation) {
+                    searchParams.radiusKm = searchRadius;
+                }
+            });
+
+            // Clear location
+            clearLocationBtn?.addEventListener('click', function() {
+                userLocation = null;
+                searchParams.latitude = null;
+                searchParams.longitude = null;
+                searchParams.radiusKm = null;
+                locationStatus.classList.add('hidden');
+                locationInfo.classList.add('hidden');
+                if (locationPlace) locationPlace.classList.add('hidden');
+                showToast('تم إلغاء تحديد الموقع', 'info');
+            });
+
             // Search restaurants
             async function searchRestaurants(page = 1) {
                 try {
@@ -866,7 +994,20 @@
                     url.searchParams.set('pageSize', '12');
                     if (searchParams.search) url.searchParams.set('search', searchParams.search);
                     if (searchParams.cityId) url.searchParams.set('cityId', searchParams.cityId);
-                    if (searchParams.categoryId) url.searchParams.set('categoryId', searchParams.categoryId);
+                    // If categoryId is set, use it (specific category filter takes priority)
+                    if (searchParams.categoryId) {
+                        url.searchParams.set('categoryId', searchParams.categoryId);
+                    }
+                    // Otherwise, if mainCategoryId is set, use it to filter by main category
+                    else if (searchParams.mainCategoryId) {
+                        url.searchParams.set('mainCategoryId', searchParams.mainCategoryId);
+                    }
+                    // Add location parameters if available
+                    if (searchParams.latitude && searchParams.longitude && searchParams.radiusKm) {
+                        url.searchParams.set('latitude', searchParams.latitude);
+                        url.searchParams.set('longitude', searchParams.longitude);
+                        url.searchParams.set('radiusKm', searchParams.radiusKm);
+                    }
 
                     const response = await fetch(url.toString(), {
                         headers: { 'Accept': 'application/json' }
@@ -1047,6 +1188,14 @@
                     activeFilters.appendChild(filter);
                 }
 
+                if (searchParams.latitude && searchParams.longitude) {
+                    hasFilters = true;
+                    const filter = document.createElement('span');
+                    filter.className = 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-800';
+                    filter.innerHTML = `موقع: ${searchRadius} كم <button class="mr-2 hover:text-purple-900" onclick="removeFilter('location')"><i class="fas fa-times"></i></button>`;
+                    activeFilters.appendChild(filter);
+                }
+
                 clearAllFilters.classList.toggle('hidden', !hasFilters);
             }
 
@@ -1062,6 +1211,14 @@
                     searchParams.mainCategoryId = null;
                     searchParams.categoryId = null;
                     mainCategorySelect.value = '';
+                } else if (type === 'location') {
+                    userLocation = null;
+                    searchParams.latitude = null;
+                    searchParams.longitude = null;
+                    searchParams.radiusKm = null;
+                    locationStatus.classList.add('hidden');
+                    locationInfo.classList.add('hidden');
+                    if (locationPlace) locationPlace.classList.add('hidden');
                 }
                 updateActiveFilters();
                 performSearch();
@@ -1146,10 +1303,14 @@
             });
 
             clearAllFilters?.addEventListener('click', function() {
-                searchParams = { search: '', cityId: null, categoryId: null, mainCategoryId: null };
+                searchParams = { search: '', cityId: null, categoryId: null, mainCategoryId: null, latitude: null, longitude: null, radiusKm: null };
                 searchInput.value = '';
                 citySelect.value = '';
                 mainCategorySelect.value = '';
+                userLocation = null;
+                locationStatus.classList.add('hidden');
+                locationInfo.classList.add('hidden');
+                if (locationPlace) locationPlace.classList.add('hidden');
                 updateActiveFilters();
                 performSearch();
             });
@@ -1159,5 +1320,6 @@
         })();
     </script>
     <script src="js/home.js"></script>
+    <script src="js/push-notifications.js"></script>
 </body>
 </html>

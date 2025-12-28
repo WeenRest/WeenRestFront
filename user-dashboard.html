@@ -19,7 +19,12 @@
 				</div>
 				<h1 class="text-white text-xl font-bold">لوحة المستخدم</h1>
 			</div>
-			<a href="index.html" class="text-yellow-400 hover:text-white transition">الصفحة الرئيسية</a>
+			<div class="flex items-center space-x-3 space-x-reverse">
+				<button id="notificationToggle" class="text-yellow-400 hover:text-white transition p-2" title="تفعيل/إلغاء الإشعارات">
+					<i class="fas fa-bell-slash"></i>
+				</button>
+				<a href="index.html" class="text-yellow-400 hover:text-white transition">الصفحة الرئيسية</a>
+			</div>
 		</div>
 	</header>
 
@@ -167,7 +172,7 @@
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 	<script>
-	const API_ORIGIN = localStorage.getItem('api_origin') || 'https://weenapp-001-site1.qtempurl.com';
+	const API_ORIGIN = localStorage.getItem('api_origin') || '  https://weenapp-001-site1.qtempurl.com';
 	const API = {
 		jobs: `${API_ORIGIN}/api/Public/jobs`,
 		myApps: `${API_ORIGIN}/api/UserJobApplications`,
@@ -294,5 +299,6 @@
 
 	loadData();
 	</script>
+	<script src="js/push-notifications.js"></script>
 </body>
 </html>

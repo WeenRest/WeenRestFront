@@ -144,6 +144,10 @@
                         <i class="fas fa-book-open w-5"></i>
                         <span>المنيو</span>
                     </a>
+                    <a href="#" onclick="showSection('posts'); loadPostsAdmin(); return false;" class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
+                        <i class="fas fa-images w-5"></i>
+                        <span>المنشورات</span>
+                    </a>
                     <a href="#" onclick="showSection('cities'); return false;" class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
                         <i class="fas fa-city w-5"></i>
                         <span>المدن</span>
@@ -431,6 +435,9 @@
                                 <select id="offerRestaurantFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
                                     <option value="">جميع المطاعم</option>
                                 </select>
+                                <select id="offerCityFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                                    <option value="">جميع المدن</option>
+                                </select>
                             </div>
                             <div id="offersAdminList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 <!-- Offers will be loaded here -->
@@ -455,6 +462,25 @@
                                 </select>
                             </div>
                             <div id="menusAdminList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Posts Section (Admin) -->
+                <div id="posts" class="section hidden">
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+                            <h3 class="text-2xl font-bold text-gray-800">إدارة المنشورات</h3>
+                        </div>
+                        <div class="p-6">
+                            <div class="mb-4 flex space-x-3 space-x-reverse flex-wrap gap-3">
+                                <input type="text" id="postSearch" placeholder="البحث في المنشورات..." 
+                                       class="flex-1 min-w-64 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                                <select id="postRestaurantFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                                    <option value="">جميع المطاعم</option>
+                                </select>
+                            </div>
+                            <div id="postsAdminList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                         </div>
                     </div>
                 </div>
@@ -896,7 +922,7 @@
 
     <!-- JavaScript -->
     <script>
-        const API_BASE_URL = 'https://weenapp-001-site1.qtempurl.com/api';
+        const API_BASE_URL = '  https://weenapp-001-site1.qtempurl.com/api';
         let currentPage = 1;
         let totalCount = 0;
         let allUsers = [];
@@ -961,7 +987,10 @@
             // Offers admin hooks
             document.getElementById('offerSearch')?.addEventListener('input', () => loadOffersAdmin());
             document.getElementById('offerRestaurantFilter')?.addEventListener('change', () => loadOffersAdmin());
+            document.getElementById('offerCityFilter')?.addEventListener('change', () => loadOffersAdmin());
             document.getElementById('menuRestaurantFilter')?.addEventListener('change', () => loadMenusAdmin());
+            document.getElementById('postSearch')?.addEventListener('input', () => loadPostsAdmin());
+            document.getElementById('postRestaurantFilter')?.addEventListener('change', () => loadPostsAdmin());
         });
 
         // Navigation
@@ -990,6 +1019,7 @@
                 'restaurants': 'المطاعم',
                 'offers': 'العروض',
                 'menus': 'المنيو',
+                'posts': 'المنشورات',
                 'cities': 'المدن',
                 'profile': 'الملف الشخصي'
             };
@@ -1229,13 +1259,110 @@
             }
         }
 
-        async function loadOffersAdmin() {
-            await loadOfferRestaurantsOptions();
-            const search = document.getElementById('offerSearch')?.value || '';
-            const restaurantId = document.getElementById('offerRestaurantFilter')?.value || '';
+        // ============ Posts (Admin) ============
+        async function loadPostRestaurantsOptions() {
+            try {
+                const data = await apiCall('/AdminDashboard/restaurants?pageSize=1000');
+                if (data.success) {
+                    const select = document.getElementById('postRestaurantFilter');
+                    if (select) {
+                        const currentVal = select.value;
+                        select.innerHTML = '<option value="">جميع المطاعم</option>';
+                        data.data.forEach(r => {
+                            const opt = document.createElement('option');
+                            opt.value = r.id;
+                            opt.textContent = r.name;
+                            select.appendChild(opt);
+                        });
+                        if (currentVal) select.value = currentVal;
+                    }
+                }
+            } catch (e) {
+                console.error('Error loading restaurants for posts', e);
+            }
+        }
+
+        async function loadPostsAdmin() {
+            await loadPostRestaurantsOptions();
+            const search = document.getElementById('postSearch')?.value || '';
+            const restaurantId = document.getElementById('postRestaurantFilter')?.value || '';
             const q = new URLSearchParams();
             if (search) q.append('search', search);
             if (restaurantId) q.append('restaurantId', restaurantId);
+            try {
+                const data = await apiCall(`/AdminDashboard/posts${q.toString() ? '?' + q.toString() : ''}`);
+                if (data.success) {
+                    const container = document.getElementById('postsAdminList');
+                    container.innerHTML = '';
+                    const posts = data.data || [];
+                    if (posts.length === 0) {
+                        container.innerHTML = '<div class="col-span-1 md:col-span-2 lg:col-span-3 text-center text-gray-500 py-8">لا توجد منشورات</div>';
+                        return;
+                    }
+                    posts.forEach(p => {
+                        const card = document.createElement('div');
+                        card.className = 'bg-white border border-gray-200 rounded-lg p-4 shadow-sm';
+                        const mediaPreview = (p.media || []).slice(0, 3).map(m => {
+                            if (m.mediaType === 'video') {
+                                return `<video src="${resolveImageUrl(m.mediaUrl)}" class="w-full h-28 object-cover rounded" muted></video>`;
+                            }
+                            return `<img src="${resolveImageUrl(m.mediaUrl)}" class="w-full h-28 object-cover rounded">`;
+                        }).join('');
+                        const description = p.description ? `<p class="text-sm text-gray-600 mb-2 line-clamp-2">${p.description}</p>` : '';
+                        card.innerHTML = `
+                            <div class="text-sm text-gray-700 mb-2">مطعم: ${p.restaurantName || ''}</div>
+                            ${description}
+                            <div class="grid grid-cols-3 gap-2 mb-3">${mediaPreview || '<div class="col-span-3 text-center text-gray-400 text-xs">لا توجد وسائط</div>'}</div>
+                            <div class="flex items-center justify-between text-sm mb-3">
+                                <span class="${p.isActive ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'} px-2 py-0.5 rounded-full">${p.isActive ? 'مفعّل' : 'معطّل'}</span>
+                                <span class="text-gray-500">${new Date(p.createdAt).toLocaleDateString('ar-EG')}</span>
+                            </div>
+                            <div class="flex space-x-2 space-x-reverse">
+                                <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded" onclick="deletePostAdmin(${p.id})"><i class='fas fa-trash mr-1'></i>حذف</button>
+                            </div>`;
+                        container.appendChild(card);
+                    });
+                }
+            } catch (e) {
+                console.error('Error loading posts (admin)', e);
+            }
+        }
+
+        async function deletePostAdmin(id) {
+            const result = await Swal.fire({
+                title: 'هل أنت متأكد؟',
+                text: 'سيتم حذف المنشور ووسائطه',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'نعم، احذف',
+                cancelButtonText: 'إلغاء'
+            });
+            if (!result.isConfirmed) return;
+            try {
+                const resp = await apiCall(`/AdminDashboard/posts/${id}`, 'DELETE');
+                if (resp.success) {
+                    showToast(resp.message, 'success');
+                    loadPostsAdmin();
+                } else {
+                    showToast(resp.message, 'error');
+                }
+            } catch (e) {
+                showToast('حدث خطأ في حذف المنشور', 'error');
+            }
+        }
+
+        async function loadOffersAdmin() {
+            await loadOfferRestaurantsOptions();
+            updateCityDropdowns();
+            const search = document.getElementById('offerSearch')?.value || '';
+            const restaurantId = document.getElementById('offerRestaurantFilter')?.value || '';
+            const city = document.getElementById('offerCityFilter')?.value || '';
+            const q = new URLSearchParams();
+            if (search) q.append('search', search);
+            if (restaurantId) q.append('restaurantId', restaurantId);
+            if (city) q.append('city', city);
             try {
                 const data = await apiCall(`/AdminDashboard/offers${q.toString() ? '?' + q.toString() : ''}`);
                 if (data.success) {
@@ -2342,7 +2469,7 @@
                         const preview = document.getElementById('restaurantImagePreview');
                         const previewImg = document.getElementById('restaurantImagePreviewImg');
                         if (preview && previewImg) {
-                            const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase')) || 'https://weenapp-001-site1.qtempurl.com';
+                            const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase')) || '  https://weenapp-001-site1.qtempurl.com';
                             const resolveImageUrl = (url) => {
                                 if (!url || typeof url !== 'string' || url.trim() === '') return null;
                                 if (/^https?:\/\//i.test(url)) return url;
@@ -2527,7 +2654,7 @@
                 // If URL is cleared, show original image if exists
                 const originalUrl = document.getElementById('restaurantOriginalImageUrl').value;
                 if (originalUrl) {
-                    const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase')) || 'https://weenapp-001-site1.qtempurl.com';
+                    const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase')) || ' https://localhost:7035';
                     const resolveImageUrl = (url) => {
                         if (!url || typeof url !== 'string' || url.trim() === '') return null;
                         if (/^https?:\/\//i.test(url)) return url;
@@ -2713,6 +2840,22 @@
                     restaurantCityFilter.appendChild(option);
                 });
             }
+
+            // Update offer city filter dropdown
+            const offerCityFilter = document.getElementById('offerCityFilter');
+            if (offerCityFilter) {
+                const currentFilter = offerCityFilter.value;
+                offerCityFilter.innerHTML = '<option value="">جميع المدن</option>';
+                allCities.filter(c => c.isActive).forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city.name;
+                    option.textContent = city.name;
+                    if (city.name === currentFilter) {
+                        option.selected = true;
+                    }
+                    offerCityFilter.appendChild(option);
+                });
+            }
         }
 
         function renderCities() {
@@ -2837,6 +2980,7 @@
             }
         }
     </script>
+    <script src="js/push-notifications.js"></script>
 </body>
 </html>
 

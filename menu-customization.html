@@ -305,7 +305,7 @@
     </script>
 
     <script>
-        const API_BASE_URL = 'https://weenapp-001-site1.qtempurl.com/api';
+        const API_BASE_URL = '  https://weenapp-001-site1.qtempurl.com/api';
         let menuStyles = [];
 
         document.addEventListener('DOMContentLoaded', async () => {
@@ -349,7 +349,7 @@
             if (menuStyle.imageUrl) {
                 const imageUrl = menuStyle.imageUrl.startsWith('http') 
                     ? menuStyle.imageUrl 
-                    : `https://weenapp-001-site1.qtempurl.com${menuStyle.imageUrl}`;
+                    : `  https://weenapp-001-site1.qtempurl.com${menuStyle.imageUrl}`;
                 imageContainer.innerHTML = `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(menuStyle.name)}" class="w-full h-full object-cover">`;
             } else {
                 imageContainer.innerHTML = '<i class="fas fa-image text-gray-400 text-2xl"></i>';
@@ -416,7 +416,7 @@
                         };
 
                         const imageUrl = style.imageUrl 
-                            ? (style.imageUrl.startsWith('http') ? style.imageUrl : `https://weenapp-001-site1.qtempurl.com${style.imageUrl}`)
+                            ? (style.imageUrl.startsWith('http') ? style.imageUrl : `  https://weenapp-001-site1.qtempurl.com${style.imageUrl}`)
                             : null;
 
                         card.innerHTML = `
@@ -527,7 +527,7 @@
             }
         }
     </script>
-</body>
+    <script src="js/push-notifications.js"></script>`r`n</body>
 </html>
 
 

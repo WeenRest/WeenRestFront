@@ -59,6 +59,10 @@
                                     <span>اتصال</span>
                                     <span id="restaurant-phone-text" class="mr-2 text-amber-800/90"></span>
                                 </a>
+                                <a id="restaurant-map-link" href="#" target="_blank" class="inline-flex items-center bg-red-50 text-red-700 px-3 py-1 rounded-full hover:bg-red-100 hidden">
+                                    <i class="fas fa-map-marker-alt ml-1"></i>
+                                    <span>عرض على الخريطة</span>
+                                </a>
                                 <span id="delivery-badge" class="inline-flex items-center px-3 py-1 rounded-full">
                                     <i class="fas fa-truck ml-1"></i>
                                     <span id="delivery-badge-text">خدمة التوصيل</span>
@@ -88,11 +92,19 @@
             </section>
 
             <!-- Menus -->
-            <section>
+            <section class="mb-10">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-xl md:text-2xl font-bold text-gray-900">المنيو</h2>
                 </div>
                 <div id="menu-gallery" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+            </section>
+
+            <!-- Posts -->
+            <section>
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl md:text-2xl font-bold text-gray-900">المنشورات</h2>
+                </div>
+                <div id="posts-list" class="space-y-6"></div>
             </section>
         </div>
     </main>
@@ -106,21 +118,22 @@
     </div>
 
     <!-- Image Modal Viewer -->
-    <div id="image-modal" class="fixed inset-0 bg-black/80 hidden z-50">
-        <button id="image-modal-close" class="absolute top-4 left-4 text-white bg-white/10 hover:bg-white/20 border border-white/20 rounded-full px-3 py-1 text-sm">
-            إغلاق ✕
+    <div id="image-modal" class="fixed inset-0 bg-black/90 hidden z-50">
+        <button id="image-modal-close" class="absolute top-4 left-4 z-10 text-white bg-white/10 hover:bg-white/20 border border-white/20 rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold transition-all">
+            ✕
         </button>
-        <div class="absolute bottom-4 right-1/2 translate-x-1/2 md:right-1/2 md:translate-x-1/2 flex items-center gap-2">
-            <button id="zoom-out" class="text-white bg-white/10 hover:bg-white/20 border border-white/20 rounded-full px-3 py-1 text-sm">-</button>
-            <button id="zoom-reset" class="text-white bg-white/10 hover:bg-white/20 border border-white/20 rounded-full px-3 py-1 text-sm">100%</button>
-            <button id="zoom-in" class="text-white bg-white/10 hover:bg-white/20 border border-white/20 rounded-full px-3 py-1 text-sm">+</button>
+        <div class="absolute bottom-4 right-1/2 translate-x-1/2 md:right-1/2 md:translate-x-1/2 flex items-center gap-2 z-10 bg-black/30 backdrop-blur-sm rounded-full px-2 py-1">
+            <button id="zoom-out" class="text-white bg-white/10 hover:bg-white/20 border border-white/20 rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold transition-all" title="تصغير">−</button>
+            <button id="zoom-reset" class="text-white bg-white/10 hover:bg-white/20 border border-white/20 rounded-full px-4 py-2 text-sm font-semibold transition-all" title="إعادة تعيين">100%</button>
+            <button id="zoom-in" class="text-white bg-white/10 hover:bg-white/20 border border-white/20 rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold transition-all" title="تكبير">+</button>
         </div>
-        <div id="image-modal-stage" class="w-full h-full flex items-center justify-center overflow-hidden cursor-grab active:cursor-grabbing">
-            <img id="image-modal-img" src="" alt="menu" class="max-w-none select-none pointer-events-none" />
+        <div id="image-modal-stage" class="w-full h-full flex items-center justify-center overflow-hidden cursor-grab active:cursor-grabbing p-4">
+            <img id="image-modal-img" src="" alt="menu" class="max-w-full max-h-full object-contain select-none pointer-events-none" />
         </div>
     </div>
 
     <script src="js/restaurant.js"></script>
+    <script src="js/push-notifications.js"></script>
 </body>
 </html>
 

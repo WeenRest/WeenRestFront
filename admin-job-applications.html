@@ -70,7 +70,7 @@
 	</main>
 
 	<script>
-	const API_ORIGIN = localStorage.getItem('api_origin') || 'https://weenapp-001-site1.qtempurl.com';
+	const API_ORIGIN = localStorage.getItem('api_origin') || '  https://weenapp-001-site1.qtempurl.com';
 	const API = {
 		jobs: `${API_ORIGIN}/api/AdminJobs`,
 		list: `${API_ORIGIN}/api/AdminJobApplications`,
@@ -218,5 +218,5 @@
 		}catch(e){ document.getElementById('emptyState').textContent = 'تعذر التحميل'; document.getElementById('emptyState').classList.remove('hidden'); }
 	})();
 	</script>
-</body>
+    <script src="js/push-notifications.js"></script>`r`n</body>
 </html>

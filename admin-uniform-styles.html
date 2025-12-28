@@ -11,7 +11,15 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111'/%3E%3Cpath fill='%23f59e0b' d='M22 10h4v20c0 6-4 8-4 8s-4-2-4-8V10h4zM38 10h4v14h6v4h-6v10h-4V10z'/%3E%3C/svg%3E">
     <style> body{font-family:'Cairo',sans-serif;} </style>
     <style>
-        .thumb{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid #eee}
+        .thumb{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid #eee;cursor:pointer;transition:transform 0.2s;}
+        .thumb:hover{transform:scale(1.05);}
+        
+        /* Fullscreen Image Modal */
+        #imageModal{display:none;position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;background-color:rgba(0,0,0,0.95);overflow:auto;}
+        #imageModal.active{display:flex;align-items:center;justify-content:center;}
+        #imageModalContent{max-width:90%;max-height:90%;object-fit:contain;border-radius:8px;}
+        #imageModalClose{position:absolute;top:20px;right:20px;color:#fff;font-size:40px;font-weight:bold;cursor:pointer;z-index:10000;background:rgba(0,0,0,0.5);width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background 0.3s;}
+        #imageModalClose:hover{background:rgba(0,0,0,0.8);}
     </style>
     </head>
 <body class="bg-gray-50">
@@ -42,9 +50,15 @@
         </div>
     </div>
 
+    <!-- Fullscreen Image Modal -->
+    <div id="imageModal" onclick="closeImageModal()">
+        <span id="imageModalClose" onclick="event.stopPropagation(); closeImageModal();">&times;</span>
+        <img id="imageModalContent" onclick="event.stopPropagation();" alt="صورة اليونيفورم">
+    </div>
+
     <script>
-        const API_BASE_URL = 'https://weenapp-001-site1.qtempurl.com/api';
-        const API_ORIGIN = 'https://weenapp-001-site1.qtempurl.com/';
+        const API_BASE_URL = '  https://weenapp-001-site1.qtempurl.com/api';
+        const API_ORIGIN = '  https://weenapp-001-site1.qtempurl.com/';
         document.addEventListener('DOMContentLoaded', ()=>{
             const token = localStorage.getItem('token');
             if(!token){ window.location.href='login.html'; return; }
@@ -63,8 +77,11 @@
             }
             data.data.forEach(s=>{
                 const tr = document.createElement('tr');
+                const imageHtml = s.imageUrl ? 
+                    `<img class="thumb" src="${resolveImageUrl(s.imageUrl)}" alt="${escapeHtml(s.title)}" onclick="openImageModal('${resolveImageUrl(s.imageUrl)}')">` : 
+                    '<span class="text-gray-400">-</span>';
                 tr.innerHTML = `
-                    <td class="px-4 py-3">${s.imageUrl ? `<img class="thumb" src="${resolveImageUrl(s.imageUrl)}" alt="">` : '-'}</td>
+                    <td class="px-4 py-3">${imageHtml}</td>
                     <td class="px-4 py-3">${escapeHtml(s.title)}</td>
                     <td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs ${s.isActive?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${s.isActive?'مفعّل':'معطّل'}</span></td>
                     <td class="px-4 py-3">${new Date(s.createdAt).toLocaleDateString('ar-EG')}</td>
@@ -153,8 +170,29 @@
             const data = await resp.json();
             if(data.success){ Swal.fire({icon:'success',title:'تم الحذف'}); loadStyles(); } else { Swal.fire({icon:'error',title:'تعذر الحذف',text:data.message||''}); }
         }
+
+        function openImageModal(imageUrl){
+            const modal = document.getElementById('imageModal');
+            const img = document.getElementById('imageModalContent');
+            img.src = imageUrl;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageModal(){
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e)=>{
+            if(e.key === 'Escape'){
+                closeImageModal();
+            }
+        });
     </script>
-</body>
+    <script src="js/push-notifications.js"></script>`r`n</body>
 </html>
 
 

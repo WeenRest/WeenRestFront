@@ -54,7 +54,7 @@
     </div>
 
     <script>
-        const API_BASE_URL = 'https://weenapp-001-site1.qtempurl.com/api';
+        const API_BASE_URL = '  https://weenapp-001-site1.qtempurl.com/api';
         document.addEventListener('DOMContentLoaded', ()=>{
             const token = localStorage.getItem('token');
             if(!token){ window.location.href='login.html'; return; }
@@ -169,7 +169,7 @@
             if(data.success){ Swal.fire({icon:'success',title:'تم الحذف'}); loadRequests(); } else { Swal.fire({icon:'error',title:'تعذر الحذف',text:data.message||''}); }
         }
     </script>
-</body>
+    <script src="js/push-notifications.js"></script>`r`n</body>
 </html>
 
 

@@ -3,33 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>خصص مطعمك - WeenRest</title>
+    <title>ستايلات ملابس الطاقم - WeenRest</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111'/%3E%3Cpath fill='%23f59e0b' d='M22 10h4v20c0 6-4 8-4 8s-4-2-4-8V10h4zM38 10h4v14h6v4h-6v10h-4V10z'/%3E%3C/svg%3E">
+    <style> body{font-family:'Cairo',sans-serif;} </style>
     <style>
-        body { font-family: 'Cairo', sans-serif; }
-        .card:hover { transform: translateY(-4px); box-shadow: 0 20px 35px rgba(0,0,0,0.08); }
-        .grad-1 { background: linear-gradient(135deg, #fef3c7, #fde68a); }
-        .grad-2 { background: linear-gradient(135deg, #e0f2fe, #bae6fd); }
-        .grad-3 { background: linear-gradient(135deg, #fee2e2, #fecaca); }
+        .thumb{width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid #eee;cursor:pointer;transition:transform 0.2s;}
+        .thumb:hover{transform:scale(1.05);}
+        
+        /* Fullscreen Image Modal */
+        #imageModal{display:none;position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;background-color:rgba(0,0,0,0.95);overflow:auto;}
+        #imageModal.active{display:flex;align-items:center;justify-content:center;}
+        #imageModalContent{max-width:90%;max-height:90%;object-fit:contain;border-radius:8px;}
+        #imageModalClose{position:absolute;top:20px;right:20px;color:#fff;font-size:40px;font-weight:bold;cursor:pointer;z-index:10000;background:rgba(0,0,0,0.5);width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background 0.3s;}
+        #imageModalClose:hover{background:rgba(0,0,0,0.8);}
     </style>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const token = localStorage.getItem('token');
-            if (!token) { window.location.href = 'login.html'; return; }
-        });
-
-        function goBack() { window.history.back(); }
-    </script>
-    <script>
-        function showToast(message, type) {
-            const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2500, timerProgressBar: true });
-            Toast.fire({ icon: type === 'success' ? 'success' : 'info', title: message });
-        }
-    </script>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
     <!-- Header (same as main site) -->
@@ -48,7 +39,7 @@
                 <nav class="hidden md:flex items-center space-x-8 space-x-reverse">
                     <a href="index.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">الرئيسية</a>
                     <a href="places.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">أصناف الطعام</a>
-                    <a href="jobs.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">وظائف</a>
+                    <a href="#" class="text-white hover:text-yellow-400 transition duration-300 font-medium">وظائف</a>
                     <a href="customize.html" id="customize-restaurant-nav" class="text-white hover:text-yellow-400 transition duration-300 font-medium">خصص مطعمك</a>
                 </nav>
 
@@ -75,7 +66,7 @@
                             <span class="font-semibold mr-1" id="user-name">المستخدم</span>
                         </div>
                     </div>
-                    <a href="admin-dashboard.html" id="dashboard-link" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-5 py-2 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-md text-sm">
+                    <a href="restaurant-owner-dashboard.html" id="dashboard-link" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-5 py-2 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-md text-sm">
                         <i class="fas fa-tachometer-alt mr-1"></i>
                         لوحة التحكم
                     </a>
@@ -95,61 +86,43 @@
                 <div class="flex flex-col space-y-4">
                     <a href="index.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">الرئيسية</a>
                     <a href="places.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">اصناف الطعام</a>
-                    <a href="jobs.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">وظائف</a>
+                    <a href="#" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">وظائف</a>
                     <a href="customize.html" id="customize-restaurant-mobile" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">خصص مطعمك</a>
                 </div>
             </div>
         </div>
     </header>
 
-    <div class="max-w-6xl mx-auto px-4 py-8 flex-1">
+    <div class="container mx-auto px-4 py-10 flex-1">
         <div class="flex items-center justify-between mb-6">
             <div class="flex items-center gap-3">
-                <button onclick="goBack()" class="w-10 h-10 rounded-full bg-white shadow flex items-center justify-center hover:bg-gray-100">
-                    <i class="fas fa-arrow-right"></i>
-                </button>
-                <h1 class="text-2xl md:text-3xl font-bold text-gray-800">خصص مطعمك</h1>
+                <a href="customize.html" class="w-10 h-10 rounded-full bg-white shadow flex items-center justify-center hover:bg-gray-100"><i class="fas fa-arrow-right"></i></a>
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-800">ستايلات ملابس الطاقم</h1>
             </div>
-            <a href="restaurant-owner-dashboard.html" class="text-sm text-gray-600 hover:text-gray-800">العودة للوحة التحكم</a>
+            <a href="restaurant-owner-uniform-requests.html" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg"><i class="fas fa-plus ml-2"></i>طلب تصميم جديد</a>
         </div>
 
-        <p class="text-gray-600 mb-8">اختر نوع التخصيص الذي تريد العمل عليه لمطعمك.</p>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- تخصيص منيو -->
-            <a href="menu-customization.html" class="block">
-                <div class="card grad-1 rounded-xl p-6 border border-yellow-100 transition">
-                    <div class="w-14 h-14 rounded-full bg-yellow-500 text-white flex items-center justify-center shadow mb-4">
-                        <i class="fas fa-book-open text-xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">تخصيص منيو</h3>
-                    <p class="text-gray-700 mb-4">اطلب إنشاء منيو لمطعمك (ديجيتال أو مطبوع) وسنقوم بالتواصل معك.</p>
-                    <span class="inline-flex items-center gap-2 text-yellow-700 font-semibold">ابدأ الآن <i class="fas fa-arrow-left text-sm"></i></span>
-                </div>
-            </a>
-
-            <!-- تخصيص ديكور -->
-            <div class="card grad-2 rounded-xl p-6 border border-sky-100 transition">
-                <div class="w-14 h-14 rounded-full bg-sky-500 text-white flex items-center justify-center shadow mb-4">
-                    <i class="fas fa-couch text-xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">تخصيص ديكور</h3>
-                <p class="text-gray-700 mb-4">قريباً: صمم ديكور المكان بأفكار عصرية تناسب هويتك.</p>
-                <span class="inline-flex items-center gap-2 text-sky-700 font-semibold">قريباً</span>
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">الصورة</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">العنوان</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">الحالة</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">التاريخ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stylesTable" class="divide-y divide-gray-200"></tbody>
+                </table>
             </div>
-
-            <!-- تخصيص ملابس الطاقم -->
-            <a href="restaurant-owner-uniform-styles.html" class="block">
-                <div class="card grad-3 rounded-xl p-6 border border-rose-100 transition">
-                    <div class="w-14 h-14 rounded-full bg-rose-500 text-white flex items-center justify-center shadow mb-4">
-                        <i class="fas fa-user-tie text-xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">تخصيص ملابس طاقم العمل</h3>
-                    <p class="text-gray-700 mb-4">اطلب تصميم يونيفورم موحّد لطاقم العمل واختر من عدة ستايلات جاهزة.</p>
-                    <span class="inline-flex items-center gap-2 text-rose-700 font-semibold">ابدأ الآن <i class="fas fa-arrow-left text-sm"></i></span>
-                </div>
-            </a>
         </div>
+    </div>
+
+    <!-- Fullscreen Image Modal -->
+    <div id="imageModal" onclick="closeImageModal()">
+        <span id="imageModalClose" onclick="event.stopPropagation(); closeImageModal();">&times;</span>
+        <img id="imageModalContent" onclick="event.stopPropagation();" alt="صورة اليونيفورم">
     </div>
 
     <!-- Footer (same as main site) -->
@@ -230,6 +203,69 @@
         </div>
     </footer>
 
+    <script>
+        const API_BASE_URL = '  https://weenapp-001-site1.qtempurl.com/api';
+        const API_ORIGIN = '  https://weenapp-001-site1.qtempurl.com/';
+        
+        document.addEventListener('DOMContentLoaded', ()=>{
+            const token = localStorage.getItem('token');
+            if(!token){ window.location.href='login.html'; return; }
+            loadStyles();
+        });
+
+        async function loadStyles(){
+            const resp = await fetch(`${API_BASE_URL}/Public/staff-uniform-styles`);
+            const data = await resp.json();
+            const tbody = document.getElementById('stylesTable');
+            tbody.innerHTML = '';
+            if(!data.success || !data.data || data.data.length===0){
+                tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-6 text-center text-gray-500">لا توجد ستايلات متاحة</td></tr>';
+                return;
+            }
+            data.data.forEach(s=>{
+                const tr = document.createElement('tr');
+                const imageHtml = s.imageUrl ? 
+                    `<img class="thumb" src="${resolveImageUrl(s.imageUrl)}" alt="${escapeHtml(s.title)}" onclick="openImageModal('${resolveImageUrl(s.imageUrl)}')">` : 
+                    '<span class="text-gray-400">-</span>';
+                tr.innerHTML = `
+                    <td class="px-4 py-3">${imageHtml}</td>
+                    <td class="px-4 py-3">${escapeHtml(s.title)}</td>
+                    <td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs ${s.isActive?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${s.isActive?'مفعّل':'معطّل'}</span></td>
+                    <td class="px-4 py-3">${new Date(s.createdAt).toLocaleDateString('ar-EG')}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function escapeHtml(x){return (x||'').toString().replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+        function resolveImageUrl(u){
+            if(!u) return '';
+            if(/^https?:\/\//i.test(u)) return u;
+            const path = u.startsWith('/') ? u : `/${u}`;
+            const base = API_ORIGIN.endsWith('/') ? API_ORIGIN.slice(0, -1) : API_ORIGIN;
+            return `${base}${path}`;
+        }
+
+        function openImageModal(imageUrl){
+            const modal = document.getElementById('imageModal');
+            const img = document.getElementById('imageModalContent');
+            img.src = imageUrl;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageModal(){
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e)=>{
+            if(e.key === 'Escape'){
+                closeImageModal();
+            }
+        });
+    </script>
     <!-- Header scripts (auth/menu behavior) -->
     <script>
         (function() {
@@ -281,5 +317,4 @@
     </script>
     <script src="js/push-notifications.js"></script>`r`n</body>
 </html>
-
 
