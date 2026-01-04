@@ -706,7 +706,7 @@
             if (!citySelect) return;
 
             const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase'))
-                || '  https://weenapp-001-site1.qtempurl.com';
+                || '  https://weenrest-001-site1.jtempurl.com';
 
             try {
                 const response = await fetch(`${API_BASE}/api/Public/cities`, {
@@ -740,7 +740,7 @@
         // Search functionality
         (function() {
             const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase'))
-                || '  https://weenapp-001-site1.qtempurl.com';
+                || '  https://weenrest-001-site1.jtempurl.com';
             const API_BASE_CLEAN = (API_BASE || '').trim();
 
             const searchInput = document.getElementById('search-input');

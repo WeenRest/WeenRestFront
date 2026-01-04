@@ -48,6 +48,11 @@
                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
                     </div>
                     <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">تاريخ البدء *</label>
+                        <input type="date" id="offerStartDateAdmin" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                    </div>
+                    <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">تاريخ الانتهاء *</label>
                         <input type="date" id="offerExpirationDateAdmin" required
                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
@@ -151,6 +156,14 @@
                     <a href="#" onclick="showSection('cities'); return false;" class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
                         <i class="fas fa-city w-5"></i>
                         <span>المدن</span>
+                    </a>
+                    <a href="#" onclick="showSection('subscriptions'); loadSubscriptions(); return false;" class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
+                        <i class="fas fa-credit-card w-5"></i>
+                        <span>الاشتراكات</span>
+                    </a>
+                    <a href="#" onclick="showSection('notifications'); return false;" class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
+                        <i class="fas fa-bell w-5"></i>
+                        <span>الإشعارات</span>
                     </a>
                     <a href="#" onclick="showSection('profile'); return false;" class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
                         <i class="fas fa-user-circle w-5"></i>
@@ -506,6 +519,80 @@
                     </div>
                 </div>
 
+                <!-- Subscriptions Section -->
+                <div id="subscriptions" class="section hidden">
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+                            <h3 class="text-2xl font-bold text-gray-800">إدارة الاشتراكات</h3>
+                            <button onclick="openSubscriptionModal()" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-4 py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                                <i class="fas fa-plus mr-2"></i>إضافة اشتراك
+                            </button>
+                        </div>
+                        <div class="p-6">
+                            <div class="mb-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <input type="text" id="subscriptionSearch" placeholder="البحث في الاشتراكات..." 
+                                       class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                                <select id="subscriptionStatusFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                                    <option value="">جميع الحالات</option>
+                                    <option value="active">نشط</option>
+                                    <option value="expired">منتهي</option>
+                                    <option value="inactive">معطّل</option>
+                                </select>
+                                <button onclick="loadSubscriptions()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                                    <i class="fas fa-sync-alt mr-2"></i>تحديث
+                                </button>
+                            </div>
+                            <div id="subscriptionsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <!-- Subscriptions will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notifications Section -->
+                <div id="notifications" class="section hidden">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                            <div class="p-6 border-b border-gray-200">
+                                <h3 class="text-2xl font-bold text-gray-800">إرسال إشعارات لجميع المستخدمين</h3>
+                                <p class="text-gray-600 mt-2">يمكنك إرسال إشعارات لجميع المستخدمين المسجلين في الموقع</p>
+                            </div>
+                            <div class="p-6">
+                                <form id="notificationForm" class="space-y-6">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">عنوان الإشعار *</label>
+                                        <input type="text" id="notificationTitle" required 
+                                               placeholder="مثال: عروض جديدة"
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                                        <p class="text-xs text-gray-500 mt-1">سيظهر هذا العنوان في الإشعار</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">محتوى الإشعار *</label>
+                                        <textarea id="notificationBody" required rows="5" 
+                                                  placeholder="مثال: لدينا عروض مميزة جديدة هذا الأسبوع..."
+                                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"></textarea>
+                                        <p class="text-xs text-gray-500 mt-1">المحتوى الكامل للإشعار الذي سيظهر للمستخدمين</p>
+                                    </div>
+                                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                                        <div class="flex items-start">
+                                            <i class="fas fa-exclamation-triangle text-yellow-600 mt-1 ml-3"></i>
+                                            <div>
+                                                <p class="text-sm font-semibold text-yellow-800">تنبيه مهم</p>
+                                                <p class="text-sm text-yellow-700 mt-1">سيتم إرسال هذا الإشعار لجميع المستخدمين المسجلين في الموقع. تأكد من صحة المحتوى قبل الإرسال.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="submit" id="sendNotificationBtn" 
+                                            class="w-full bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-3 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 flex items-center justify-center">
+                                        <i class="fas fa-paper-plane mr-2"></i>
+                                        إرسال الإشعار لجميع المستخدمين
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Profile Section -->
                 <div id="profile" class="section hidden">
                     <div class="max-w-4xl mx-auto">
@@ -770,6 +857,48 @@
         </div>
     </div>
 
+    <!-- Subscription Modal -->
+    <div id="subscriptionModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-2xl font-bold text-gray-800" id="subscriptionModalTitle">إضافة اشتراك</h3>
+            </div>
+            <form id="subscriptionForm" class="p-6 space-y-4">
+                <input type="hidden" id="subscriptionId">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">صاحب المطعم *</label>
+                    <select id="subscriptionOwnerId" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                        <option value="">اختر صاحب المطعم</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">تاريخ البداية *</label>
+                        <input type="date" id="subscriptionStartDate" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">تاريخ الانتهاء *</label>
+                        <input type="date" id="subscriptionEndDate" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="flex items-center space-x-2 space-x-reverse">
+                        <input type="checkbox" id="subscriptionIsActive" class="w-4 h-4 text-yellow-600 rounded" checked>
+                        <span class="text-sm font-semibold text-gray-700">مفعّل</span>
+                    </label>
+                </div>
+                <div class="flex space-x-3 space-x-reverse pt-4">
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-2 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                        حفظ
+                    </button>
+                    <button type="button" onclick="closeSubscriptionModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg font-semibold transition duration-300">
+                        إلغاء
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Restaurant Modal -->
     <div id="restaurantModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
@@ -922,7 +1051,7 @@
 
     <!-- JavaScript -->
     <script>
-        const API_BASE_URL = '  https://weenapp-001-site1.qtempurl.com/api';
+        const API_BASE_URL = '  https://weenrest-001-site1.jtempurl.com/api';
         let currentPage = 1;
         let totalCount = 0;
         let allUsers = [];
@@ -956,6 +1085,7 @@
             // Setup form handlers
             document.getElementById('profileForm').addEventListener('submit', updateProfile);
             document.getElementById('passwordForm').addEventListener('submit', changePassword);
+            document.getElementById('notificationForm').addEventListener('submit', sendNotificationToAll);
             document.getElementById('editUserForm').addEventListener('submit', saveUserEdit);
             document.getElementById('searchInput').addEventListener('input', filterUsers);
             document.getElementById('roleFilter').addEventListener('change', filterUsers);
@@ -1021,6 +1151,8 @@
                 'menus': 'المنيو',
                 'posts': 'المنشورات',
                 'cities': 'المدن',
+                'subscriptions': 'الاشتراكات',
+                'notifications': 'الإشعارات',
                 'profile': 'الملف الشخصي'
             };
             return titles[sectionName] || 'لوحة التحكم';
@@ -1381,14 +1513,17 @@
                             ${imgTag}
                             <h4 class="text-lg font-bold text-gray-800 mb-1">${o.name}</h4>
                             <p class="text-sm text-gray-600 mb-2">${o.description || ''}</p>
-                            <div class="flex items-center justify-between text-sm mb-2">
+                            <div class="flex items-center justify-between text-sm mb-2 flex-wrap gap-1">
                                 <span class="text-gray-700">مطعم: ${o.restaurantName || ''}</span>
-                                <span class="text-gray-700">ينتهي: ${new Date(o.expirationDate).toLocaleDateString('ar-EG')}</span>
+                                <div class="flex gap-2">
+                                    <span class="text-gray-700">يبدأ: ${new Date(o.startDate).toLocaleDateString('ar-EG')}</span>
+                                    <span class="text-gray-700">ينتهي: ${new Date(o.expirationDate).toLocaleDateString('ar-EG')}</span>
+                                </div>
                             </div>
                             <div class="flex items-center justify-between text-sm mb-3">
                                 <span class="${o.isActive ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'} px-2 py-0.5 rounded-full">${o.isActive ? 'مفعّل' : 'معطّل'}</span>
                                 <div class="flex space-x-2 space-x-reverse">
-                                    <button class="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1.5 rounded" onclick="openOfferAdminModal(${o.id}, o)"><i class='fas fa-edit mr-1'></i>تعديل</button>
+                                    <button class="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1.5 rounded" onclick="openOfferAdminModal(${o.id})"><i class='fas fa-edit mr-1'></i>تعديل</button>
                                     <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded" onclick="deleteOfferAdmin(${o.id})"><i class='fas fa-trash mr-1'></i>حذف</button>
                                 </div>
                             </div>
@@ -1401,19 +1536,28 @@
             }
         }
 
-        function openOfferAdminModal(id = null, offer = null) {
+        async function openOfferAdminModal(id = null) {
             const modal = document.getElementById('offerAdminModal');
             document.getElementById('offerAdminModalTitle').textContent = id ? 'تعديل العرض' : 'إضافة عرض';
             document.getElementById('offerAdminForm').reset();
             document.getElementById('offerAdminId').value = id || '';
             loadOfferRestaurantsOptions();
-            if (offer) {
-                document.getElementById('offerNameAdmin').value = offer.name;
-                document.getElementById('offerExpirationDateAdmin').value = offer.expirationDate?.slice(0,10);
-                document.getElementById('offerDescriptionAdmin').value = offer.description || '';
-                document.getElementById('offerImageUrlAdmin').value = offer.imageUrl || '';
-                document.getElementById('offerIsActiveAdmin').checked = !!offer.isActive;
-                document.getElementById('offerRestaurantId').value = offer.restaurantId;
+            if (id) {
+                try {
+                    const data = await apiCall(`/AdminDashboard/offers/${id}`);
+                    if (data.success && data.data) {
+                        const offer = data.data;
+                        document.getElementById('offerNameAdmin').value = offer.name || '';
+                        document.getElementById('offerStartDateAdmin').value = offer.startDate ? offer.startDate.slice(0, 10) : '';
+                        document.getElementById('offerExpirationDateAdmin').value = offer.expirationDate ? offer.expirationDate.slice(0, 10) : '';
+                        document.getElementById('offerDescriptionAdmin').value = offer.description || '';
+                        document.getElementById('offerImageUrlAdmin').value = offer.imageUrl || '';
+                        document.getElementById('offerIsActiveAdmin').checked = offer.isActive !== false;
+                        document.getElementById('offerRestaurantId').value = offer.restaurantId;
+                    }
+                } catch (e) {
+                    console.error('Error loading offer details', e);
+                }
             }
             modal.classList.remove('hidden');
         }
@@ -1428,6 +1572,7 @@
             const imageFile = document.getElementById('offerImageFileAdmin').files[0];
             const formData = new FormData();
             formData.append('Name', document.getElementById('offerNameAdmin').value);
+            formData.append('StartDate', document.getElementById('offerStartDateAdmin').value);
             formData.append('ExpirationDate', document.getElementById('offerExpirationDateAdmin').value);
             const desc = document.getElementById('offerDescriptionAdmin').value;
             if (desc && desc.trim()) formData.append('Description', desc);
@@ -1777,6 +1922,63 @@
             } catch (error) {
                 showToast('حدث خطأ في تغيير كلمة المرور', 'error');
                 showLoading(false);
+            }
+        }
+
+        async function sendNotificationToAll(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('notificationTitle').value.trim();
+            const body = document.getElementById('notificationBody').value.trim();
+
+            if (!title || !body) {
+                showToast('يرجى إدخال العنوان والمحتوى', 'error');
+                return;
+            }
+
+            const confirmResult = await Swal.fire({
+                title: 'تأكيد الإرسال',
+                text: 'هل أنت متأكد من إرسال هذا الإشعار لجميع المستخدمين؟',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#f59e0b',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'نعم، أرسل الإشعار',
+                cancelButtonText: 'إلغاء',
+                customClass: {
+                    title: 'font-cairo',
+                    text: 'font-cairo',
+                    confirmButton: 'font-cairo',
+                    cancelButton: 'font-cairo'
+                }
+            });
+
+            if (!confirmResult.isConfirmed) return;
+
+            showLoading(true);
+            const sendBtn = document.getElementById('sendNotificationBtn');
+            sendBtn.disabled = true;
+
+            try {
+                const notificationData = {
+                    title: title,
+                    body: body
+                };
+
+                const data = await apiCall('/PushNotifications/send-to-all', 'POST', notificationData);
+                
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    document.getElementById('notificationForm').reset();
+                } else {
+                    showToast(data.message || 'حدث خطأ في إرسال الإشعار', 'error');
+                }
+            } catch (error) {
+                console.error('Error sending notification:', error);
+                showToast('حدث خطأ في إرسال الإشعار', 'error');
+            } finally {
+                showLoading(false);
+                sendBtn.disabled = false;
             }
         }
 
@@ -2469,7 +2671,7 @@
                         const preview = document.getElementById('restaurantImagePreview');
                         const previewImg = document.getElementById('restaurantImagePreviewImg');
                         if (preview && previewImg) {
-                            const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase')) || '  https://weenapp-001-site1.qtempurl.com';
+                            const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase')) || '  https://weenrest-001-site1.jtempurl.com';
                             const resolveImageUrl = (url) => {
                                 if (!url || typeof url !== 'string' || url.trim() === '') return null;
                                 if (/^https?:\/\//i.test(url)) return url;
@@ -2979,6 +3181,260 @@
                 showToast('حدث خطأ في حذف المدينة', 'error');
             }
         }
+
+        // ==================== Subscriptions Functions ====================
+        let allSubscriptions = [];
+        let filteredSubscriptions = [];
+        let allStakeholders = [];
+
+        async function loadStakeholders() {
+            try {
+                const data = await apiCall('/AdminDashboard/users?role=stakeholder&pageSize=1000');
+                if (data.success) {
+                    allStakeholders = data.data;
+                    updateSubscriptionOwnerDropdown();
+                }
+            } catch (error) {
+                console.error('Error loading stakeholders:', error);
+            }
+        }
+
+        function updateSubscriptionOwnerDropdown() {
+            const select = document.getElementById('subscriptionOwnerId');
+            if (!select) return;
+            
+            const currentValue = select.value;
+            select.innerHTML = '<option value="">اختر صاحب المطعم</option>';
+            allStakeholders.forEach(owner => {
+                const option = document.createElement('option');
+                option.value = owner.id;
+                option.textContent = `${owner.firstName} ${owner.lastName} (${owner.email})`;
+                if (owner.id === currentValue) {
+                    option.selected = true;
+                }
+                select.appendChild(option);
+            });
+        }
+
+        async function loadSubscriptions() {
+            try {
+                const searchTerm = document.getElementById('subscriptionSearch')?.value || '';
+                const statusFilter = document.getElementById('subscriptionStatusFilter')?.value || '';
+                
+                let url = '/AdminDashboard/subscriptions?pageSize=1000';
+                if (statusFilter === 'expired') {
+                    url += '&expired=true';
+                } else if (statusFilter === 'active') {
+                    url += '&expired=false&isActive=true';
+                } else if (statusFilter === 'inactive') {
+                    url += '&isActive=false';
+                }
+
+                const data = await apiCall(url);
+                if (data.success) {
+                    allSubscriptions = data.data;
+                    
+                    // Filter by search term
+                    if (searchTerm) {
+                        filteredSubscriptions = allSubscriptions.filter(sub =>
+                            sub.ownerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            sub.ownerEmail.toLowerCase().includes(searchTerm.toLowerCase())
+                        );
+                    } else {
+                        filteredSubscriptions = allSubscriptions;
+                    }
+                    
+                    renderSubscriptions();
+                }
+            } catch (error) {
+                console.error('Error loading subscriptions:', error);
+                showToast('حدث خطأ في تحميل الاشتراكات', 'error');
+            }
+        }
+
+        function renderSubscriptions() {
+            const container = document.getElementById('subscriptionsList');
+            if (!container) return;
+
+            container.innerHTML = '';
+            
+            if (filteredSubscriptions.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">لا توجد اشتراكات</div>';
+                return;
+            }
+
+            filteredSubscriptions.forEach(sub => {
+                const card = document.createElement('div');
+                card.className = 'bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition duration-300';
+                
+                const statusColor = sub.isValid ? 'bg-green-100 text-green-800' : 
+                                   sub.isActive ? 'bg-yellow-100 text-yellow-800' : 
+                                   'bg-red-100 text-red-800';
+                const statusText = sub.isValid ? 'نشط' : 
+                                  sub.isActive ? 'منتهي' : 
+                                  'معطّل';
+                
+                card.innerHTML = `
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex-1">
+                                <h4 class="text-lg font-bold text-gray-800">${sub.ownerName}</h4>
+                                <p class="text-sm text-gray-600">${sub.ownerEmail}</p>
+                            </div>
+                            <span class="px-2 py-1 text-xs rounded-full ${statusColor}">
+                                ${statusText}
+                            </span>
+                        </div>
+                        <div class="space-y-2 mb-3">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">تاريخ البداية:</span>
+                                <span class="font-semibold">${new Date(sub.startDate).toLocaleDateString('ar-EG')}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">تاريخ الانتهاء:</span>
+                                <span class="font-semibold">${new Date(sub.endDate).toLocaleDateString('ar-EG')}</span>
+                            </div>
+                            ${sub.isValid ? `
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-600">الأيام المتبقية:</span>
+                                    <span class="font-semibold text-green-600">${sub.daysRemaining} يوم</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="flex space-x-2 space-x-reverse">
+                            <button onclick="editSubscription(${sub.id})" class="flex-1 bg-yellow-600 text-white px-3 py-2 rounded text-sm hover:bg-yellow-700 transition">
+                                <i class="fas fa-edit mr-1"></i>تعديل
+                            </button>
+                            <button onclick="deleteSubscription(${sub.id})" class="flex-1 bg-red-600 text-white px-3 py-2 rounded text-sm hover:bg-red-700 transition">
+                                <i class="fas fa-trash mr-1"></i>حذف
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function filterSubscriptions() {
+            loadSubscriptions();
+        }
+
+        async function openSubscriptionModal(id = null) {
+            await loadStakeholders();
+            
+            document.getElementById('subscriptionModalTitle').textContent = id ? 'تعديل اشتراك' : 'إضافة اشتراك';
+            document.getElementById('subscriptionForm').reset();
+            document.getElementById('subscriptionId').value = id || '';
+            
+            // Set default dates
+            if (!id) {
+                const today = new Date();
+                const nextMonth = new Date(today);
+                nextMonth.setMonth(nextMonth.getMonth() + 1);
+                
+                document.getElementById('subscriptionStartDate').value = today.toISOString().split('T')[0];
+                document.getElementById('subscriptionEndDate').value = nextMonth.toISOString().split('T')[0];
+            }
+            
+            if (id) {
+                const subscription = allSubscriptions.find(s => s.id === id);
+                if (subscription) {
+                    document.getElementById('subscriptionOwnerId').value = subscription.ownerId;
+                    document.getElementById('subscriptionStartDate').value = new Date(subscription.startDate).toISOString().split('T')[0];
+                    document.getElementById('subscriptionEndDate').value = new Date(subscription.endDate).toISOString().split('T')[0];
+                    document.getElementById('subscriptionIsActive').checked = subscription.isActive;
+                }
+            }
+            document.getElementById('subscriptionModal').classList.remove('hidden');
+        }
+
+        function closeSubscriptionModal() {
+            document.getElementById('subscriptionModal').classList.add('hidden');
+        }
+
+        async function saveSubscription(e) {
+            e.preventDefault();
+            const id = document.getElementById('subscriptionId').value;
+            
+            const data = {
+                ownerId: document.getElementById('subscriptionOwnerId').value,
+                startDate: document.getElementById('subscriptionStartDate').value,
+                endDate: document.getElementById('subscriptionEndDate').value,
+                isActive: document.getElementById('subscriptionIsActive').checked
+            };
+
+            // Validate dates
+            if (new Date(data.endDate) <= new Date(data.startDate)) {
+                showToast('تاريخ الانتهاء يجب أن يكون بعد تاريخ البداية', 'error');
+                return;
+            }
+
+            try {
+                const result = await apiCall(
+                    id ? `/AdminDashboard/subscriptions/${id}` : '/AdminDashboard/subscriptions',
+                    id ? 'PUT' : 'POST',
+                    data
+                );
+                if (result.success) {
+                    showToast(result.message, 'success');
+                    closeSubscriptionModal();
+                    loadSubscriptions();
+                } else {
+                    showToast(result.message, 'error');
+                }
+            } catch (error) {
+                showToast('حدث خطأ في حفظ الاشتراك', 'error');
+            }
+        }
+
+        function editSubscription(id) {
+            openSubscriptionModal(id);
+        }
+
+        async function deleteSubscription(id) {
+            const result = await Swal.fire({
+                title: 'هل أنت متأكد؟',
+                text: 'هل تريد حذف هذا الاشتراك؟',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'نعم، احذف',
+                cancelButtonText: 'إلغاء'
+            });
+
+            if (!result.isConfirmed) return;
+
+            try {
+                const data = await apiCall(`/AdminDashboard/subscriptions/${id}`, 'DELETE');
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadSubscriptions();
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                showToast('حدث خطأ في حذف الاشتراك', 'error');
+            }
+        }
+
+        // Setup subscription form handler
+        document.addEventListener('DOMContentLoaded', () => {
+            const subscriptionForm = document.getElementById('subscriptionForm');
+            if (subscriptionForm) {
+                subscriptionForm.addEventListener('submit', saveSubscription);
+            }
+            
+            const subscriptionSearch = document.getElementById('subscriptionSearch');
+            if (subscriptionSearch) {
+                subscriptionSearch.addEventListener('input', filterSubscriptions);
+            }
+            
+            const subscriptionStatusFilter = document.getElementById('subscriptionStatusFilter');
+            if (subscriptionStatusFilter) {
+                subscriptionStatusFilter.addEventListener('change', filterSubscriptions);
+            }
+        });
     </script>
     <script src="js/push-notifications.js"></script>
 </body>

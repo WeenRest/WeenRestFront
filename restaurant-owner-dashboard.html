@@ -576,6 +576,11 @@
                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
                     </div>
                     <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">تاريخ البدء *</label>
+                        <input type="date" id="offerStartDate" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                    </div>
+                    <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">تاريخ الانتهاء *</label>
                         <input type="date" id="offerExpirationDate" required
                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
@@ -696,7 +701,7 @@
 
     <!-- JavaScript -->
     <script>
-        const API_BASE_URL = '  https://weenapp-001-site1.qtempurl.com/api';
+        const API_BASE_URL = '  https://weenrest-001-site1.jtempurl.com/api';
         let currentRestaurant = null;
         let allCategories = [];
         let allCities = [];
@@ -1086,7 +1091,7 @@
                     const preview = document.getElementById('restaurantImagePreview');
                     const previewImg = document.getElementById('restaurantImagePreviewImg');
                     if (preview && previewImg) {
-                        const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase')) || '  https://weenapp-001-site1.qtempurl.com';
+                        const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase')) || '  https://weenrest-001-site1.jtempurl.com';
                         const resolveImageUrl = (url) => {
                             if (!url || typeof url !== 'string' || url.trim() === '') return null;
                             if (/^https?:\/\//i.test(url)) return url;
@@ -1322,7 +1327,7 @@
                 // If URL is cleared, show original image if exists
                 const originalUrl = document.getElementById('restaurantOriginalImageUrl').value;
                 if (originalUrl) {
-                    const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase')) || '  https://weenapp-001-site1.qtempurl.com';
+                    const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase')) || '  https://weenrest-001-site1.jtempurl.com';
                     const resolveImageUrl = (url) => {
                         if (!url || typeof url !== 'string' || url.trim() === '') return null;
                         if (/^https?:\/\//i.test(url)) return url;
@@ -1493,9 +1498,14 @@
                             ${imgTag}
                             <h4 class="text-base sm:text-lg font-bold text-gray-800 mb-1 truncate">${o.name}</h4>
                             <p class="text-xs sm:text-sm text-gray-600 mb-2 line-clamp-2">${o.description || ''}</p>
-                            <div class="flex items-center justify-between text-xs sm:text-sm mb-2 sm:mb-3 flex-wrap gap-1">
-                                <span class="text-gray-700">ينتهي في: ${new Date(o.expirationDate).toLocaleDateString('ar-EG')}</span>
-                                <span class="${o.isActive ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'} px-2 py-0.5 rounded-full text-xs">${o.isActive ? 'مفعّل' : 'معطّل'}</span>
+                            <div class="flex flex-col gap-1 text-xs sm:text-sm mb-2 sm:mb-3">
+                                <div class="flex items-center justify-between flex-wrap gap-1">
+                                    <span class="text-gray-700">يبدأ: ${new Date(o.startDate).toLocaleDateString('ar-EG')}</span>
+                                    <span class="text-gray-700">ينتهي: ${new Date(o.expirationDate).toLocaleDateString('ar-EG')}</span>
+                                </div>
+                                <div class="flex items-center justify-between flex-wrap gap-1">
+                                    <span class="${o.isActive ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'} px-2 py-0.5 rounded-full text-xs">${o.isActive ? 'مفعّل' : 'معطّل'}</span>
+                                </div>
                             </div>
                             <div class="flex flex-col sm:flex-row gap-2 space-x-0 sm:space-x-reverse">
                                 <button class="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1.5 sm:py-2 rounded text-xs sm:text-sm" onclick="openOfferModal(${o.id})"><i class="fas fa-edit mr-1"></i>تعديل</button>
@@ -1510,13 +1520,25 @@
             }
         }
 
-        function openOfferModal(id = null) {
+        async function openOfferModal(id = null) {
             document.getElementById('offerModalTitle').textContent = id ? 'تعديل العرض' : 'إضافة عرض';
             document.getElementById('offerForm').reset();
             document.getElementById('offerId').value = id || '';
-            if (id && currentRestaurant) {
-                // fetch the offer details from loaded list for convenience
-                // Alternatively could request /offers/{id}
+            if (id) {
+                try {
+                    const data = await apiCall(`/RestaurantOwnerDashboard/offers/${id}`);
+                    if (data.success && data.data) {
+                        const offer = data.data;
+                        document.getElementById('offerName').value = offer.name || '';
+                        document.getElementById('offerStartDate').value = offer.startDate ? offer.startDate.slice(0, 10) : '';
+                        document.getElementById('offerExpirationDate').value = offer.expirationDate ? offer.expirationDate.slice(0, 10) : '';
+                        document.getElementById('offerDescription').value = offer.description || '';
+                        document.getElementById('offerImageUrl').value = offer.imageUrl || '';
+                        document.getElementById('offerIsActive').checked = offer.isActive !== false;
+                    }
+                } catch (e) {
+                    console.error('Error loading offer details', e);
+                }
             }
             document.getElementById('offerModal').classList.remove('hidden');
         }
@@ -1531,6 +1553,7 @@
             const imageFile = document.getElementById('offerImageFile').files[0];
             const formData = new FormData();
             formData.append('Name', document.getElementById('offerName').value);
+            formData.append('StartDate', document.getElementById('offerStartDate').value);
             formData.append('ExpirationDate', document.getElementById('offerExpirationDate').value);
             const desc = document.getElementById('offerDescription').value;
             if (desc && desc.trim()) formData.append('Description', desc);

@@ -507,6 +507,11 @@
             const submitBtn = form.querySelector('button[type="submit"]');
             const messageDiv = document.getElementById('contact-message');
             
+            // Get API base URL
+            const API_BASE_URL = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase')) 
+                ? localStorage.getItem('apiBase') + '/api'
+                : 'https://weenrest-001-site1.jtempurl.com/api';
+            
             // Get form data
             const formData = {
                 name: document.getElementById('contact-name').value.trim(),
@@ -527,15 +532,25 @@
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin ml-2"></i><span>جاري الإرسال...</span>';
             
             try {
-                // Here you would typically send the data to your backend API
-                // For now, we'll simulate a successful submission
-                await new Promise(resolve => setTimeout(resolve, 1500));
+                const response = await fetch(`${API_BASE_URL}/Public/contact`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
                 
-                // Show success message
-                showToast('تم إرسال رسالتك بنجاح! سنقوم بالرد عليك في أقرب وقت ممكن.', 'success');
+                const result = await response.json();
                 
-                // Reset form
-                form.reset();
+                if (result.success) {
+                    // Show success message
+                    showToast(result.message || 'تم إرسال رسالتك بنجاح! سنقوم بالرد عليك في أقرب وقت ممكن.', 'success');
+                    
+                    // Reset form
+                    form.reset();
+                } else {
+                    showToast(result.message || 'حدث خطأ أثناء إرسال الرسالة. يرجى المحاولة مرة أخرى.', 'error');
+                }
                 
                 // Re-enable submit button
                 submitBtn.disabled = false;
