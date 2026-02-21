@@ -151,7 +151,11 @@
             if(data.success){ Swal.fire({icon:'success',title:'تم الحذف'}); loadRequests(); } else { Swal.fire({icon:'error',title:'تعذر الحذف',text:data.message||''}); }
         }
     </script>
-    <script src="js/push-notifications.js"></script>`r`n</body>
+    <link rel="stylesheet" href="css/in-app-notifications.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <script src="js/push-notifications.js"></script>
+    <script src="js/in-app-notifications.js"></script>
+</body>
 </html>
 
 

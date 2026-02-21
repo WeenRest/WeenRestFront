@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة المشرفين - WeenRest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111'/%3E%3Cpath fill='%23f59e0b' d='M22 10h4v20c0 6-4 8-4 8s-4-2-4-8V10h4zM38 10h4v14h6v4h-6v10h-4V10z'/%3E%3C/svg%3E">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+        }
+        .sidebar-link.active {
+            background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-8 flex flex-col items-center">
+            <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-yellow-600 mb-4"></div>
+            <p class="text-gray-700 font-semibold">جاري التحميل...</p>
+        </div>
+    </div>
+
+    <!-- Supervisor Modal -->
+    <div id="supervisorModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-2xl font-bold text-gray-800" id="supervisorModalTitle">إضافة مشرف</h3>
+            </div>
+            <form id="supervisorForm" class="p-6 space-y-4">
+                <input type="hidden" id="supervisorId">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">المستخدم *</label>
+                        <select id="supervisorUserId" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                            <option value="">اختر المستخدم</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="flex items-center space-x-2 space-x-reverse">
+                            <input type="checkbox" id="supervisorIsSuperSupervisor" class="w-4 h-4 text-yellow-600 rounded">
+                            <span class="text-sm font-semibold text-gray-700">سوبر مشرف (يمكنه إضافة مشرفين آخرين)</span>
+                        </label>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">نطاق الصلاحيات *</label>
+                        <select id="supervisorScopeType" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500" onchange="handleScopeTypeChange()">
+                            <option value="Global">عام (كل البيانات)</option>
+                            <option value="City">مدينة محددة</option>
+                            <option value="Restaurant">مطاعم محددة</option>
+                        </select>
+                    </div>
+
+                    <div id="citiesContainer" class="md:col-span-2 hidden">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">المدن *</label>
+                        <select id="supervisorCityIds" multiple class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500" size="5">
+                        </select>
+                        <p class="text-xs text-gray-500 mt-1">اضغط Ctrl (أو Cmd على Mac) لاختيار مدن متعددة</p>
+                    </div>
+
+                    <div id="restaurantsContainer" class="md:col-span-2 hidden">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">المطاعم *</label>
+                        <select id="supervisorRestaurantIds" multiple class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500" size="5">
+                        </select>
+                        <p class="text-xs text-gray-500 mt-1">اضغط Ctrl (أو Cmd على Mac) لاختيار مطاعم متعددة</p>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">الصلاحيات *</label>
+                        <div id="permissionsContainer" class="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-64 overflow-y-auto border border-gray-200 rounded-lg p-4">
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="flex items-center space-x-2 space-x-reverse">
+                            <input type="checkbox" id="supervisorIsActive" class="w-4 h-4 text-yellow-600 rounded" checked>
+                            <span class="text-sm font-semibold text-gray-700">مفعّل</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flex space-x-3 space-x-reverse pt-4">
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-2 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                        حفظ
+                    </button>
+                    <button type="button" onclick="closeSupervisorModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg font-semibold transition duration-300">
+                        إلغاء
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gradient-to-b from-gray-900 to-black text-white shadow-2xl">
+            <div class="flex flex-col h-full">
+                <!-- Logo -->
+                <div class="p-6 border-b border-gray-700">
+                    <div class="flex items-center space-x-3 space-x-reverse">
+                        <div class="w-12 h-12 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-utensils text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold">WeenRest</h1>
+                            <p class="text-xs text-gray-400">لوحة التحكم</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="flex-1 p-4 space-y-2">
+                    <a href="admin-dashboard.html" class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
+                        <i class="fas fa-home w-5"></i>
+                        <span>لوحة التحكم</span>
+                    </a>
+                    <a href="#" class="sidebar-link active flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer">
+                        <i class="fas fa-user-shield w-5"></i>
+                        <span>المشرفين</span>
+                    </a>
+                    <a href="admin-dashboard.html#users" class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
+                        <i class="fas fa-users w-5"></i>
+                        <span>المستخدمين</span>
+                    </a>
+                </nav>
+
+                <!-- User Info -->
+                <div class="p-4 border-t border-gray-700">
+                    <div class="flex items-center space-x-3 space-x-reverse mb-3">
+                        <div class="w-10 h-10 bg-yellow-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-white"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-semibold" id="userName">الأدمن</p>
+                            <p class="text-xs text-gray-400" id="userEmail">admin@weenrest.com</p>
+                        </div>
+                    </div>
+                    <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm font-semibold transition duration-300">
+                        <i class="fas fa-sign-out-alt ml-2"></i>تسجيل الخروج
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto">
+            <!-- Header -->
+            <header class="bg-white shadow-md p-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-3xl font-bold text-gray-800">إدارة المشرفين</h2>
+                    <button onclick="openSupervisorModal()" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-6 py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                        <i class="fas fa-plus ml-2"></i>إضافة مشرف
+                    </button>
+                </div>
+            </header>
+
+            <!-- Filters -->
+            <div class="bg-white shadow-md p-4 m-6 rounded-lg">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">البحث</label>
+                        <input type="text" id="searchInput" placeholder="ابحث عن مشرف..." 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
+                               onkeyup="filterSupervisors()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">الحالة</label>
+                        <select id="statusFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500" onchange="filterSupervisors()">
+                            <option value="">الكل</option>
+                            <option value="active">مفعّل</option>
+                            <option value="inactive">غير مفعّل</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">نطاق الصلاحيات</label>
+                        <select id="scopeFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500" onchange="filterSupervisors()">
+                            <option value="">الكل</option>
+                            <option value="Global">عام</option>
+                            <option value="City">مدينة</option>
+                            <option value="Restaurant">مطعم</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Supervisors List -->
+            <div class="p-6">
+                <div id="supervisorsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Supervisors will be loaded here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://weenrest-001-site1.jtempurl.com/api';
+        let allSupervisors = [];
+        let filteredSupervisors = [];
+        let allUsers = [];
+        let allCities = [];
+        let allRestaurants = [];
+        let allPermissions = [];
+
+        // Check authentication
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            await loadUserInfo();
+            await loadPermissions();
+            await loadUsers();
+            await loadCities();
+            await loadRestaurants();
+            await loadSupervisors();
+        });
+
+        async function loadUserInfo() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/AdminDashboard/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        document.getElementById('userName').textContent = `${data.data.firstName} ${data.data.lastName}`;
+                        document.getElementById('userEmail').textContent = data.data.email;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading user info:', error);
+            }
+        }
+
+        async function loadPermissions() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/Supervisor/permissions`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        allPermissions = data.data;
+                        renderPermissions();
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading permissions:', error);
+            }
+        }
+
+        function renderPermissions() {
+            const container = document.getElementById('permissionsContainer');
+            container.innerHTML = '';
+            allPermissions.forEach(permission => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center space-x-2 space-x-reverse';
+                div.innerHTML = `
+                    <input type="checkbox" id="perm_${permission.name}" value="${permission.name}" 
+                           class="w-4 h-4 text-yellow-600 rounded permission-checkbox">
+                    <label for="perm_${permission.name}" class="text-sm text-gray-700 cursor-pointer">
+                        ${permission.displayName}
+                    </label>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        async function loadUsers() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/AdminDashboard/users?pageSize=1000&role=user`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        allUsers = data.data;
+                        updateUserDropdown();
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+
+        function updateUserDropdown() {
+            const select = document.getElementById('supervisorUserId');
+            if (!select) return;
+            const currentValue = select.value;
+            select.innerHTML = '<option value="">اختر المستخدم</option>';
+            allUsers.forEach(user => {
+                if (user.isActive) {
+                    const option = document.createElement('option');
+                    option.value = user.id;
+                    option.textContent = `${user.firstName} ${user.lastName} (${user.email})`;
+                    if (user.id === currentValue) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                }
+            });
+        }
+
+        async function loadCities() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/AdminDashboard/cities?pageSize=1000`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        allCities = data.data.filter(c => c.isActive);
+                        updateCitiesDropdown();
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading cities:', error);
+            }
+        }
+
+        function updateCitiesDropdown() {
+            const select = document.getElementById('supervisorCityIds');
+            if (!select) return;
+            select.innerHTML = '';
+            allCities.forEach(city => {
+                const option = document.createElement('option');
+                option.value = city.id;
+                option.textContent = city.name;
+                select.appendChild(option);
+            });
+        }
+
+        async function loadRestaurants() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/AdminDashboard/restaurants?pageSize=1000`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        allRestaurants = data.data.filter(r => r.isActive);
+                        updateRestaurantsDropdown();
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading restaurants:', error);
+            }
+        }
+
+        function updateRestaurantsDropdown() {
+            const select = document.getElementById('supervisorRestaurantIds');
+            if (!select) return;
+            select.innerHTML = '';
+            allRestaurants.forEach(restaurant => {
+                const option = document.createElement('option');
+                option.value = restaurant.id;
+                option.textContent = restaurant.name;
+                select.appendChild(option);
+            });
+        }
+
+        function handleScopeTypeChange() {
+            const scopeType = document.getElementById('supervisorScopeType').value;
+            const citiesContainer = document.getElementById('citiesContainer');
+            const restaurantsContainer = document.getElementById('restaurantsContainer');
+            
+            citiesContainer.classList.add('hidden');
+            restaurantsContainer.classList.add('hidden');
+            
+            if (scopeType === 'City') {
+                citiesContainer.classList.remove('hidden');
+                document.getElementById('supervisorCityIds').required = true;
+                document.getElementById('supervisorRestaurantIds').required = false;
+            } else if (scopeType === 'Restaurant') {
+                restaurantsContainer.classList.remove('hidden');
+                document.getElementById('supervisorRestaurantIds').required = true;
+                document.getElementById('supervisorCityIds').required = false;
+            } else {
+                document.getElementById('supervisorCityIds').required = false;
+                document.getElementById('supervisorRestaurantIds').required = false;
+            }
+        }
+
+        async function loadSupervisors() {
+            try {
+                showLoading();
+                const response = await fetch(`${API_BASE_URL}/Supervisor`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        allSupervisors = data.data;
+                        filteredSupervisors = [];
+                        renderSupervisors();
+                    }
+                } else if (response.status === 401) {
+                    window.location.href = 'login.html';
+                }
+            } catch (error) {
+                console.error('Error loading supervisors:', error);
+                Swal.fire('خطأ', 'حدث خطأ أثناء تحميل المشرفين', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function renderSupervisors() {
+            const container = document.getElementById('supervisorsList');
+            container.innerHTML = '';
+
+            const supervisorsToRender = filteredSupervisors.length > 0 ? filteredSupervisors : allSupervisors;
+
+            if (supervisorsToRender.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">لا يوجد مشرفين</div>';
+                return;
+            }
+
+            supervisorsToRender.forEach(supervisor => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-lg shadow-md p-6 card-hover transition duration-300';
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">${supervisor.userFirstName} ${supervisor.userLastName}</h3>
+                            <p class="text-sm text-gray-500">${supervisor.userEmail}</p>
+                        </div>
+                        <div class="flex space-x-2 space-x-reverse">
+                            <button onclick="editSupervisor(${supervisor.id})" class="text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteSupervisor(${supervisor.id})" class="text-red-600 hover:text-red-800">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-center space-x-2 space-x-reverse">
+                            <span class="font-semibold text-gray-700">النطاق:</span>
+                            <span class="text-gray-600">${supervisor.scopeTypeDisplay}</span>
+                            ${supervisor.isSuperSupervisor ? '<span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">سوبر مشرف</span>' : ''}
+                        </div>
+                        <div class="flex items-center space-x-2 space-x-reverse">
+                            <span class="font-semibold text-gray-700">الحالة:</span>
+                            <span class="${supervisor.isActive ? 'text-green-600' : 'text-red-600'}">
+                                ${supervisor.isActive ? 'مفعّل' : 'غير مفعّل'}
+                            </span>
+                        </div>
+                        <div>
+                            <span class="font-semibold text-gray-700">الصلاحيات:</span>
+                            <div class="mt-1 flex flex-wrap gap-1">
+                                ${supervisor.permissionDisplays.map(p => `<span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs">${p.displayName}</span>`).join('')}
+                            </div>
+                        </div>
+                        ${supervisor.cityNames.length > 0 ? `<div><span class="font-semibold text-gray-700">المدن:</span> <span class="text-gray-600">${supervisor.cityNames.join(', ')}</span></div>` : ''}
+                        ${supervisor.restaurantNames.length > 0 ? `<div><span class="font-semibold text-gray-700">المطاعم:</span> <span class="text-gray-600">${supervisor.restaurantNames.join(', ')}</span></div>` : ''}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function filterSupervisors() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const scopeFilter = document.getElementById('scopeFilter').value;
+
+            let filtered = [...allSupervisors];
+
+            if (searchTerm) {
+                filtered = filtered.filter(s => 
+                    s.userFirstName.toLowerCase().includes(searchTerm) ||
+                    s.userLastName.toLowerCase().includes(searchTerm) ||
+                    s.userEmail.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            if (statusFilter === 'active') {
+                filtered = filtered.filter(s => s.isActive);
+            } else if (statusFilter === 'inactive') {
+                filtered = filtered.filter(s => !s.isActive);
+            }
+
+            if (scopeFilter) {
+                filtered = filtered.filter(s => s.scopeType === scopeFilter);
+            }
+
+            filteredSupervisors = filtered;
+            renderSupervisors();
+        }
+
+        function openSupervisorModal() {
+            document.getElementById('supervisorModalTitle').textContent = 'إضافة مشرف';
+            document.getElementById('supervisorForm').reset();
+            document.getElementById('supervisorId').value = '';
+            document.getElementById('supervisorIsActive').checked = true;
+            document.getElementById('supervisorIsSuperSupervisor').checked = false;
+            document.getElementById('supervisorScopeType').value = 'Global';
+            handleScopeTypeChange();
+            document.querySelectorAll('.permission-checkbox').forEach(cb => cb.checked = false);
+            document.getElementById('supervisorModal').classList.remove('hidden');
+        }
+
+        function closeSupervisorModal() {
+            document.getElementById('supervisorModal').classList.add('hidden');
+        }
+
+        async function editSupervisor(id) {
+            const supervisor = allSupervisors.find(s => s.id === id);
+            if (!supervisor) return;
+
+            document.getElementById('supervisorModalTitle').textContent = 'تعديل مشرف';
+            document.getElementById('supervisorId').value = supervisor.id;
+            document.getElementById('supervisorUserId').value = supervisor.userId;
+            document.getElementById('supervisorIsSuperSupervisor').checked = supervisor.isSuperSupervisor;
+            document.getElementById('supervisorScopeType').value = supervisor.scopeType;
+            document.getElementById('supervisorIsActive').checked = supervisor.isActive;
+            
+            handleScopeTypeChange();
+
+            // Set cities
+            if (supervisor.cityIds.length > 0) {
+                const citySelect = document.getElementById('supervisorCityIds');
+                supervisor.cityIds.forEach(cityId => {
+                    const option = citySelect.querySelector(`option[value="${cityId}"]`);
+                    if (option) option.selected = true;
+                });
+            }
+
+            // Set restaurants
+            if (supervisor.restaurantIds.length > 0) {
+                const restaurantSelect = document.getElementById('supervisorRestaurantIds');
+                supervisor.restaurantIds.forEach(restaurantId => {
+                    const option = restaurantSelect.querySelector(`option[value="${restaurantId}"]`);
+                    if (option) option.selected = true;
+                });
+            }
+
+            // Set permissions
+            document.querySelectorAll('.permission-checkbox').forEach(cb => {
+                cb.checked = supervisor.permissions.includes(cb.value);
+            });
+
+            document.getElementById('supervisorModal').classList.remove('hidden');
+        }
+
+        async function deleteSupervisor(id) {
+            const result = await Swal.fire({
+                title: 'هل أنت متأكد؟',
+                text: 'سيتم حذف المشرف نهائياً',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'نعم، احذف',
+                cancelButtonText: 'إلغاء'
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    showLoading();
+                    const response = await fetch(`${API_BASE_URL}/Supervisor/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        Swal.fire('تم الحذف', 'تم حذف المشرف بنجاح', 'success');
+                        await loadSupervisors();
+                    } else {
+                        const data = await response.json();
+                        Swal.fire('خطأ', data.message || 'حدث خطأ أثناء الحذف', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error deleting supervisor:', error);
+                    Swal.fire('خطأ', 'حدث خطأ أثناء الحذف', 'error');
+                } finally {
+                    hideLoading();
+                }
+            }
+        }
+
+        document.getElementById('supervisorForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const selectedPermissions = Array.from(document.querySelectorAll('.permission-checkbox:checked')).map(cb => cb.value);
+            if (selectedPermissions.length === 0) {
+                Swal.fire('خطأ', 'يجب اختيار صلاحية واحدة على الأقل', 'error');
+                return;
+            }
+
+            const scopeType = document.getElementById('supervisorScopeType').value;
+            const cityIds = scopeType === 'City' ? Array.from(document.getElementById('supervisorCityIds').selectedOptions).map(o => parseInt(o.value)) : [];
+            const restaurantIds = scopeType === 'Restaurant' ? Array.from(document.getElementById('supervisorRestaurantIds').selectedOptions).map(o => parseInt(o.value)) : [];
+
+            if (scopeType === 'City' && cityIds.length === 0) {
+                Swal.fire('خطأ', 'يجب اختيار مدينة واحدة على الأقل', 'error');
+                return;
+            }
+
+            if (scopeType === 'Restaurant' && restaurantIds.length === 0) {
+                Swal.fire('خطأ', 'يجب اختيار مطعم واحد على الأقل', 'error');
+                return;
+            }
+
+            const supervisorId = document.getElementById('supervisorId').value;
+            const isUpdate = supervisorId !== '';
+
+            const payload = {
+                userId: document.getElementById('supervisorUserId').value,
+                isSuperSupervisor: document.getElementById('supervisorIsSuperSupervisor').checked,
+                scopeType: scopeType,
+                cityIds: cityIds,
+                restaurantIds: restaurantIds,
+                permissions: selectedPermissions,
+                isActive: document.getElementById('supervisorIsActive').checked
+            };
+
+            try {
+                showLoading();
+                const url = isUpdate ? `${API_BASE_URL}/Supervisor/${supervisorId}` : `${API_BASE_URL}/Supervisor`;
+                const method = isUpdate ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    Swal.fire('نجح', isUpdate ? 'تم تحديث المشرف بنجاح' : 'تم إضافة المشرف بنجاح', 'success');
+                    closeSupervisorModal();
+                    await loadSupervisors();
+                } else {
+                    const data = await response.json();
+                    Swal.fire('خطأ', data.message || 'حدث خطأ', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving supervisor:', error);
+                Swal.fire('خطأ', 'حدث خطأ أثناء الحفظ', 'error');
+            } finally {
+                hideLoading();
+            }
+        });
+
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>
+
