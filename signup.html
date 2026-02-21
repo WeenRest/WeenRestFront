@@ -389,6 +389,19 @@
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('user', JSON.stringify(data.user));
                     
+                    // Send JWT token to Flutter app (for FCM device registration)
+                    try {
+                        if (window.FlutterApp) {
+                            window.FlutterApp.postMessage(JSON.stringify({
+                                type: 'jwt_token',
+                                token: data.token
+                            }));
+                            console.log('JWT token sent to Flutter app');
+                        }
+                    } catch (e) {
+                        console.log('Not running inside Flutter WebView');
+                    }
+                    
                     // Redirect to home page first, then user can go to dashboard if needed
                     setTimeout(() => {
                         window.location.href = 'index.html';
