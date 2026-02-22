@@ -2,7 +2,7 @@
   const qs = new URLSearchParams(window.location.search);
   const id = parseInt(qs.get('id') || '', 10);
   const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase'))
-    || '  https://localhost:5053';
+    || '  https://weenrest-001-site1.jtempurl.com';
 
   const toast = (message, type = 'info') => {
     const toastEl = document.getElementById('toast');
@@ -66,7 +66,7 @@
           </div>
         `;
       }
-      const timeStr = day.startTime && day.endTime 
+      const timeStr = day.startTime && day.endTime
         ? `${day.startTime} - ${day.endTime}`
         : 'غير محدد';
       return `
@@ -78,7 +78,7 @@
     }).join('');
   };
 
-    const setHero = (data) => {
+  const setHero = (data) => {
     const heroImg = document.getElementById('restaurant-image');
     const nameEl = document.getElementById('restaurant-name');
     const descEl = document.getElementById('restaurant-description');
@@ -111,7 +111,7 @@
       // Support both camelCase and PascalCase from API
       const hasDelivery = data.hasDelivery || data.HasDelivery || false;
       deliveryBadge.style.display = 'inline-flex';
-      
+
       if (hasDelivery) {
         // Delivery available - green badge
         deliveryBadge.className = 'inline-flex items-center bg-green-50 text-green-700 px-3 py-1 rounded-full';
@@ -267,12 +267,12 @@
     const m = modal();
     const img = modalImg();
     if (!m || !img) return;
-    
+
     // Reset state
     zoom = 1;
     translateX = 0;
     translateY = 0;
-    
+
     // Load image and set initial size
     img.src = src || '';
     img.onload = () => {
@@ -284,7 +284,7 @@
       // Prevent body scroll when modal is open
       document.body.style.overflow = 'hidden';
     };
-    
+
     m.classList.remove('hidden');
     document.addEventListener('keydown', onKeyDown);
   };

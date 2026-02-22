@@ -2,7 +2,7 @@
 class PushNotificationService {
   constructor() {
     // Normalize base URL (some pages store it with leading/trailing spaces)
-    this.apiBase = (localStorage.getItem('api_origin') || localStorage.getItem('apiBase') || ' https://localhost:5053').trim();
+    this.apiBase = (localStorage.getItem('api_origin') || localStorage.getItem('apiBase') || ' https://weenrest-001-site1.jtempurl.com').trim();
     this.subscription = null;
     this.isSupported = 'serviceWorker' in navigator && 'PushManager' in window;
     this.init();
@@ -32,7 +32,7 @@ class PushNotificationService {
 
       // Check for existing subscription
       this.subscription = await registration.pushManager.getSubscription();
-      
+
       // Update subscription status in UI
       this.updateUIBadge();
       this.ensureGlobalWidget();
@@ -55,7 +55,7 @@ class PushNotificationService {
 
     try {
       const permission = await Notification.requestPermission();
-      
+
       if (permission === 'granted') {
         return { granted: true };
       } else if (permission === 'denied') {
@@ -82,7 +82,7 @@ class PushNotificationService {
       }
 
       const registration = await navigator.serviceWorker.ready;
-      
+
       // Get VAPID public key from server
       const vapidResponse = await fetch(`${this.apiBase}/api/PushNotifications/vapid-public-key`);
       if (!vapidResponse.ok) {
@@ -287,7 +287,7 @@ window.addEventListener('load', async () => {
       const isSubscribed = await window.pushNotificationService.checkSubscription();
       if (!isSubscribed) {
         // Silently try to subscribe (don't show error if it fails)
-        window.pushNotificationService.subscribe().catch(() => {});
+        window.pushNotificationService.subscribe().catch(() => { });
       }
     }
   }

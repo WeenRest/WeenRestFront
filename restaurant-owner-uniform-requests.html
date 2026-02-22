@@ -337,7 +337,7 @@
     </footer>
 
     <script>
-        const API_BASE_URL = '  https://localhost:5053/api';
+        const API_BASE_URL = '  https://weenrest-001-site1.jtempurl.com/api';
         let uniformStyles = [];
 
         document.addEventListener('DOMContentLoaded', async () => {
@@ -388,7 +388,7 @@
             if (uniformStyle.imageUrl) {
                 const imageUrl = uniformStyle.imageUrl.startsWith('http')
                     ? uniformStyle.imageUrl
-                    : `  https://localhost:5053${uniformStyle.imageUrl}`;
+                    : `  https://weenrest-001-site1.jtempurl.com${uniformStyle.imageUrl}`;
                 imageContainer.innerHTML = `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(uniformStyle.title)}" class="w-full h-full object-cover">`;
             } else {
                 imageContainer.innerHTML = '<i class="fas fa-image text-gray-400 text-2xl"></i>';
@@ -464,7 +464,7 @@
                         };
 
                         const imageUrl = style.imageUrl
-                            ? (style.imageUrl.startsWith('http') ? style.imageUrl : `  https://localhost:5053${style.imageUrl}`)
+                            ? (style.imageUrl.startsWith('http') ? style.imageUrl : `  https://weenrest-001-site1.jtempurl.com${style.imageUrl}`)
                             : null;
 
                         card.innerHTML = `

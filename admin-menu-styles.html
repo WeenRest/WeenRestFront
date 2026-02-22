@@ -52,7 +52,7 @@
     </div>
 
     <script>
-        const API_BASE_URL = '  https://localhost:5053/api';
+        const API_BASE_URL = '  https://weenrest-001-site1.jtempurl.com/api';
         document.addEventListener('DOMContentLoaded', () => {
             const token = localStorage.getItem('token');
             if (!token) { window.location.href = 'login.html'; return; }
@@ -71,7 +71,7 @@
             }
             data.data.forEach(s => {
                 const tr = document.createElement('tr');
-                const imageUrl = s.imageUrl ? `  https://localhost:5053${s.imageUrl}` : '';
+                const imageUrl = s.imageUrl ? `  https://weenrest-001-site1.jtempurl.com${s.imageUrl}` : '';
                 tr.innerHTML = `
                     <td class="px-4 py-3">
                         ${imageUrl ? `<img src="${imageUrl}" alt="${escapeHtml(s.name)}" class="w-16 h-16 object-cover rounded">` : '<span class="text-gray-400">لا توجد صورة</span>'}
@@ -128,7 +128,7 @@
             const data = await resp.json();
             if (!data.success) { return Swal.fire({ icon: 'error', title: 'تعذر الجلب', text: data.message || '' }); }
             const s = data.data;
-            const imagePreview = s.imageUrl ? `<img src="  https://localhost:5053${s.imageUrl}" class="w-32 h-32 object-cover rounded mb-2" alt="Preview">` : '';
+            const imagePreview = s.imageUrl ? `<img src="  https://weenrest-001-site1.jtempurl.com${s.imageUrl}" class="w-32 h-32 object-cover rounded mb-2" alt="Preview">` : '';
             const { value: formData } = await Swal.fire({
                 title: 'تعديل نوع منيو',
                 html: `

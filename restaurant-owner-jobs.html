@@ -60,7 +60,7 @@
 	</main>
 
 	<script>
-		const API_ORIGIN = localStorage.getItem('api_origin') || '  https://localhost:5053';
+		const API_ORIGIN = localStorage.getItem('api_origin') || '  https://weenrest-001-site1.jtempurl.com';
 		const API = {
 			jobs: `${API_ORIGIN}/api/RestaurantOwnerJobs/jobs`,
 			apps: (jobId) => jobId ? `${API_ORIGIN}/api/RestaurantOwnerJobs/applications?jobId=${encodeURIComponent(jobId)}` : `${API_ORIGIN}/api/RestaurantOwnerJobs/applications`

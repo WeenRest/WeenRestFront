@@ -1,7 +1,7 @@
 // In-App Notifications Service - Live via SignalR
 class InAppNotificationService {
     constructor() {
-        this.apiBase = (localStorage.getItem('apiBase') || localStorage.getItem('api_origin') || 'https://localhost:5053').trim().replace(/\/$/, '');
+        this.apiBase = (localStorage.getItem('apiBase') || localStorage.getItem('api_origin') || 'https://weenrest-001-site1.jtempurl.com').trim().replace(/\/$/, '');
         this.hubUrl = (this.apiBase.replace(/\/api$/, '') || this.apiBase) + '/hubs/notifications';
         this.unreadCount = 0;
         this.notifications = [];

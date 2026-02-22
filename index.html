@@ -582,7 +582,7 @@
             // Background token refresh
             if (token) {
                 try {
-                    const API_ORIGIN = localStorage.getItem('api_origin') || '  https://localhost:5053';
+                    const API_ORIGIN = localStorage.getItem('api_origin') || '  https://weenrest-001-site1.jtempurl.com';
                     const API_BASE_CLEAN = (API_ORIGIN || '').trim();
                     const verifyRes = await fetch(`${API_BASE_CLEAN}/api/Auth/me`, {
                         headers: { 'Authorization': `Bearer ${token}` }
@@ -810,7 +810,7 @@
             if (!citySelect) return;
 
             const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase'))
-                || '  https://localhost:5053';
+                || '  https://weenrest-001-site1.jtempurl.com';
 
             try {
                 const response = await fetch(`${API_BASE}/api/Public/cities`, {
@@ -844,7 +844,7 @@
         // Search functionality
         (function () {
             const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase'))
-                || '  https://localhost:5053';
+                || '  https://weenrest-001-site1.jtempurl.com';
             const API_BASE_CLEAN = (API_BASE || '').trim();
 
             const searchInput = document.getElementById('search-input');

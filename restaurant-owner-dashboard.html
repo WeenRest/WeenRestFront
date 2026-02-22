@@ -803,7 +803,7 @@
 
     <!-- JavaScript -->
     <script>
-        const API_BASE_URL = '  https://localhost:5053/api';
+        const API_BASE_URL = '  https://weenrest-001-site1.jtempurl.com/api';
         let currentRestaurant = null;
         let allCategories = [];
         let allCities = [];
@@ -1193,7 +1193,7 @@
                     const preview = document.getElementById('restaurantImagePreview');
                     const previewImg = document.getElementById('restaurantImagePreviewImg');
                     if (preview && previewImg) {
-                        const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase')) || '  https://localhost:5053';
+                        const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase')) || '  https://weenrest-001-site1.jtempurl.com';
                         const resolveImageUrl = (url) => {
                             if (!url || typeof url !== 'string' || url.trim() === '') return null;
                             if (/^https?:\/\//i.test(url)) return url;
@@ -1429,7 +1429,7 @@
                 // If URL is cleared, show original image if exists
                 const originalUrl = document.getElementById('restaurantOriginalImageUrl').value;
                 if (originalUrl) {
-                    const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase')) || '  https://localhost:5053';
+                    const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase')) || '  https://weenrest-001-site1.jtempurl.com';
                     const resolveImageUrl = (url) => {
                         if (!url || typeof url !== 'string' || url.trim() === '') return null;
                         if (/^https?:\/\//i.test(url)) return url;
