@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,13 +8,15 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111'/%3E%3Cpath fill='%23f59e0b' d='M22 10h4v20c0 6-4 8-4 8s-4-2-4-8V10h4zM38 10h4v14h6v4h-6v10h-4V10z'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111'/%3E%3Cpath fill='%23f59e0b' d='M22 10h4v20c0 6-4 8-4 8s-4-2-4-8V10h4zM38 10h4v14h6v4h-6v10h-4V10z'/%3E%3C/svg%3E">
     <style>
         body {
             font-family: 'Cairo', sans-serif;
         }
     </style>
 </head>
+
 <body class="bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen">
     <!-- Header -->
     <header class="bg-gradient-to-r from-gray-800 to-gray-900 shadow-lg">
@@ -21,14 +24,16 @@
             <div class="flex items-center justify-between">
                 <!-- Logo -->
                 <div class="flex items-center space-x-2 sm:space-x-4 space-x-reverse">
-                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
+                    <div
+                        class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
                         <i class="fas fa-utensils text-white text-base sm:text-xl"></i>
                     </div>
                     <h1 class="text-white text-lg sm:text-2xl font-bold">WeenRest</h1>
                 </div>
 
                 <!-- Back to Home -->
-                <a href="index.html" class="text-yellow-400 hover:text-white transition duration-300 font-medium text-sm sm:text-base">
+                <a href="index.html"
+                    class="text-yellow-400 hover:text-white transition duration-300 font-medium text-sm sm:text-base">
                     <i class="fas fa-arrow-right mr-1 sm:mr-2"></i>
                     <span class="hidden sm:inline">العودة للرئيسية</span>
                     <span class="sm:hidden">الرئيسية</span>
@@ -42,104 +47,107 @@
         <!-- Left Side - Login Form -->
         <div class="w-full lg:w-1/2 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
             <div class="w-full max-w-md">
-            <!-- Login Card -->
-            <div class="bg-white/90 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-2xl border border-yellow-600/20">
-                <!-- Header -->
-                <div class="text-center mb-4 sm:mb-6">
-                    <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-1 sm:mb-2">مرحباً بك</h2>
-                    <p class="text-gray-600 text-xs sm:text-sm">سجل دخولك للاستمتاع بأفضل المطاعم</p>
-                </div>
-
-                <!-- Login Form -->
-                <form class="space-y-3 sm:space-y-4">
-                    <!-- Email Field -->
-                    <div>
-                        <label for="email" class="block text-gray-700 font-semibold mb-1.5 sm:mb-2 text-sm sm:text-base">
-                            <i class="fas fa-envelope mr-1 sm:mr-2 text-yellow-600 text-xs sm:text-sm"></i>
-                            البريد الإلكتروني
-                        </label>
-                        <div class="relative">
-                            <input type="email" 
-                                   id="email" 
-                                   name="email" 
-                                   required
-                                   class="w-full px-3 sm:px-4 py-2.5 sm:py-3 pr-10 sm:pr-12 bg-gray-50 border border-gray-300 rounded-lg sm:rounded-xl text-sm sm:text-base text-gray-800 placeholder-gray-500 focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 transition duration-300"
-                                   placeholder="أدخل بريدك الإلكتروني">
-                            <i class="fas fa-envelope absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs sm:text-sm"></i>
-                        </div>
+                <!-- Login Card -->
+                <div
+                    class="bg-white/90 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-2xl border border-yellow-600/20">
+                    <!-- Header -->
+                    <div class="text-center mb-4 sm:mb-6">
+                        <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-1 sm:mb-2">مرحباً بك</h2>
+                        <p class="text-gray-600 text-xs sm:text-sm">سجل دخولك للاستمتاع بأفضل المطاعم</p>
                     </div>
 
-                    <!-- Password Field -->
-                    <div>
-                        <label for="password" class="block text-gray-700 font-semibold mb-1.5 sm:mb-2 text-sm sm:text-base">
-                            <i class="fas fa-lock mr-1 sm:mr-2 text-yellow-600 text-xs sm:text-sm"></i>
-                            كلمة المرور
-                        </label>
-                        <div class="relative">
-                            <input type="password" 
-                                   id="password" 
-                                   name="password" 
-                                   required
-                                   class="w-full px-3 sm:px-4 py-2.5 sm:py-3 pr-10 sm:pr-12 bg-gray-50 border border-gray-300 rounded-lg sm:rounded-xl text-sm sm:text-base text-gray-800 placeholder-gray-500 focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 transition duration-300"
-                                   placeholder="أدخل كلمة المرور">
-                            <div class="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2">
-                                <i class="fas fa-lock text-gray-400 cursor-pointer text-xs sm:text-sm"></i>
+                    <!-- Login Form -->
+                    <form class="space-y-3 sm:space-y-4">
+                        <!-- Email Field -->
+                        <div>
+                            <label for="email"
+                                class="block text-gray-700 font-semibold mb-1.5 sm:mb-2 text-sm sm:text-base">
+                                <i class="fas fa-envelope mr-1 sm:mr-2 text-yellow-600 text-xs sm:text-sm"></i>
+                                البريد الإلكتروني
+                            </label>
+                            <div class="relative">
+                                <input type="email" id="email" name="email" required
+                                    class="w-full px-3 sm:px-4 py-2.5 sm:py-3 pr-10 sm:pr-12 bg-gray-50 border border-gray-300 rounded-lg sm:rounded-xl text-sm sm:text-base text-gray-800 placeholder-gray-500 focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 transition duration-300"
+                                    placeholder="أدخل بريدك الإلكتروني">
+                                <i
+                                    class="fas fa-envelope absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs sm:text-sm"></i>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Remember Me & Forgot Password -->
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
-                        <label class="flex items-center text-gray-600">
-                            <input type="checkbox" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-yellow-600 bg-gray-50 border-gray-300 rounded focus:ring-yellow-500 focus:ring-2">
-                            <span class="mr-1.5 sm:mr-2 text-xs sm:text-sm">تذكرني</span>
-                        </label>
-                        <a href="#" class="text-yellow-600 hover:text-yellow-700 text-xs sm:text-sm transition duration-300">
-                            نسيت كلمة المرور؟
-                        </a>
-                    </div>
+                        <!-- Password Field -->
+                        <div>
+                            <label for="password"
+                                class="block text-gray-700 font-semibold mb-1.5 sm:mb-2 text-sm sm:text-base">
+                                <i class="fas fa-lock mr-1 sm:mr-2 text-yellow-600 text-xs sm:text-sm"></i>
+                                كلمة المرور
+                            </label>
+                            <div class="relative">
+                                <input type="password" id="password" name="password" required
+                                    class="w-full px-3 sm:px-4 py-2.5 sm:py-3 pr-10 sm:pr-12 bg-gray-50 border border-gray-300 rounded-lg sm:rounded-xl text-sm sm:text-base text-gray-800 placeholder-gray-500 focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 transition duration-300"
+                                    placeholder="أدخل كلمة المرور">
+                                <div class="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2">
+                                    <i class="fas fa-lock text-gray-400 cursor-pointer text-xs sm:text-sm"></i>
+                                </div>
+                            </div>
+                        </div>
 
-                    <!-- Login Button -->
-                    <button type="submit" 
+                        <!-- Remember Me & Forgot Password -->
+                        <div
+                            class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
+                            <label class="flex items-center text-gray-600">
+                                <input type="checkbox"
+                                    class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-yellow-600 bg-gray-50 border-gray-300 rounded focus:ring-yellow-500 focus:ring-2">
+                                <span class="mr-1.5 sm:mr-2 text-xs sm:text-sm">تذكرني</span>
+                            </label>
+                            <a href="#"
+                                class="text-yellow-600 hover:text-yellow-700 text-xs sm:text-sm transition duration-300">
+                                نسيت كلمة المرور؟
+                            </a>
+                        </div>
+
+                        <!-- Login Button -->
+                        <button type="submit"
                             class="w-full bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-lg transform hover:scale-105 text-sm sm:text-base">
-                        <i class="fas fa-sign-in-alt mr-1 sm:mr-2"></i>
-                        تسجيل الدخول
-                    </button>
-                </form>
+                            <i class="fas fa-sign-in-alt mr-1 sm:mr-2"></i>
+                            تسجيل الدخول
+                        </button>
+                    </form>
 
-                <!-- Divider -->
-                <div class="flex items-center my-3 sm:my-4">
-                    <div class="flex-1 border-t border-gray-300"></div>
-                    <span class="px-3 sm:px-4 text-gray-500 text-xs sm:text-sm">أو</span>
-                    <div class="flex-1 border-t border-gray-300"></div>
+                    <!-- Divider -->
+                    <div class="flex items-center my-3 sm:my-4">
+                        <div class="flex-1 border-t border-gray-300"></div>
+                        <span class="px-3 sm:px-4 text-gray-500 text-xs sm:text-sm">أو</span>
+                        <div class="flex-1 border-t border-gray-300"></div>
+                    </div>
+
+                    <!-- Social Login -->
+                    <div class="space-y-2 sm:space-y-3">
+                        <button
+                            class="w-full bg-gray-50 border border-gray-300 text-gray-700 py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-semibold hover:bg-gray-100 transition duration-300 flex items-center justify-center text-sm sm:text-base">
+                            <i class="fab fa-google text-red-500 mr-2 sm:mr-3"></i>
+                            تسجيل الدخول بـ Google
+                        </button>
+                    </div>
+
+                    <!-- Sign Up Link -->
+                    <div class="text-center mt-3 sm:mt-4">
+                        <p class="text-gray-600 text-xs sm:text-sm">
+                            ليس لديك حساب؟
+                            <a href="signup.html"
+                                class="text-yellow-600 hover:text-yellow-700 font-semibold transition duration-300">
+                                إنشاء حساب جديد
+                            </a>
+                        </p>
+                    </div>
                 </div>
 
-                <!-- Social Login -->
-                <div class="space-y-2 sm:space-y-3">
-                    <button class="w-full bg-gray-50 border border-gray-300 text-gray-700 py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-semibold hover:bg-gray-100 transition duration-300 flex items-center justify-center text-sm sm:text-base">
-                        <i class="fab fa-google text-red-500 mr-2 sm:mr-3"></i>
-                        تسجيل الدخول بـ Google
-                    </button>
-                </div>
-
-                <!-- Sign Up Link -->
+                <!-- Additional Info -->
                 <div class="text-center mt-3 sm:mt-4">
-                    <p class="text-gray-600 text-xs sm:text-sm">
-                        ليس لديك حساب؟
-                        <a href="signup.html" class="text-yellow-600 hover:text-yellow-700 font-semibold transition duration-300">
-                            إنشاء حساب جديد
-                        </a>
+                    <p class="text-gray-500 text-[10px] sm:text-xs">
+                        <i class="fas fa-shield-alt mr-1 sm:mr-2"></i>
+                        معلوماتك محمية بأعلى معايير الأمان
                     </p>
                 </div>
-            </div>
-
-            <!-- Additional Info -->
-            <div class="text-center mt-3 sm:mt-4">
-                <p class="text-gray-500 text-[10px] sm:text-xs">
-                    <i class="fas fa-shield-alt mr-1 sm:mr-2"></i>
-                    معلوماتك محمية بأعلى معايير الأمان
-                </p>
-            </div>
             </div>
         </div>
 
@@ -153,24 +161,30 @@
                 <div class="absolute top-20 right-20 text-yellow-400 text-5xl animate-pulse">
                     <i class="fas fa-pizza-slice"></i>
                 </div>
-                <div class="absolute bottom-20 left-20 text-yellow-400 text-5xl animate-bounce" style="animation-delay: 0.5s;">
+                <div class="absolute bottom-20 left-20 text-yellow-400 text-5xl animate-bounce"
+                    style="animation-delay: 0.5s;">
                     <i class="fas fa-hamburger"></i>
                 </div>
-                <div class="absolute bottom-10 right-10 text-yellow-400 text-6xl animate-pulse" style="animation-delay: 1s;">
+                <div class="absolute bottom-10 right-10 text-yellow-400 text-6xl animate-pulse"
+                    style="animation-delay: 1s;">
                     <i class="fas fa-ice-cream"></i>
                 </div>
-                <div class="absolute top-1/2 left-1/4 text-yellow-400 text-4xl animate-bounce" style="animation-delay: 1.5s;">
+                <div class="absolute top-1/2 left-1/4 text-yellow-400 text-4xl animate-bounce"
+                    style="animation-delay: 1.5s;">
                     <i class="fas fa-drumstick-bite"></i>
                 </div>
-                <div class="absolute top-1/3 right-1/3 text-yellow-400 text-3xl animate-pulse" style="animation-delay: 2s;">
+                <div class="absolute top-1/3 right-1/3 text-yellow-400 text-3xl animate-pulse"
+                    style="animation-delay: 2s;">
                     <i class="fas fa-birthday-cake"></i>
                 </div>
             </div>
-            
+
             <!-- Content -->
-            <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-8 xl:px-12 w-full">
+            <div
+                class="relative z-10 flex flex-col items-center justify-center h-full text-center px-8 xl:px-12 w-full">
                 <div class="mb-6 xl:mb-8">
-                    <div class="w-20 h-20 xl:w-24 xl:h-24 bg-yellow-600/30 rounded-full flex items-center justify-center mx-auto mb-4 xl:mb-6">
+                    <div
+                        class="w-20 h-20 xl:w-24 xl:h-24 bg-yellow-600/30 rounded-full flex items-center justify-center mx-auto mb-4 xl:mb-6">
                         <i class="fas fa-utensils text-yellow-400 text-3xl xl:text-4xl"></i>
                     </div>
                     <h2 class="text-3xl xl:text-4xl font-bold text-white mb-3 xl:mb-4">مرحباً بك في WeenRest</h2>
@@ -180,7 +194,8 @@
                 <!-- Features -->
                 <div class="grid grid-cols-1 gap-4 xl:gap-6 mb-6 xl:mb-8 w-full max-w-md">
                     <div class="flex items-center text-white text-right">
-                        <div class="w-10 h-10 xl:w-12 xl:h-12 bg-yellow-600/30 rounded-full flex items-center justify-center mr-3 xl:mr-4 flex-shrink-0">
+                        <div
+                            class="w-10 h-10 xl:w-12 xl:h-12 bg-yellow-600/30 rounded-full flex items-center justify-center mr-3 xl:mr-4 flex-shrink-0">
                             <i class="fas fa-star text-yellow-400 text-sm xl:text-base"></i>
                         </div>
                         <div>
@@ -188,9 +203,10 @@
                             <p class="text-white/80 text-xs xl:text-sm">أفضل المطاعم في سوريا</p>
                         </div>
                     </div>
-                    
+
                     <div class="flex items-center text-white text-right">
-                        <div class="w-10 h-10 xl:w-12 xl:h-12 bg-yellow-600/30 rounded-full flex items-center justify-center mr-3 xl:mr-4 flex-shrink-0">
+                        <div
+                            class="w-10 h-10 xl:w-12 xl:h-12 bg-yellow-600/30 rounded-full flex items-center justify-center mr-3 xl:mr-4 flex-shrink-0">
                             <i class="fas fa-truck text-yellow-400 text-sm xl:text-base"></i>
                         </div>
                         <div>
@@ -198,9 +214,10 @@
                             <p class="text-white/80 text-xs xl:text-sm">توصيل في أقل من 30 دقيقة</p>
                         </div>
                     </div>
-                    
+
                     <div class="flex items-center text-white text-right">
-                        <div class="w-10 h-10 xl:w-12 xl:h-12 bg-yellow-600/30 rounded-full flex items-center justify-center mr-3 xl:mr-4 flex-shrink-0">
+                        <div
+                            class="w-10 h-10 xl:w-12 xl:h-12 bg-yellow-600/30 rounded-full flex items-center justify-center mr-3 xl:mr-4 flex-shrink-0">
                             <i class="fas fa-percent text-yellow-400 text-sm xl:text-base"></i>
                         </div>
                         <div>
@@ -234,7 +251,8 @@
         <div class="container mx-auto px-3 sm:px-4">
             <div class="text-center">
                 <div class="flex items-center justify-center space-x-2 sm:space-x-3 space-x-reverse mb-3 sm:mb-4">
-                    <div class="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
+                    <div
+                        class="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
                         <i class="fas fa-utensils text-white text-xs sm:text-sm"></i>
                     </div>
                     <h3 class="text-lg sm:text-xl font-bold">WeenRest</h3>
@@ -243,9 +261,15 @@
                     منصة المطاعم الرائدة في سوريا
                 </p>
                 <div class="flex flex-wrap justify-center gap-3 sm:gap-0 sm:space-x-6 sm:space-x-reverse">
-                    <a href="#" class="text-yellow-400 hover:text-white text-xs sm:text-sm transition duration-300">سياسة الخصوصية</a>
-                    <a href="#" class="text-yellow-400 hover:text-white text-xs sm:text-sm transition duration-300">الشروط والأحكام</a>
-                    <a href="#" class="text-yellow-400 hover:text-white text-xs sm:text-sm transition duration-300">تواصل معنا</a>
+                    <a href="#"
+                        class="text-yellow-400 hover:text-white text-xs sm:text-sm transition duration-300">سياسة
+                        الخصوصية</a>
+                    <a href="#"
+                        class="text-yellow-400 hover:text-white text-xs sm:text-sm transition duration-300">الشروط
+                        والأحكام</a>
+                    <a href="#"
+                        class="text-yellow-400 hover:text-white text-xs sm:text-sm transition duration-300">تواصل
+                        معنا</a>
                 </div>
             </div>
         </div>
@@ -253,7 +277,7 @@
 
     <!-- JavaScript -->
     <script>
-        const API_BASE_URL = '  https://weenrest-001-site1.jtempurl.com/api/auth';
+        const API_BASE_URL = '  https://localhost:5053/api/auth';
 
         // Error/Success message element
         const messageDiv = document.createElement('div');
@@ -262,14 +286,14 @@
         document.querySelector('form').insertBefore(messageDiv, document.querySelector('form').firstChild);
 
         // Form submission
-        document.querySelector('form').addEventListener('submit', async function(e) {
+        document.querySelector('form').addEventListener('submit', async function (e) {
             e.preventDefault();
-            
+
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const submitBtn = document.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
-            
+
             if (!email || !password) {
                 showMessage('يرجى إدخال البريد الإلكتروني وكلمة المرور', 'error');
                 return;
@@ -299,7 +323,7 @@
                     // Store token and user info
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('user', JSON.stringify(data.user));
-                    
+
                     // Send JWT token to Flutter app (for FCM device registration)
                     try {
                         if (window.FlutterApp) {
@@ -312,7 +336,7 @@
                     } catch (e) {
                         console.log('Not running inside Flutter WebView');
                     }
-                    
+
                     // Redirect to home page first, then user can go to dashboard if needed
                     setTimeout(() => {
                         window.location.href = 'index.html';
@@ -334,7 +358,7 @@
         function showMessage(message, type) {
             messageDiv.textContent = message;
             messageDiv.classList.remove('hidden');
-            
+
             if (type === 'success') {
                 messageDiv.className = 'mb-4 p-3 rounded-lg text-sm bg-green-100 text-green-700 border border-green-300';
             } else {
@@ -344,11 +368,11 @@
 
         // Add focus effects
         document.querySelectorAll('input').forEach(input => {
-            input.addEventListener('focus', function() {
+            input.addEventListener('focus', function () {
                 this.parentElement.classList.add('ring-2', 'ring-yellow-500/20');
             });
-            
-            input.addEventListener('blur', function() {
+
+            input.addEventListener('blur', function () {
                 this.parentElement.classList.remove('ring-2', 'ring-yellow-500/20');
             });
         });
@@ -356,8 +380,8 @@
         // Password visibility toggle
         const passwordField = document.getElementById('password');
         const lockIcon = passwordField.nextElementSibling.querySelector('i');
-        
-        lockIcon.addEventListener('click', function() {
+
+        lockIcon.addEventListener('click', function () {
             if (passwordField.type === 'password') {
                 passwordField.type = 'text';
                 this.classList.remove('fa-lock');
@@ -374,4 +398,5 @@
     <script src="js/push-notifications.js"></script>
     <script src="js/in-app-notifications.js"></script>
 </body>
+
 </html>

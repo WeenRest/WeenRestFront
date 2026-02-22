@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,20 +9,79 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111'/%3E%3Cpath fill='%23f59e0b' d='M22 10h4v20c0 6-4 8-4 8s-4-2-4-8V10h4zM38 10h4v14h6v4h-6v10h-4V10z'/%3E%3C/svg%3E">
-    <style> body{font-family:'Cairo',sans-serif;} </style>
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111'/%3E%3Cpath fill='%23f59e0b' d='M22 10h4v20c0 6-4 8-4 8s-4-2-4-8V10h4zM38 10h4v14h6v4h-6v10h-4V10z'/%3E%3C/svg%3E">
     <style>
-        .thumb{width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid #eee;cursor:pointer;transition:transform 0.2s;}
-        .thumb:hover{transform:scale(1.05);}
-        
+        body {
+            font-family: 'Cairo', sans-serif;
+        }
+    </style>
+    <style>
+        .thumb {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .thumb:hover {
+            transform: scale(1.05);
+        }
+
         /* Fullscreen Image Modal */
-        #imageModal{display:none;position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;background-color:rgba(0,0,0,0.95);overflow:auto;}
-        #imageModal.active{display:flex;align-items:center;justify-content:center;}
-        #imageModalContent{max-width:90%;max-height:90%;object-fit:contain;border-radius:8px;}
-        #imageModalClose{position:absolute;top:20px;right:20px;color:#fff;font-size:40px;font-weight:bold;cursor:pointer;z-index:10000;background:rgba(0,0,0,0.5);width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background 0.3s;}
-        #imageModalClose:hover{background:rgba(0,0,0,0.8);}
+        #imageModal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            overflow: auto;
+        }
+
+        #imageModal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #imageModalContent {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        #imageModalClose {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10000;
+            background: rgba(0, 0, 0, 0.5);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        #imageModalClose:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
     </style>
 </head>
+
 <body class="bg-gray-50 min-h-screen flex flex-col">
     <!-- Header (same as main site) -->
     <header class="bg-gradient-to-r from-gray-900 to-black shadow-lg sticky top-0 z-50">
@@ -29,7 +89,8 @@
             <div class="flex items-center justify-between">
                 <!-- Logo -->
                 <div class="flex items-center space-x-4 space-x-reverse">
-                    <div class="w-12 h-12 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
+                    <div
+                        class="w-12 h-12 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
                         <i class="fas fa-utensils text-white text-xl"></i>
                     </div>
                     <h1 class="text-white text-2xl font-bold">WeenRest</h1>
@@ -37,18 +98,23 @@
 
                 <!-- Navigation Menu -->
                 <nav class="hidden md:flex items-center space-x-8 space-x-reverse">
-                    <a href="index.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">الرئيسية</a>
-                    <a href="places.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">أصناف الطعام</a>
+                    <a href="index.html"
+                        class="text-white hover:text-yellow-400 transition duration-300 font-medium">الرئيسية</a>
+                    <a href="places.html"
+                        class="text-white hover:text-yellow-400 transition duration-300 font-medium">أصناف الطعام</a>
                     <a href="#" class="text-white hover:text-yellow-400 transition duration-300 font-medium">وظائف</a>
-                    <a href="customize.html" id="customize-restaurant-nav" class="text-white hover:text-yellow-400 transition duration-300 font-medium">خصص مطعمك</a>
+                    <a href="customize.html" id="customize-restaurant-nav"
+                        class="text-white hover:text-yellow-400 transition duration-300 font-medium">خصص مطعمك</a>
                 </nav>
 
                 <!-- Login & Signup Buttons (Hidden when logged in) -->
                 <div class="flex items-center space-x-4 space-x-reverse" id="auth-buttons">
-                    <a href="signup.html" class="border-2 border-yellow-600 text-yellow-600 px-6 py-2 rounded-full font-semibold hover:bg-yellow-600 hover:text-white transition duration-300">
+                    <a href="signup.html"
+                        class="border-2 border-yellow-600 text-yellow-600 px-6 py-2 rounded-full font-semibold hover:bg-yellow-600 hover:text-white transition duration-300">
                         إنشاء حساب
                     </a>
-                    <a href="login.html" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-6 py-2 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-md">
+                    <a href="login.html"
+                        class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-6 py-2 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-md">
                         تسجيل الدخول
                     </a>
                     <!-- Mobile Menu Button -->
@@ -66,11 +132,13 @@
                             <span class="font-semibold mr-1" id="user-name">المستخدم</span>
                         </div>
                     </div>
-                    <a href="restaurant-owner-dashboard.html" id="dashboard-link" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-5 py-2 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-md text-sm">
+                    <a href="restaurant-owner-dashboard.html" id="dashboard-link"
+                        class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-5 py-2 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300 shadow-md text-sm">
                         <i class="fas fa-tachometer-alt mr-1"></i>
                         لوحة التحكم
                     </a>
-                    <button id="logout-btn" class="border-2 border-yellow-600 text-yellow-600 px-5 py-2 rounded-full font-semibold hover:bg-yellow-600 hover:text-white transition duration-300 text-sm">
+                    <button id="logout-btn"
+                        class="border-2 border-yellow-600 text-yellow-600 px-5 py-2 rounded-full font-semibold hover:bg-yellow-600 hover:text-white transition duration-300 text-sm">
                         <i class="fas fa-sign-out-alt mr-1"></i>
                         تسجيل الخروج
                     </button>
@@ -84,10 +152,15 @@
             <!-- Mobile Menu -->
             <div class="md:hidden mt-4 hidden" id="mobile-menu">
                 <div class="flex flex-col space-y-4">
-                    <a href="index.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">الرئيسية</a>
-                    <a href="places.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">اصناف الطعام</a>
-                    <a href="#" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">وظائف</a>
-                    <a href="customize.html" id="customize-restaurant-mobile" class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">خصص مطعمك</a>
+                    <a href="index.html"
+                        class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">الرئيسية</a>
+                    <a href="places.html"
+                        class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">اصناف
+                        الطعام</a>
+                    <a href="#"
+                        class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">وظائف</a>
+                    <a href="customize.html" id="customize-restaurant-mobile"
+                        class="text-white hover:text-yellow-400 transition duration-300 font-medium py-2">خصص مطعمك</a>
                 </div>
             </div>
         </div>
@@ -96,10 +169,14 @@
     <div class="container mx-auto px-4 py-10 flex-1">
         <div class="flex items-center justify-between mb-6">
             <div class="flex items-center gap-3">
-                <a href="customize.html" class="w-10 h-10 rounded-full bg-white shadow flex items-center justify-center hover:bg-gray-100"><i class="fas fa-arrow-right"></i></a>
+                <a href="customize.html"
+                    class="w-10 h-10 rounded-full bg-white shadow flex items-center justify-center hover:bg-gray-100"><i
+                        class="fas fa-arrow-right"></i></a>
                 <h1 class="text-2xl md:text-3xl font-bold text-gray-800">ستايلات ملابس الطاقم</h1>
             </div>
-            <a href="restaurant-owner-uniform-requests.html" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg"><i class="fas fa-plus ml-2"></i>طلب تصميم جديد</a>
+            <a href="restaurant-owner-uniform-requests.html"
+                class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg"><i
+                    class="fas fa-plus ml-2"></i>طلب تصميم جديد</a>
         </div>
 
         <div class="bg-white rounded-xl shadow-md overflow-hidden">
@@ -132,7 +209,8 @@
                 <!-- Company Info -->
                 <div class="col-span-1 md:col-span-2">
                     <div class="flex items-center space-x-3 space-x-reverse mb-4">
-                        <div class="w-10 h-10 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
+                        <div
+                            class="w-10 h-10 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
                             <i class="fas fa-utensils text-white"></i>
                         </div>
                         <h3 class="text-2xl font-bold">WeenRest</h3>
@@ -160,10 +238,14 @@
                 <div>
                     <h4 class="text-lg font-semibold mb-4">روابط سريعة</h4>
                     <ul class="space-y-2">
-                        <li><a href="#" class="text-yellow-400 hover:text-white transition duration-300">عن الموقع</a></li>
-                        <li><a href="#" class="text-yellow-400 hover:text-white transition duration-300">كيفية الاستخدام</a></li>
-                        <li><a href="#" class="text-yellow-400 hover:text-white transition duration-300">الشروط والأحكام</a></li>
-                        <li><a href="#" class="text-yellow-400 hover:text-white transition duration-300">سياسة الخصوصية</a></li>
+                        <li><a href="#" class="text-yellow-400 hover:text-white transition duration-300">عن الموقع</a>
+                        </li>
+                        <li><a href="#" class="text-yellow-400 hover:text-white transition duration-300">كيفية
+                                الاستخدام</a></li>
+                        <li><a href="#" class="text-yellow-400 hover:text-white transition duration-300">الشروط
+                                والأحكام</a></li>
+                        <li><a href="#" class="text-yellow-400 hover:text-white transition duration-300">سياسة
+                                الخصوصية</a></li>
                     </ul>
                 </div>
 
@@ -194,9 +276,12 @@
                         © 2024 WeenRest. جميع الحقوق محفوظة.
                     </p>
                     <div class="flex space-x-6 space-x-reverse mt-4 md:mt-0">
-                        <a href="#" class="text-yellow-400 hover:text-white text-sm transition duration-300">سياسة الخصوصية</a>
-                        <a href="#" class="text-yellow-400 hover:text-white text-sm transition duration-300">الشروط والأحكام</a>
-                        <a href="#" class="text-yellow-400 hover:text-white text-sm transition duration-300">تواصل معنا</a>
+                        <a href="#" class="text-yellow-400 hover:text-white text-sm transition duration-300">سياسة
+                            الخصوصية</a>
+                        <a href="#" class="text-yellow-400 hover:text-white text-sm transition duration-300">الشروط
+                            والأحكام</a>
+                        <a href="#" class="text-yellow-400 hover:text-white text-sm transition duration-300">تواصل
+                            معنا</a>
                     </div>
                 </div>
             </div>
@@ -204,48 +289,48 @@
     </footer>
 
     <script>
-        const API_BASE_URL = '  https://weenrest-001-site1.jtempurl.com/api';
-        const API_ORIGIN = '  https://weenrest-001-site1.jtempurl.com/';
-        
-        document.addEventListener('DOMContentLoaded', ()=>{
+        const API_BASE_URL = '  https://localhost:5053/api';
+        const API_ORIGIN = '  https://localhost:5053/';
+
+        document.addEventListener('DOMContentLoaded', () => {
             const token = localStorage.getItem('token');
-            if(!token){ window.location.href='login.html'; return; }
+            if (!token) { window.location.href = 'login.html'; return; }
             loadStyles();
         });
 
-        async function loadStyles(){
+        async function loadStyles() {
             const resp = await fetch(`${API_BASE_URL}/Public/staff-uniform-styles`);
             const data = await resp.json();
             const tbody = document.getElementById('stylesTable');
             tbody.innerHTML = '';
-            if(!data.success || !data.data || data.data.length===0){
+            if (!data.success || !data.data || data.data.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-6 text-center text-gray-500">لا توجد ستايلات متاحة</td></tr>';
                 return;
             }
-            data.data.forEach(s=>{
+            data.data.forEach(s => {
                 const tr = document.createElement('tr');
-                const imageHtml = s.imageUrl ? 
-                    `<img class="thumb" src="${resolveImageUrl(s.imageUrl)}" alt="${escapeHtml(s.title)}" onclick="openImageModal('${resolveImageUrl(s.imageUrl)}')">` : 
+                const imageHtml = s.imageUrl ?
+                    `<img class="thumb" src="${resolveImageUrl(s.imageUrl)}" alt="${escapeHtml(s.title)}" onclick="openImageModal('${resolveImageUrl(s.imageUrl)}')">` :
                     '<span class="text-gray-400">-</span>';
                 tr.innerHTML = `
                     <td class="px-4 py-3">${imageHtml}</td>
                     <td class="px-4 py-3">${escapeHtml(s.title)}</td>
-                    <td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs ${s.isActive?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${s.isActive?'مفعّل':'معطّل'}</span></td>
+                    <td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs ${s.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${s.isActive ? 'مفعّل' : 'معطّل'}</span></td>
                     <td class="px-4 py-3">${new Date(s.createdAt).toLocaleDateString('ar-EG')}</td>`;
                 tbody.appendChild(tr);
             });
         }
 
-        function escapeHtml(x){return (x||'').toString().replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
-        function resolveImageUrl(u){
-            if(!u) return '';
-            if(/^https?:\/\//i.test(u)) return u;
+        function escapeHtml(x) { return (x || '').toString().replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
+        function resolveImageUrl(u) {
+            if (!u) return '';
+            if (/^https?:\/\//i.test(u)) return u;
             const path = u.startsWith('/') ? u : `/${u}`;
             const base = API_ORIGIN.endsWith('/') ? API_ORIGIN.slice(0, -1) : API_ORIGIN;
             return `${base}${path}`;
         }
 
-        function openImageModal(imageUrl){
+        function openImageModal(imageUrl) {
             const modal = document.getElementById('imageModal');
             const img = document.getElementById('imageModalContent');
             img.src = imageUrl;
@@ -253,22 +338,22 @@
             document.body.style.overflow = 'hidden';
         }
 
-        function closeImageModal(){
+        function closeImageModal() {
             const modal = document.getElementById('imageModal');
             modal.classList.remove('active');
             document.body.style.overflow = '';
         }
 
         // Close modal on Escape key
-        document.addEventListener('keydown', (e)=>{
-            if(e.key === 'Escape'){
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
                 closeImageModal();
             }
         });
     </script>
     <!-- Header scripts (auth/menu behavior) -->
     <script>
-        (function() {
+        (function () {
             const token = localStorage.getItem('token');
             const userData = localStorage.getItem('user');
             const authButtons = document.getElementById('auth-buttons');
@@ -300,17 +385,17 @@
             }
         })();
 
-        document.getElementById('logout-btn')?.addEventListener('click', function() {
+        document.getElementById('logout-btn')?.addEventListener('click', function () {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             setTimeout(() => { window.location.href = 'index.html'; }, 300);
         });
 
-        document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
+        document.getElementById('mobile-menu-btn')?.addEventListener('click', function () {
             const mobileMenu = document.getElementById('mobile-menu');
             mobileMenu.classList.toggle('hidden');
         });
-        document.getElementById('mobile-menu-btn-auth')?.addEventListener('click', function() {
+        document.getElementById('mobile-menu-btn-auth')?.addEventListener('click', function () {
             const mobileMenu = document.getElementById('mobile-menu');
             mobileMenu.classList.toggle('hidden');
         });
@@ -320,5 +405,5 @@
     <script src="js/push-notifications.js"></script>
     <script src="js/in-app-notifications.js"></script>
 </body>
-</html>
 
+</html>

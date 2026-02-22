@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
+
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,9 +8,11 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
-	<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111'/%3E%3Cpath fill='%23f59e0b' d='M22 10h4v20c0 6-4 8-4 8s-4-2-4-8V10h4zM38 10h4v14h6v4h-6v10h-4V10z'/%3E%3C/svg%3E">
+	<link rel="icon" type="image/svg+xml"
+		href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111'/%3E%3Cpath fill='%23f59e0b' d='M22 10h4v20c0 6-4 8-4 8s-4-2-4-8V10h4zM38 10h4v14h6v4h-6v10h-4V10z'/%3E%3C/svg%3E">
 	<script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-gray-50 font-[Cairo]">
 	<header class="bg-white border-b">
 		<div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -26,7 +29,8 @@
 			<h2 class="font-semibold mb-3">إضافة / تعديل وظيفة</h2>
 			<form id="jobForm" class="grid md:grid-cols-3 gap-3">
 				<input type="hidden" id="jobId" />
-				<input id="jobName" type="text" placeholder="اسم الوظيفة" class="border rounded-md px-3 py-2" required />
+				<input id="jobName" type="text" placeholder="اسم الوظيفة" class="border rounded-md px-3 py-2"
+					required />
 				<label class="inline-flex items-center gap-2 text-sm">
 					<input id="jobActive" type="checkbox" class="w-4 h-4" checked /> فعّال
 				</label>
@@ -59,18 +63,18 @@
 	</main>
 
 	<script>
-	const API_ORIGIN = localStorage.getItem('api_origin') || '  https://weenrest-001-site1.jtempurl.com';
-	const API = {
-		list: `${API_ORIGIN}/api/AdminJobs`,
-		create: `${API_ORIGIN}/api/AdminJobs`,
-		update: (id) => `${API_ORIGIN}/api/AdminJobs/${id}`,
-		remove: (id) => `${API_ORIGIN}/api/AdminJobs/${id}`
-	};
+		const API_ORIGIN = localStorage.getItem('api_origin') || '  https://localhost:5053';
+		const API = {
+			list: `${API_ORIGIN}/api/AdminJobs`,
+			create: `${API_ORIGIN}/api/AdminJobs`,
+			update: (id) => `${API_ORIGIN}/api/AdminJobs/${id}`,
+			remove: (id) => `${API_ORIGIN}/api/AdminJobs/${id}`
+		};
 
-	function rowTemplate(j, idx){
-		return `
+		function rowTemplate(j, idx) {
+			return `
 			<tr class="border-b">
-				<td class="p-3">${idx+1}</td>
+				<td class="p-3">${idx + 1}</td>
 				<td class="p-3">${j.name}</td>
 				<td class="p-3">${j.isActive ? 'فعّال' : 'متوقف'}</td>
 				<td class="p-3">${new Date(j.createdAt).toLocaleDateString()}</td>
@@ -80,88 +84,89 @@
 				</td>
 			</tr>
 		`;
-	}
+		}
 
-	async function fetchJobs(){
-		const res = await fetch(API.list, { headers: authHeaders() });
-		if(!res.ok) throw new Error('failed');
-		return (await res.json()).data || [];
-	}
+		async function fetchJobs() {
+			const res = await fetch(API.list, { headers: authHeaders() });
+			if (!res.ok) throw new Error('failed');
+			return (await res.json()).data || [];
+		}
 
-	function authHeaders(){
-		const token = localStorage.getItem('token');
-		return token ? { 'Authorization': `Bearer ${token}`, 'Content-Type':'application/json' } : { 'Content-Type':'application/json' };
-	}
+		function authHeaders() {
+			const token = localStorage.getItem('token');
+			return token ? { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
+		}
 
-	async function saveJob(e){
-		e.preventDefault();
-		const id = document.getElementById('jobId').value;
-		const payload = {
-			name: document.getElementById('jobName').value.trim(),
-			isActive: document.getElementById('jobActive').checked
-		};
-		const method = id ? 'PUT' : 'POST';
-		const url = id ? API.update(id) : API.create;
-		const res = await fetch(url, { method, headers: authHeaders(), body: JSON.stringify(payload) });
-		if(!res.ok){ alert('فشل الحفظ'); return; }
-		resetForm();
+		async function saveJob(e) {
+			e.preventDefault();
+			const id = document.getElementById('jobId').value;
+			const payload = {
+				name: document.getElementById('jobName').value.trim(),
+				isActive: document.getElementById('jobActive').checked
+			};
+			const method = id ? 'PUT' : 'POST';
+			const url = id ? API.update(id) : API.create;
+			const res = await fetch(url, { method, headers: authHeaders(), body: JSON.stringify(payload) });
+			if (!res.ok) { alert('فشل الحفظ'); return; }
+			resetForm();
+			render();
+		}
+
+		function resetForm() {
+			document.getElementById('jobId').value = '';
+			document.getElementById('jobName').value = '';
+			document.getElementById('jobActive').checked = true;
+		}
+
+		function bindActions() {
+			document.querySelectorAll('[data-edit]').forEach(btn => {
+				btn.addEventListener('click', () => {
+					const id = btn.getAttribute('data-edit');
+					const row = cache.find(x => x.id == id);
+					if (!row) return;
+					document.getElementById('jobId').value = row.id;
+					document.getElementById('jobName').value = row.name;
+					document.getElementById('jobActive').checked = row.isActive;
+					window.scrollTo({ top: 0, behavior: 'smooth' });
+				});
+			});
+			document.querySelectorAll('[data-del]').forEach(btn => {
+				btn.addEventListener('click', async () => {
+					const id = btn.getAttribute('data-del');
+					if (!confirm('تأكيد حذف الوظيفة؟')) return;
+					const res = await fetch(API.remove(id), { method: 'DELETE', headers: authHeaders() });
+					if (!res.ok) { alert('فشل الحذف'); return; }
+					render();
+				});
+			});
+		}
+
+		let cache = [];
+		async function render() {
+			const table = document.getElementById('jobsTable');
+			const empty = document.getElementById('emptyState');
+			const search = document.getElementById('searchInput').value.trim();
+			table.innerHTML = '';
+			try {
+				cache = await fetchJobs();
+				let data = cache;
+				if (search) data = data.filter(x => x.name && x.name.includes(search));
+				if (!data.length) { empty.classList.remove('hidden'); return; }
+				empty.classList.add('hidden');
+				table.innerHTML = data.map(rowTemplate).join('');
+				bindActions();
+			} catch (e) { empty.textContent = 'حدث خطأ أثناء الجلب'; empty.classList.remove('hidden'); }
+		}
+
+		document.getElementById('jobForm').addEventListener('submit', saveJob);
+		document.getElementById('resetBtn').addEventListener('click', resetForm);
+		document.getElementById('searchInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') render(); });
 		render();
-	}
-
-	function resetForm(){
-		document.getElementById('jobId').value = '';
-		document.getElementById('jobName').value = '';
-		document.getElementById('jobActive').checked = true;
-	}
-
-	function bindActions(){
-		document.querySelectorAll('[data-edit]').forEach(btn => {
-			btn.addEventListener('click', () => {
-				const id = btn.getAttribute('data-edit');
-				const row = cache.find(x => x.id == id);
-				if(!row) return;
-				document.getElementById('jobId').value = row.id;
-				document.getElementById('jobName').value = row.name;
-				document.getElementById('jobActive').checked = row.isActive;
-				window.scrollTo({ top: 0, behavior: 'smooth' });
-			});
-		});
-		document.querySelectorAll('[data-del]').forEach(btn => {
-			btn.addEventListener('click', async () => {
-				const id = btn.getAttribute('data-del');
-				if(!confirm('تأكيد حذف الوظيفة؟')) return;
-				const res = await fetch(API.remove(id), { method:'DELETE', headers: authHeaders() });
-				if(!res.ok){ alert('فشل الحذف'); return; }
-				render();
-			});
-		});
-	}
-
-	let cache = [];
-	async function render(){
-		const table = document.getElementById('jobsTable');
-		const empty = document.getElementById('emptyState');
-		const search = document.getElementById('searchInput').value.trim();
-		table.innerHTML = '';
-		try{
-			cache = await fetchJobs();
-			let data = cache;
-			if(search) data = data.filter(x => x.name && x.name.includes(search));
-			if(!data.length){ empty.classList.remove('hidden'); return; }
-			empty.classList.add('hidden');
-			table.innerHTML = data.map(rowTemplate).join('');
-			bindActions();
-		}catch(e){ empty.textContent = 'حدث خطأ أثناء الجلب'; empty.classList.remove('hidden'); }
-	}
-
-	document.getElementById('jobForm').addEventListener('submit', saveJob);
-	document.getElementById('resetBtn').addEventListener('click', resetForm);
-	document.getElementById('searchInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') render(); });
-	render();
 	</script>
 	<link rel="stylesheet" href="css/in-app-notifications.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
 	<script src="js/push-notifications.js"></script>
 	<script src="js/in-app-notifications.js"></script>
 </body>
+
 </html>

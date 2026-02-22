@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,13 +9,15 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111'/%3E%3Cpath fill='%23f59e0b' d='M22 10h4v20c0 6-4 8-4 8s-4-2-4-8V10h4zM38 10h4v14h6v4h-6v10h-4V10z'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111'/%3E%3Cpath fill='%23f59e0b' d='M22 10h4v20c0 6-4 8-4 8s-4-2-4-8V10h4zM38 10h4v14h6v4h-6v10h-4V10z'/%3E%3C/svg%3E">
     <style>
         body {
             font-family: 'Cairo', sans-serif;
         }
     </style>
 </head>
+
 <body class="bg-gray-50">
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
@@ -31,7 +34,8 @@
                 <!-- Logo -->
                 <div class="p-6 border-b border-gray-700">
                     <div class="flex items-center space-x-3 space-x-reverse">
-                        <div class="w-12 h-12 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
+                        <div
+                            class="w-12 h-12 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
                             <i class="fas fa-utensils text-white text-xl"></i>
                         </div>
                         <div>
@@ -43,23 +47,32 @@
 
                 <!-- Navigation -->
                 <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
-                    <a href="admin-dashboard.html" class="flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
+                    <a href="admin-dashboard.html"
+                        class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
                         <i class="fas fa-home w-5"></i>
                         <span>لوحة التحكم</span>
                     </a>
-                    <a href="admin-dashboard.html#users" class="flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
+                    <a href="admin-dashboard.html#users"
+                        class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800"
+                        data-permission="ManageUsers">
                         <i class="fas fa-users w-5"></i>
                         <span>المستخدمين</span>
                     </a>
-                    <a href="admin-user-statistics.html" class="flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer bg-gray-800">
+                    <a href="admin-user-statistics.html"
+                        class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer bg-gray-800"
+                        data-permission="ViewStatistics">
                         <i class="fas fa-chart-line w-5"></i>
                         <span>إحصائيات التفاعل</span>
                     </a>
-                    <a href="admin-dashboard.html#restaurants" class="flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
+                    <a href="admin-dashboard.html#restaurants"
+                        class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800"
+                        data-permission="ManageRestaurants">
                         <i class="fas fa-utensils w-5"></i>
                         <span>المطاعم</span>
                     </a>
-                    <a href="admin-dashboard.html#offers" class="flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800">
+                    <a href="admin-dashboard.html#offers"
+                        class="sidebar-link flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800"
+                        data-permission="ManageOffers">
                         <i class="fas fa-bullhorn w-5"></i>
                         <span>العروض</span>
                     </a>
@@ -68,7 +81,8 @@
                 <!-- User Info -->
                 <div class="p-4 border-t border-gray-700">
                     <div class="flex items-center space-x-3 space-x-reverse mb-3">
-                        <div class="w-10 h-10 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
+                        <div
+                            class="w-10 h-10 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
                             <i class="fas fa-user text-white"></i>
                         </div>
                         <div class="flex-1 min-w-0">
@@ -76,7 +90,8 @@
                             <p class="text-xs text-gray-400 truncate" id="sidebarUserEmail">البريد الإلكتروني</p>
                         </div>
                     </div>
-                    <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm font-semibold transition duration-300">
+                    <button onclick="logout()"
+                        class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm font-semibold transition duration-300">
                         <i class="fas fa-sign-out-alt mr-2"></i>تسجيل الخروج
                     </button>
                 </div>
@@ -89,7 +104,8 @@
                 <!-- Header -->
                 <div class="mb-8">
                     <h1 class="text-3xl font-bold text-gray-800 mb-2">إحصائيات المستخدمين الأكثر تفاعلاً</h1>
-                    <p class="text-gray-600">عرض المستخدمين الأكثر تفاعلاً مع الموقع بناءً على زيارات الصفحات والإجراءات</p>
+                    <p class="text-gray-600">عرض المستخدمين الأكثر تفاعلاً مع الموقع بناءً على زيارات الصفحات والإجراءات
+                    </p>
                 </div>
 
                 <!-- Filters -->
@@ -97,7 +113,8 @@
                     <div class="flex flex-wrap gap-4 items-end">
                         <div class="flex-1 min-w-64">
                             <label class="block text-sm font-semibold text-gray-700 mb-2">الفترة الزمنية</label>
-                            <select id="periodFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                            <select id="periodFilter"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
                                 <option value="all">جميع الفترات</option>
                                 <option value="day">آخر 24 ساعة</option>
                                 <option value="week">آخر أسبوع</option>
@@ -105,7 +122,8 @@
                             </select>
                         </div>
                         <div>
-                            <button onclick="loadMostActiveUsers()" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-6 py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300 font-semibold">
+                            <button onclick="loadMostActiveUsers()"
+                                class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-6 py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300 font-semibold">
                                 <i class="fas fa-sync-alt mr-2"></i>تحديث
                             </button>
                         </div>
@@ -169,16 +187,36 @@
                         <table class="w-full">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الترتيب</th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">المستخدم</th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">البريد الإلكتروني</th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">إجمالي التفاعلات</th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">زيارات الصفحات</th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">إضافات للمفضلة</th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">طلبات الوظائف</th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">مشاهدات المطاعم</th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">مشاهدات العروض</th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">آخر نشاط</th>
+                                    <th
+                                        class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        الترتيب</th>
+                                    <th
+                                        class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        المستخدم</th>
+                                    <th
+                                        class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        البريد الإلكتروني</th>
+                                    <th
+                                        class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        إجمالي التفاعلات</th>
+                                    <th
+                                        class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        زيارات الصفحات</th>
+                                    <th
+                                        class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        إضافات للمفضلة</th>
+                                    <th
+                                        class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        طلبات الوظائف</th>
+                                    <th
+                                        class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        مشاهدات المطاعم</th>
+                                    <th
+                                        class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        مشاهدات العروض</th>
+                                    <th
+                                        class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        آخر نشاط</th>
                                 </tr>
                             </thead>
                             <tbody id="usersTableBody" class="bg-white divide-y divide-gray-200">
@@ -186,7 +224,8 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="p-4 border-t border-gray-200 text-center text-gray-600" id="emptyState" style="display: none;">
+                    <div class="p-4 border-t border-gray-200 text-center text-gray-600" id="emptyState"
+                        style="display: none;">
                         <i class="fas fa-inbox text-4xl mb-2 text-gray-400"></i>
                         <p>لا توجد بيانات للعرض</p>
                     </div>
@@ -196,7 +235,8 @@
     </div>
 
     <!-- Message Toast -->
-    <div id="toast" class="fixed bottom-4 right-4 bg-white rounded-lg shadow-2xl border border-gray-200 p-4 hidden z-50 max-w-sm">
+    <div id="toast"
+        class="fixed bottom-4 right-4 bg-white rounded-lg shadow-2xl border border-gray-200 p-4 hidden z-50 max-w-sm">
         <div class="flex items-center space-x-3 space-x-reverse">
             <div id="toastIcon" class="flex-shrink-0"></div>
             <p id="toastMessage" class="text-sm font-semibold text-gray-800"></p>
@@ -205,15 +245,34 @@
 
     <!-- JavaScript -->
     <script>
-        const API_BASE_URL = '  https://weenrest-001-site1.jtempurl.com/api';
+        const API_BASE_URL = '  https://localhost:5053/api';
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             // Check authentication
             const token = localStorage.getItem('token');
-            if (!token) {
+            const userData = localStorage.getItem('user');
+            if (!token || !userData) {
                 window.location.href = 'login.html';
                 return;
+            }
+
+            const user = JSON.parse(userData);
+
+            if (user.role === 'supervisor') {
+                const perms = user.permissions || [];
+                // Check if user has ViewStatistics permission to view this page
+                if (!perms.includes('ViewStatistics')) {
+                    window.location.href = 'admin-dashboard.html';
+                    return;
+                }
+
+                document.querySelectorAll('.sidebar-link[data-permission]').forEach(link => {
+                    const reqPerm = link.getAttribute('data-permission');
+                    if (!perms.includes(reqPerm)) {
+                        link.style.display = 'none';
+                    }
+                });
             }
 
             // Load user profile
@@ -262,9 +321,9 @@
             const toast = document.getElementById('toast');
             const toastIcon = document.getElementById('toastIcon');
             const toastMessage = document.getElementById('toastMessage');
-            
+
             toastMessage.textContent = message;
-            
+
             if (type === 'success') {
                 toastIcon.innerHTML = '<i class="fas fa-check-circle text-green-500 text-xl"></i>';
             } else if (type === 'error') {
@@ -272,7 +331,7 @@
             } else {
                 toastIcon.innerHTML = '<i class="fas fa-info-circle text-blue-500 text-xl"></i>';
             }
-            
+
             toast.classList.remove('hidden');
             setTimeout(() => {
                 toast.classList.add('hidden');
@@ -299,7 +358,7 @@
             try {
                 const period = document.getElementById('periodFilter').value;
                 const data = await apiCall(`/AdminDashboard/most-active-users?period=${period}&pageSize=100`);
-                
+
                 if (data && data.success) {
                     const users = data.data || [];
                     renderUsers(users);
@@ -321,20 +380,20 @@
         function renderUsers(users) {
             const tbody = document.getElementById('usersTableBody');
             const emptyState = document.getElementById('emptyState');
-            
+
             if (users.length === 0) {
                 tbody.innerHTML = '';
                 emptyState.style.display = 'block';
                 return;
             }
-            
+
             emptyState.style.display = 'none';
             tbody.innerHTML = '';
 
             users.forEach((user, index) => {
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-50 transition duration-200';
-                
+
                 const roleColors = {
                     'admin': 'bg-purple-100 text-purple-800',
                     'stakeholder': 'bg-blue-100 text-blue-800',
@@ -347,7 +406,7 @@
                     'user': 'مستخدم'
                 };
 
-                const lastActivity = user.lastActivityDate 
+                const lastActivity = user.lastActivityDate
                     ? new Date(user.lastActivityDate).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' })
                     : '-';
 
@@ -414,5 +473,5 @@
     <script src="js/push-notifications.js"></script>
     <script src="js/in-app-notifications.js"></script>
 </body>
-</html>
 
+</html>

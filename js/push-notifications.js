@@ -2,7 +2,7 @@
 class PushNotificationService {
   constructor() {
     // Normalize base URL (some pages store it with leading/trailing spaces)
-    this.apiBase = (localStorage.getItem('api_origin') || localStorage.getItem('apiBase') || ' https://weenrest-001-site1.jtempurl.com').trim();
+    this.apiBase = (localStorage.getItem('api_origin') || localStorage.getItem('apiBase') || ' https://localhost:5053').trim();
     this.subscription = null;
     this.isSupported = 'serviceWorker' in navigator && 'PushManager' in window;
     this.init();

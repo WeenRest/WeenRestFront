@@ -2,7 +2,7 @@
   const qs = new URLSearchParams(window.location.search);
   const id = parseInt(qs.get('id') || '', 10);
   const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase'))
-    || '  https://weenrest-001-site1.jtempurl.com';
+    || '  https://localhost:5053';
 
   const toast = (message, type = 'info') => {
     const toastEl = document.getElementById('toast');

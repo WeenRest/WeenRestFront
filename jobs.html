@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
+
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,15 +10,18 @@
 	<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 	<script src="https://cdn.tailwindcss.com"></script>
-	<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111'/%3E%3Cpath fill='%23f59e0b' d='M22 10h4v20c0 6-4 8-4 8s-4-2-4-8V10h4zM38 10h4v14h6v4h-6v10h-4V10z'/%3E%3C/svg%3E">
+	<link rel="icon" type="image/svg+xml"
+		href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111'/%3E%3Cpath fill='%23f59e0b' d='M22 10h4v20c0 6-4 8-4 8s-4-2-4-8V10h4zM38 10h4v14h6v4h-6v10h-4V10z'/%3E%3C/svg%3E">
 </head>
+
 <body class="bg-gray-50 font-[Cairo] min-h-screen flex flex-col">
 	<header class="bg-gradient-to-r from-gray-900 to-black shadow-lg sticky top-0 z-40">
 		<div class="container mx-auto px-4 py-4">
 			<div class="flex items-center justify-between">
 				<!-- Logo -->
 				<div class="flex items-center space-x-4 space-x-reverse">
-					<div class="w-10 h-10 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
+					<div
+						class="w-10 h-10 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
 						<i class="fas fa-briefcase text-white"></i>
 					</div>
 					<h1 class="text-white text-xl font-bold">WeenRest</h1>
@@ -25,16 +29,23 @@
 
 				<!-- Navigation Menu -->
 				<nav class="hidden md:flex items-center space-x-8 space-x-reverse">
-                    <a href="index.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">الرئيسية</a>
-                    <a href="places.html" class="text-white hover:text-yellow-400 transition duration-300 font-medium">أصناف الطعام</a>
-                    <a href="jobs.html" class="text-yellow-400 font-semibold">وظائف</a>
-                    <a href="customize.html" id="customize-restaurant-nav" class="text-white hover:text-yellow-400 transition duration-300 font-medium">خصص مطعمك</a>
+					<a href="index.html"
+						class="text-white hover:text-yellow-400 transition duration-300 font-medium">الرئيسية</a>
+					<a href="places.html"
+						class="text-white hover:text-yellow-400 transition duration-300 font-medium">أصناف الطعام</a>
+					<a href="jobs.html" class="text-yellow-400 font-semibold">وظائف</a>
+					<a href="customize.html" id="customize-restaurant-nav"
+						class="text-white hover:text-yellow-400 transition duration-300 font-medium">خصص مطعمك</a>
 				</nav>
 
 				<!-- Auth/Account -->
 				<div class="flex items-center space-x-4 space-x-reverse" id="auth-buttons">
-                    <a href="signup.html" class="hidden md:inline-block border-2 border-yellow-600 text-yellow-600 px-4 py-2 rounded-full font-semibold hover:bg-yellow-600 hover:text-white transition">إنشاء حساب</a>
-                    <a href="login.html" class="hidden md:inline-block bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-5 py-2 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition shadow-md">تسجيل الدخول</a>
+					<a href="signup.html"
+						class="hidden md:inline-block border-2 border-yellow-600 text-yellow-600 px-4 py-2 rounded-full font-semibold hover:bg-yellow-600 hover:text-white transition">إنشاء
+						حساب</a>
+					<a href="login.html"
+						class="hidden md:inline-block bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-5 py-2 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition shadow-md">تسجيل
+						الدخول</a>
 				</div>
 				<div class="flex items-center space-x-4 space-x-reverse hidden" id="user-info">
 					<div class="flex items-center space-x-3 space-x-reverse text-white">
@@ -44,7 +55,9 @@
 							<span class="font-semibold mr-1" id="user-name">المستخدم</span>
 						</div>
 					</div>
-					<a href="#" id="dashboard-link" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-5 py-2 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition shadow-md text-sm">لوحة التحكم</a>
+					<a href="#" id="dashboard-link"
+						class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-5 py-2 rounded-full font-semibold hover:from-yellow-700 hover:to-amber-700 transition shadow-md text-sm">لوحة
+						التحكم</a>
 				</div>
 			</div>
 		</div>
@@ -58,7 +71,8 @@
 		</div>
 
 		<section class="mb-6 flex items-center gap-3">
-			<input id="searchInput" type="text" placeholder="ابحث عن وظيفة" class="w-full md:w-1/2 border rounded-md px-3 py-2 focus:outline-none focus:ring" />
+			<input id="searchInput" type="text" placeholder="ابحث عن وظيفة"
+				class="w-full md:w-1/2 border rounded-md px-3 py-2 focus:outline-none focus:ring" />
 			<button id="searchBtn" class="bg-blue-600 text-white px-4 py-2 rounded-md">بحث</button>
 		</section>
 
@@ -73,43 +87,48 @@
 			<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
 				<div class="col-span-1 md:col-span-2">
 					<div class="flex items-center space-x-3 space-x-reverse mb-4">
-						<div class="w-10 h-10 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
+						<div
+							class="w-10 h-10 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
 							<i class="fas fa-utensils text-white"></i>
 						</div>
 						<h3 class="text-2xl font-bold">WeenRest</h3>
 					</div>
-					<p class="text-gray-300 mb-4 max-w-md">منصة المطاعم الرائدة. تصفح أفضل المطاعم والعروض، وتقدم لفرص العمل المتاحة.</p>
+					<p class="text-gray-300 mb-4 max-w-md">منصة المطاعم الرائدة. تصفح أفضل المطاعم والعروض، وتقدم لفرص
+						العمل المتاحة.</p>
 				</div>
 				<div>
 					<h4 class="text-lg font-semibold mb-4">روابط سريعة</h4>
 					<ul class="space-y-2">
-                        <li><a href="index.html" class="text-yellow-400 hover:text-white transition">الرئيسية</a></li>
-                        <li><a href="jobs.html" class="text-yellow-400 hover:text-white transition">الوظائف</a></li>
-                        <li><a href="customize.html" class="text-yellow-400 hover:text-white transition">خصص مطعمك</a></li>
+						<li><a href="index.html" class="text-yellow-400 hover:text-white transition">الرئيسية</a></li>
+						<li><a href="jobs.html" class="text-yellow-400 hover:text-white transition">الوظائف</a></li>
+						<li><a href="customize.html" class="text-yellow-400 hover:text-white transition">خصص مطعمك</a>
+						</li>
 					</ul>
 				</div>
 				<div>
 					<h4 class="text-lg font-semibold mb-4">تواصل</h4>
 					<ul class="space-y-2 text-yellow-400">
-						<li class="flex items-center space-x-2 space-x-reverse"><i class="fas fa-phone"></i><span>+20 123 456 7890</span></li>
-						<li class="flex items-center space-x-2 space-x-reverse"><i class="fas fa-envelope"></i><span>info@weenrest.com</span></li>
+						<li class="flex items-center space-x-2 space-x-reverse"><i class="fas fa-phone"></i><span>+20
+								123 456 7890</span></li>
+						<li class="flex items-center space-x-2 space-x-reverse"><i
+								class="fas fa-envelope"></i><span>info@weenrest.com</span></li>
 					</ul>
 				</div>
 			</div>
 			<div class="border-t border-yellow-600 mt-8 pt-6 flex items-center justify-between text-sm text-yellow-400">
 				<span>© 2024 WeenRest. جميع الحقوق محفوظة.</span>
-                <a href="index.html" class="hover:text-white transition">العودة للرئيسية</a>
+				<a href="index.html" class="hover:text-white transition">العودة للرئيسية</a>
 			</div>
 		</div>
 	</footer>
 
 	<script>
-	const API_ORIGIN = localStorage.getItem('api_origin') || '  https://weenrest-001-site1.jtempurl.com';
-	const API_BASE = `${API_ORIGIN}/api/Public`;
-	let isLoggedIn = false;
+		const API_ORIGIN = localStorage.getItem('api_origin') || '  https://localhost:5053';
+		const API_BASE = `${API_ORIGIN}/api/Public`;
+		let isLoggedIn = false;
 
-	function jobCard(job){
-		return `
+		function jobCard(job) {
+			return `
 			<li class="bg-white border rounded-lg p-4 shadow-sm">
 				<h3 class="font-semibold text-gray-800">${job.name}</h3>
 				<div class="text-sm text-gray-500 mt-1">تاريخ الإنشاء: ${new Date(job.createdAt).toLocaleDateString()}</div>
@@ -119,85 +138,86 @@
 				</div>
 			</li>
 		`;
-	}
-
-	async function fetchJobs(search){
-		const res = await fetch(`${API_BASE}/jobs`);
-		if(!res.ok) throw new Error("failed");
-		let data = (await res.json()).data || [];
-		if(search){
-			const s = search.trim();
-			if(s) data = data.filter(j => j.name && j.name.includes(s));
 		}
-		return data;
-	}
 
-	async function render(){
-		const listEl = document.getElementById('jobsList');
-		const emptyEl = document.getElementById('emptyState');
-		const search = document.getElementById('searchInput').value;
-		listEl.innerHTML = '';
-		try{
-			const jobs = await fetchJobs(search);
-			if(!jobs.length){
-				emptyEl.classList.remove('hidden');
-				return;
+		async function fetchJobs(search) {
+			const res = await fetch(`${API_BASE}/jobs`);
+			if (!res.ok) throw new Error("failed");
+			let data = (await res.json()).data || [];
+			if (search) {
+				const s = search.trim();
+				if (s) data = data.filter(j => j.name && j.name.includes(s));
 			}
-			emptyEl.classList.add('hidden');
-			listEl.innerHTML = jobs.map(jobCard).join('');
-		}catch(e){
-			emptyEl.textContent = 'حدث خطأ أثناء جلب الوظائف';
-			emptyEl.classList.remove('hidden');
+			return data;
 		}
-	}
 
-	// Auth header like index.html
-	(function() {
-		const token = localStorage.getItem('token');
-		const userData = localStorage.getItem('user');
-		const authButtons = document.getElementById('auth-buttons');
-		const userInfo = document.getElementById('user-info');
-		const userName = document.getElementById('user-name');
-		const dashboardLink = document.getElementById('dashboard-link');
-		const loginHint = document.getElementById('loginHint');
-
-		if (token && userData) {
-			isLoggedIn = true;
+		async function render() {
+			const listEl = document.getElementById('jobsList');
+			const emptyEl = document.getElementById('emptyState');
+			const search = document.getElementById('searchInput').value;
+			listEl.innerHTML = '';
 			try {
-				const user = JSON.parse(userData);
-				authButtons.classList.add('hidden');
-				userInfo.classList.remove('hidden');
-				const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'المستخدم';
-				userName.textContent = fullName;
-				if (user.role === 'admin') {
-					dashboardLink.href = 'admin-dashboard.html';
-				} else if (user.role === 'stakeholder') {
-					dashboardLink.href = 'restaurant-owner-dashboard.html';
-				} else {
-					dashboardLink.href = 'user-dashboard.html';
+				const jobs = await fetchJobs(search);
+				if (!jobs.length) {
+					emptyEl.classList.remove('hidden');
+					return;
 				}
-				loginHint.classList.add('hidden');
+				emptyEl.classList.add('hidden');
+				listEl.innerHTML = jobs.map(jobCard).join('');
 			} catch (e) {
+				emptyEl.textContent = 'حدث خطأ أثناء جلب الوظائف';
+				emptyEl.classList.remove('hidden');
+			}
+		}
+
+		// Auth header like index.html
+		(function () {
+			const token = localStorage.getItem('token');
+			const userData = localStorage.getItem('user');
+			const authButtons = document.getElementById('auth-buttons');
+			const userInfo = document.getElementById('user-info');
+			const userName = document.getElementById('user-name');
+			const dashboardLink = document.getElementById('dashboard-link');
+			const loginHint = document.getElementById('loginHint');
+
+			if (token && userData) {
+				isLoggedIn = true;
+				try {
+					const user = JSON.parse(userData);
+					authButtons.classList.add('hidden');
+					userInfo.classList.remove('hidden');
+					const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'المستخدم';
+					userName.textContent = fullName;
+					if (user.role === 'admin') {
+						dashboardLink.href = 'admin-dashboard.html';
+					} else if (user.role === 'stakeholder') {
+						dashboardLink.href = 'restaurant-owner-dashboard.html';
+					} else {
+						dashboardLink.href = 'user-dashboard.html';
+					}
+					loginHint.classList.add('hidden');
+				} catch (e) {
+					isLoggedIn = false;
+					localStorage.removeItem('token');
+					localStorage.removeItem('user');
+					loginHint.classList.remove('hidden');
+				}
+			} else {
 				isLoggedIn = false;
-				localStorage.removeItem('token');
-				localStorage.removeItem('user');
+				authButtons.classList.remove('hidden');
+				userInfo.classList.add('hidden');
 				loginHint.classList.remove('hidden');
 			}
-		} else {
-			isLoggedIn = false;
-			authButtons.classList.remove('hidden');
-			userInfo.classList.add('hidden');
-			loginHint.classList.remove('hidden');
-		}
-	})();
+		})();
 
-	document.getElementById('searchBtn').addEventListener('click', render);
-	document.getElementById('searchInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') render(); });
-	render();
+		document.getElementById('searchBtn').addEventListener('click', render);
+		document.getElementById('searchInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') render(); });
+		render();
 	</script>
 	<link rel="stylesheet" href="css/in-app-notifications.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
 	<script src="js/push-notifications.js"></script>
 	<script src="js/in-app-notifications.js"></script>
 </body>
+
 </html>

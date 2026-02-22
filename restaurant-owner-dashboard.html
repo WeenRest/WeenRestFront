@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,41 +12,47 @@
     <!-- Leaflet (OpenStreetMap) - مجاني تماماً ولا يحتاج API Key -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111'/%3E%3Cpath fill='%23f59e0b' d='M22 10h4v20c0 6-4 8-4 8s-4-2-4-8V10h4zM38 10h4v14h6v4h-6v10h-4V10z'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23111'/%3E%3Cpath fill='%23f59e0b' d='M22 10h4v20c0 6-4 8-4 8s-4-2-4-8V10h4zM38 10h4v14h6v4h-6v10h-4V10z'/%3E%3C/svg%3E">
     <style>
         body {
             font-family: 'Cairo', sans-serif;
         }
+
         .sidebar-link.active {
             background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
             color: white;
         }
+
         .card-hover:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
-        
+
         /* Mobile sidebar overlay */
         @media (max-width: 768px) {
             .sidebar-overlay {
                 transition: opacity 0.3s ease;
             }
+
             .sidebar-overlay.hidden {
                 opacity: 0;
                 pointer-events: none;
             }
         }
-        
+
         /* Hide scrollbar on mobile for better UX */
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
+
         .no-scrollbar {
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
     </style>
 </head>
+
 <body class="bg-gray-50">
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
@@ -57,15 +64,18 @@
 
     <div class="flex h-screen overflow-hidden">
         <!-- Mobile Sidebar Overlay -->
-        <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden sidebar-overlay" onclick="toggleSidebar()"></div>
-        
+        <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden sidebar-overlay"
+            onclick="toggleSidebar()"></div>
+
         <!-- Sidebar -->
-        <aside id="sidebar" class="fixed md:relative right-0 md:right-auto w-64 bg-gradient-to-b from-gray-900 to-black text-white shadow-2xl z-50 md:z-auto h-full transform translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+        <aside id="sidebar"
+            class="fixed md:relative right-0 md:right-auto w-64 bg-gradient-to-b from-gray-900 to-black text-white shadow-2xl z-50 md:z-auto h-full transform translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
             <div class="flex flex-col h-full">
                 <!-- Logo -->
                 <div class="p-4 sm:p-6 border-b border-gray-700 flex items-center justify-between">
                     <div class="flex items-center space-x-3 space-x-reverse">
-                        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
+                        <div
+                            class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
                             <i class="fas fa-utensils text-white text-lg sm:text-xl"></i>
                         </div>
                         <div>
@@ -81,27 +91,33 @@
 
                 <!-- Navigation -->
                 <nav class="flex-1 p-3 sm:p-4 space-y-1 sm:space-y-2 overflow-y-auto no-scrollbar">
-                    <a href="#" onclick="showSection('dashboard'); return false;" class="sidebar-link active flex items-center space-x-2 sm:space-x-3 space-x-reverse p-2.5 sm:p-3 rounded-lg transition duration-300 cursor-pointer text-sm sm:text-base">
+                    <a href="#" onclick="showSection('dashboard'); return false;"
+                        class="sidebar-link active flex items-center space-x-2 sm:space-x-3 space-x-reverse p-2.5 sm:p-3 rounded-lg transition duration-300 cursor-pointer text-sm sm:text-base">
                         <i class="fas fa-home w-4 sm:w-5"></i>
                         <span>لوحة التحكم</span>
                     </a>
-                    <a href="#" onclick="showSection('restaurant'); return false;" class="sidebar-link flex items-center space-x-2 sm:space-x-3 space-x-reverse p-2.5 sm:p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800 text-sm sm:text-base">
+                    <a href="#" onclick="showSection('restaurant'); return false;"
+                        class="sidebar-link flex items-center space-x-2 sm:space-x-3 space-x-reverse p-2.5 sm:p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800 text-sm sm:text-base">
                         <i class="fas fa-store w-4 sm:w-5"></i>
                         <span>إدارة المطعم</span>
                     </a>
-                    <a href="#" onclick="showSection('offers'); loadOffers(); return false;" class="sidebar-link flex items-center space-x-2 sm:space-x-3 space-x-reverse p-2.5 sm:p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800 text-sm sm:text-base">
+                    <a href="#" onclick="showSection('offers'); loadOffers(); return false;"
+                        class="sidebar-link flex items-center space-x-2 sm:space-x-3 space-x-reverse p-2.5 sm:p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800 text-sm sm:text-base">
                         <i class="fas fa-bullhorn w-4 sm:w-5"></i>
                         <span>العروض</span>
                     </a>
-                    <a href="#" onclick="showSection('menus'); loadMenus(); return false;" class="sidebar-link flex items-center space-x-2 sm:space-x-3 space-x-reverse p-2.5 sm:p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800 text-sm sm:text-base">
+                    <a href="#" onclick="showSection('menus'); loadMenus(); return false;"
+                        class="sidebar-link flex items-center space-x-2 sm:space-x-3 space-x-reverse p-2.5 sm:p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800 text-sm sm:text-base">
                         <i class="fas fa-book-open w-4 sm:w-5"></i>
                         <span>قائمة المنيو</span>
                     </a>
-                    <a href="#" onclick="showSection('posts'); loadPosts(); return false;" class="sidebar-link flex items-center space-x-2 sm:space-x-3 space-x-reverse p-2.5 sm:p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800 text-sm sm:text-base">
+                    <a href="#" onclick="showSection('posts'); loadPosts(); return false;"
+                        class="sidebar-link flex items-center space-x-2 sm:space-x-3 space-x-reverse p-2.5 sm:p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800 text-sm sm:text-base">
                         <i class="fas fa-images w-4 sm:w-5"></i>
                         <span>المنشورات</span>
                     </a>
-                    <a href="#" onclick="showSection('profile'); return false;" class="sidebar-link flex items-center space-x-2 sm:space-x-3 space-x-reverse p-2.5 sm:p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800 text-sm sm:text-base">
+                    <a href="#" onclick="showSection('profile'); return false;"
+                        class="sidebar-link flex items-center space-x-2 sm:space-x-3 space-x-reverse p-2.5 sm:p-3 rounded-lg transition duration-300 cursor-pointer hover:bg-gray-800 text-sm sm:text-base">
                         <i class="fas fa-user-circle w-4 sm:w-5"></i>
                         <span>الملف الشخصي</span>
                     </a>
@@ -110,15 +126,18 @@
                 <!-- User Info -->
                 <div class="p-3 sm:p-4 border-t border-gray-700">
                     <div class="flex items-center space-x-2 sm:space-x-3 space-x-reverse mb-2 sm:mb-3">
-                        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-yellow-600 rounded-full flex items-center justify-center flex-shrink-0">
+                        <div
+                            class="w-8 h-8 sm:w-10 sm:h-10 bg-yellow-600 rounded-full flex items-center justify-center flex-shrink-0">
                             <i class="fas fa-user text-white text-xs sm:text-sm"></i>
                         </div>
                         <div class="flex-1 min-w-0">
                             <p class="text-xs sm:text-sm font-semibold truncate" id="userName">صاحب المطعم</p>
-                            <p class="text-[10px] sm:text-xs text-gray-400 truncate" id="userEmail">owner@weenrest.com</p>
+                            <p class="text-[10px] sm:text-xs text-gray-400 truncate" id="userEmail">owner@weenrest.com
+                            </p>
                         </div>
                     </div>
-                    <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white py-1.5 sm:py-2 rounded-lg transition duration-300 text-xs sm:text-sm font-semibold">
+                    <button onclick="logout()"
+                        class="w-full bg-red-600 hover:bg-red-700 text-white py-1.5 sm:py-2 rounded-lg transition duration-300 text-xs sm:text-sm font-semibold">
                         <i class="fas fa-sign-out-alt mr-1 sm:mr-2"></i>
                         تسجيل الخروج
                     </button>
@@ -136,10 +155,12 @@
                         <button onclick="toggleSidebar()" class="md:hidden text-gray-700 hover:text-yellow-600 text-xl">
                             <i class="fas fa-bars"></i>
                         </button>
-                        <h2 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-800" id="pageTitle">لوحة التحكم</h2>
+                        <h2 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-800" id="pageTitle">لوحة التحكم
+                        </h2>
                     </div>
                     <div class="flex items-center space-x-2 sm:space-x-4 space-x-reverse">
-                        <div class="flex items-center space-x-1.5 sm:space-x-2 space-x-reverse bg-gray-100 px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg">
+                        <div
+                            class="flex items-center space-x-1.5 sm:space-x-2 space-x-reverse bg-gray-100 px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg">
                             <i class="fas fa-calendar text-gray-600 text-xs sm:text-sm"></i>
                             <span class="text-xs sm:text-sm text-gray-700 hidden sm:inline" id="currentDate"></span>
                             <span class="text-xs text-gray-700 sm:hidden" id="currentDateMobile"></span>
@@ -153,20 +174,25 @@
                 <!-- Dashboard Section -->
                 <div id="dashboard" class="section">
                     <!-- Welcome Card -->
-                    <div class="bg-gradient-to-r from-yellow-600 to-amber-600 rounded-xl p-4 sm:p-6 md:p-8 text-white mb-4 sm:mb-6 card-hover transition duration-300">
+                    <div
+                        class="bg-gradient-to-r from-yellow-600 to-amber-600 rounded-xl p-4 sm:p-6 md:p-8 text-white mb-4 sm:mb-6 card-hover transition duration-300">
                         <div class="flex items-center justify-between flex-wrap gap-3">
                             <div class="flex-1 min-w-0">
-                                <h3 class="text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2">مرحباً بك في لوحة التحكم</h3>
-                                <p class="text-yellow-100 text-sm sm:text-base">يمكنك إدارة مطعمك وملفك الشخصي من هنا</p>
+                                <h3 class="text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2">مرحباً بك في لوحة
+                                    التحكم</h3>
+                                <p class="text-yellow-100 text-sm sm:text-base">يمكنك إدارة مطعمك وملفك الشخصي من هنا
+                                </p>
                             </div>
-                            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                            <div
+                                class="w-16 h-16 sm:w-20 sm:h-20 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
                                 <i class="fas fa-store text-2xl sm:text-3xl"></i>
                             </div>
                         </div>
                     </div>
 
                     <!-- Stats Cards -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6" id="statsCards">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6"
+                        id="statsCards">
                         <!-- Stats will be loaded here -->
                     </div>
 
@@ -174,25 +200,35 @@
                     <div class="bg-white rounded-xl shadow-md p-4 sm:p-6 mb-4 sm:mb-6">
                         <h3 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">إجراءات سريعة</h3>
                         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
-                            <button onclick="showSection('restaurant')" class="flex flex-col items-center p-3 sm:p-4 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-lg hover:from-yellow-100 hover:to-amber-100 transition duration-300 cursor-pointer">
+                            <button onclick="showSection('restaurant')"
+                                class="flex flex-col items-center p-3 sm:p-4 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-lg hover:from-yellow-100 hover:to-amber-100 transition duration-300 cursor-pointer">
                                 <i class="fas fa-store text-yellow-600 text-xl sm:text-2xl mb-1 sm:mb-2"></i>
-                                <span class="text-xs sm:text-sm font-semibold text-gray-700 text-center">إدارة المطعم</span>
+                                <span class="text-xs sm:text-sm font-semibold text-gray-700 text-center">إدارة
+                                    المطعم</span>
                             </button>
-                            <button onclick="editRestaurant()" class="flex flex-col items-center p-3 sm:p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg hover:from-blue-100 hover:to-indigo-100 transition duration-300 cursor-pointer">
+                            <button onclick="editRestaurant()"
+                                class="flex flex-col items-center p-3 sm:p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg hover:from-blue-100 hover:to-indigo-100 transition duration-300 cursor-pointer">
                                 <i class="fas fa-edit text-blue-600 text-xl sm:text-2xl mb-1 sm:mb-2"></i>
-                                <span class="text-xs sm:text-sm font-semibold text-gray-700 text-center">تعديل المطعم</span>
+                                <span class="text-xs sm:text-sm font-semibold text-gray-700 text-center">تعديل
+                                    المطعم</span>
                             </button>
-                            <button onclick="window.location.href='customize.html'" class="flex flex-col items-center p-3 sm:p-4 bg-gradient-to-br from-pink-50 to-rose-50 rounded-lg hover:from-pink-100 hover:to-rose-100 transition duration-300 cursor-pointer">
+                            <button onclick="window.location.href='customize.html'"
+                                class="flex flex-col items-center p-3 sm:p-4 bg-gradient-to-br from-pink-50 to-rose-50 rounded-lg hover:from-pink-100 hover:to-rose-100 transition duration-300 cursor-pointer">
                                 <i class="fas fa-magic text-pink-600 text-xl sm:text-2xl mb-1 sm:mb-2"></i>
-                                <span class="text-xs sm:text-sm font-semibold text-gray-700 text-center">خصص مطعمك</span>
+                                <span class="text-xs sm:text-sm font-semibold text-gray-700 text-center">خصص
+                                    مطعمك</span>
                             </button>
-                            <button onclick="showSection('profile')" class="flex flex-col items-center p-3 sm:p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg hover:from-green-100 hover:to-emerald-100 transition duration-300 cursor-pointer">
+                            <button onclick="showSection('profile')"
+                                class="flex flex-col items-center p-3 sm:p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg hover:from-green-100 hover:to-emerald-100 transition duration-300 cursor-pointer">
                                 <i class="fas fa-user-cog text-green-600 text-xl sm:text-2xl mb-1 sm:mb-2"></i>
-                                <span class="text-xs sm:text-sm font-semibold text-gray-700 text-center">الملف الشخصي</span>
+                                <span class="text-xs sm:text-sm font-semibold text-gray-700 text-center">الملف
+                                    الشخصي</span>
                             </button>
-                            <button onclick="window.location.href='index.html'" class="flex flex-col items-center p-3 sm:p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-lg hover:from-gray-100 hover:to-slate-100 transition duration-300 cursor-pointer">
+                            <button onclick="window.location.href='index.html'"
+                                class="flex flex-col items-center p-3 sm:p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-lg hover:from-gray-100 hover:to-slate-100 transition duration-300 cursor-pointer">
                                 <i class="fas fa-globe text-gray-600 text-xl sm:text-2xl mb-1 sm:mb-2"></i>
-                                <span class="text-xs sm:text-sm font-semibold text-gray-700 text-center">الموقع الرئيسي</span>
+                                <span class="text-xs sm:text-sm font-semibold text-gray-700 text-center">الموقع
+                                    الرئيسي</span>
                             </button>
                         </div>
                     </div>
@@ -206,10 +242,12 @@
                             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 sm:gap-4">
                                 <h3 class="text-xl sm:text-2xl font-bold text-gray-800">إدارة المطعم</h3>
                                 <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 space-x-0 sm:space-x-reverse">
-                                    <button onclick="editRestaurant()" id="editRestaurantBtn" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300 text-sm sm:text-base">
+                                    <button onclick="editRestaurant()" id="editRestaurantBtn"
+                                        class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300 text-sm sm:text-base">
                                         <i class="fas fa-edit mr-1 sm:mr-2"></i>تعديل المطعم
                                     </button>
-                                    <button onclick="openRestaurantModal()" id="createRestaurantBtn" class="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:from-green-700 hover:to-emerald-700 transition duration-300 text-sm sm:text-base">
+                                    <button onclick="openRestaurantModal()" id="createRestaurantBtn"
+                                        class="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:from-green-700 hover:to-emerald-700 transition duration-300 text-sm sm:text-base">
                                         <i class="fas fa-plus mr-1 sm:mr-2"></i>إنشاء مطعم
                                     </button>
                                 </div>
@@ -220,9 +258,11 @@
                         <div class="p-4 sm:p-6" id="restaurantInfo">
                             <div class="text-center py-8 sm:py-12" id="noRestaurantMsg">
                                 <i class="fas fa-store text-4xl sm:text-5xl md:text-6xl text-gray-300 mb-3 sm:mb-4"></i>
-                                <h4 class="text-lg sm:text-xl font-bold text-gray-600 mb-2">لا يوجد مطعم مرتبط بحسابك</h4>
+                                <h4 class="text-lg sm:text-xl font-bold text-gray-600 mb-2">لا يوجد مطعم مرتبط بحسابك
+                                </h4>
                                 <p class="text-sm sm:text-base text-gray-500 mb-4 sm:mb-6">قم بإنشاء مطعم جديد للبدء</p>
-                                <button onclick="openRestaurantModal()" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300 text-sm sm:text-base">
+                                <button onclick="openRestaurantModal()"
+                                    class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300 text-sm sm:text-base">
                                     <i class="fas fa-plus mr-1 sm:mr-2"></i>إنشاء مطعم جديد
                                 </button>
                             </div>
@@ -231,31 +271,42 @@
                                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                                     <!-- Restaurant Image -->
                                     <div>
-                                        <img id="restaurantImage" src="" alt="صورة المطعم" class="w-full h-48 sm:h-56 md:h-64 object-contain rounded-lg shadow-md mb-3 sm:mb-4">
+                                        <img id="restaurantImage" src="" alt="صورة المطعم"
+                                            class="w-full h-48 sm:h-56 md:h-64 object-contain rounded-lg shadow-md mb-3 sm:mb-4">
                                     </div>
 
                                     <!-- Restaurant Info -->
                                     <div class="space-y-3 sm:space-y-4">
                                         <div>
-                                            <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">اسم المطعم</label>
-                                            <p id="restaurantName" class="text-base sm:text-lg font-bold text-gray-800"></p>
+                                            <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">اسم
+                                                المطعم</label>
+                                            <p id="restaurantName" class="text-base sm:text-lg font-bold text-gray-800">
+                                            </p>
                                         </div>
                                         <div>
-                                            <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">الوصف</label>
-                                            <p id="restaurantDescription" class="text-sm sm:text-base text-gray-600"></p>
+                                            <label
+                                                class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">الوصف</label>
+                                            <p id="restaurantDescription" class="text-sm sm:text-base text-gray-600">
+                                            </p>
                                         </div>
                                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                                             <div>
-                                                <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">رقم الهاتف</label>
-                                                <p id="restaurantPhone" class="text-sm sm:text-base text-gray-600 break-all"></p>
+                                                <label
+                                                    class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">رقم
+                                                    الهاتف</label>
+                                                <p id="restaurantPhone"
+                                                    class="text-sm sm:text-base text-gray-600 break-all"></p>
                                             </div>
                                             <div>
-                                                <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">القسم</label>
-                                                <p id="restaurantCategory" class="text-sm sm:text-base text-gray-600"></p>
+                                                <label
+                                                    class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">القسم</label>
+                                                <p id="restaurantCategory" class="text-sm sm:text-base text-gray-600">
+                                                </p>
                                             </div>
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-semibold text-gray-700 mb-1">العنوان</label>
+                                            <label
+                                                class="block text-sm font-semibold text-gray-700 mb-1">العنوان</label>
                                             <p id="restaurantAddress" class="text-gray-600"></p>
                                         </div>
                                         <div>
@@ -264,16 +315,20 @@
                                         </div>
                                         <div>
                                             <label class="block text-sm font-semibold text-gray-700 mb-1">الحالة</label>
-                                            <span id="restaurantStatus" class="inline-block px-3 py-1 rounded-full text-sm font-semibold"></span>
+                                            <span id="restaurantStatus"
+                                                class="inline-block px-3 py-1 rounded-full text-sm font-semibold"></span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="mt-4 sm:mt-6 flex flex-col sm:flex-row gap-2 sm:gap-3 space-x-0 sm:space-x-reverse">
-                                    <button onclick="editRestaurant()" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 sm:px-6 py-2 rounded-lg transition duration-300 text-sm sm:text-base">
+                                <div
+                                    class="mt-4 sm:mt-6 flex flex-col sm:flex-row gap-2 sm:gap-3 space-x-0 sm:space-x-reverse">
+                                    <button onclick="editRestaurant()"
+                                        class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 sm:px-6 py-2 rounded-lg transition duration-300 text-sm sm:text-base">
                                         <i class="fas fa-edit mr-1 sm:mr-2"></i>تعديل
                                     </button>
-                                    <button onclick="deleteRestaurant()" class="bg-red-600 hover:bg-red-700 text-white px-4 sm:px-6 py-2 rounded-lg transition duration-300 text-sm sm:text-base">
+                                    <button onclick="deleteRestaurant()"
+                                        class="bg-red-600 hover:bg-red-700 text-white px-4 sm:px-6 py-2 rounded-lg transition duration-300 text-sm sm:text-base">
                                         <i class="fas fa-trash mr-1 sm:mr-2"></i>حذف المطعم
                                     </button>
                                 </div>
@@ -285,9 +340,11 @@
                 <!-- Offers Section -->
                 <div id="offers" class="section hidden">
                     <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                        <div class="p-4 sm:p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                        <div
+                            class="p-4 sm:p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                             <h3 class="text-xl sm:text-2xl font-bold text-gray-800">عروض المطعم</h3>
-                            <button onclick="openOfferModal()" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300 text-sm sm:text-base w-full sm:w-auto">
+                            <button onclick="openOfferModal()"
+                                class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300 text-sm sm:text-base w-full sm:w-auto">
                                 <i class="fas fa-plus mr-1 sm:mr-2"></i>إضافة عرض
                             </button>
                         </div>
@@ -302,14 +359,17 @@
                 <!-- Menus Section -->
                 <div id="menus" class="section hidden">
                     <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                        <div class="p-4 sm:p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                        <div
+                            class="p-4 sm:p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                             <h3 class="text-xl sm:text-2xl font-bold text-gray-800">المنيو</h3>
-                            <button onclick="openMenuModal()" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300 text-sm sm:text-base w-full sm:w-auto">
+                            <button onclick="openMenuModal()"
+                                class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300 text-sm sm:text-base w-full sm:w-auto">
                                 <i class="fas fa-plus mr-1 sm:mr-2"></i>إضافة منيو
                             </button>
                         </div>
                         <div class="p-4 sm:p-6">
-                            <div id="menusList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4"></div>
+                            <div id="menusList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -317,14 +377,17 @@
                 <!-- Posts Section -->
                 <div id="posts" class="section hidden">
                     <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                        <div class="p-4 sm:p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                        <div
+                            class="p-4 sm:p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                             <h3 class="text-xl sm:text-2xl font-bold text-gray-800">المنشورات</h3>
-                            <button onclick="openPostModal()" class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300 text-sm sm:text-base w-full sm:w-auto">
+                            <button onclick="openPostModal()"
+                                class="bg-gradient-to-r from-yellow-600 to-amber-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:from-yellow-700 hover:to-amber-700 transition duration-300 text-sm sm:text-base w-full sm:w-auto">
                                 <i class="fas fa-plus mr-1 sm:mr-2"></i>إضافة منشور
                             </button>
                         </div>
                         <div class="p-4 sm:p-6">
-                            <div id="postsList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4"></div>
+                            <div id="postsList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -335,34 +398,38 @@
                         <!-- Profile Info Card -->
                         <div class="bg-white rounded-xl shadow-md p-4 sm:p-6 mb-4 sm:mb-6">
                             <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">الملف الشخصي</h3>
-                            
+
                             <!-- Profile Form -->
                             <form id="profileForm" class="space-y-4 sm:space-y-6">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                                     <div>
-                                        <label class="block text-sm font-semibold text-gray-700 mb-2">الاسم الأول</label>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">الاسم
+                                            الأول</label>
                                         <input type="text" id="profileFirstName" required
-                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-semibold text-gray-700 mb-2">الاسم الأخير</label>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">الاسم
+                                            الأخير</label>
                                         <input type="text" id="profileLastName" required
-                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-semibold text-gray-700 mb-2">البريد الإلكتروني</label>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">البريد
+                                            الإلكتروني</label>
                                         <input type="email" id="profileEmail" required
-                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-semibold text-gray-700 mb-2">رقم الهاتف</label>
                                         <input type="tel" id="profilePhone" required
-                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
                                     </div>
-                         
+
                                 </div>
 
-                                <button type="submit" class="w-full bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-3 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                                <button type="submit"
+                                    class="w-full bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-3 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300">
                                     <i class="fas fa-save mr-2"></i>
                                     حفظ التغييرات
                                 </button>
@@ -372,20 +439,23 @@
                         <!-- Change Password Card -->
                         <div class="bg-white rounded-xl shadow-md p-4 sm:p-6 mb-4 sm:mb-6">
                             <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">تغيير كلمة المرور</h3>
-                            
+
                             <form id="passwordForm" class="space-y-4 sm:space-y-6">
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">كلمة المرور الحالية</label>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">كلمة المرور
+                                        الحالية</label>
                                     <input type="password" id="currentPassword" required
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">كلمة المرور الجديدة</label>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">كلمة المرور
+                                        الجديدة</label>
                                     <input type="password" id="newPassword" required
-                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
                                 </div>
 
-                                <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition duration-300">
+                                <button type="submit"
+                                    class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition duration-300">
                                     <i class="fas fa-key mr-2"></i>
                                     تغيير كلمة المرور
                                 </button>
@@ -398,70 +468,80 @@
     </div>
 
     <!-- Restaurant Modal -->
-    <div id="restaurantModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-2 sm:p-4">
+    <div id="restaurantModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-2 sm:p-4">
         <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
             <div class="p-4 sm:p-6 border-b border-gray-200 sticky top-0 bg-white z-10">
                 <div class="flex items-center justify-between">
                     <h3 class="text-xl sm:text-2xl font-bold text-gray-800" id="restaurantModalTitle">إنشاء مطعم</h3>
-                    <button onclick="closeRestaurantModal()" class="md:hidden text-gray-500 hover:text-gray-700 text-xl">
+                    <button onclick="closeRestaurantModal()"
+                        class="md:hidden text-gray-500 hover:text-gray-700 text-xl">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
             </div>
             <form id="restaurantForm" class="p-4 sm:p-6 space-y-3 sm:space-y-4">
                 <input type="hidden" id="restaurantId">
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                     <div>
-                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">اسم المطعم *</label>
+                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">اسم المطعم
+                            *</label>
                         <input type="text" id="restaurantNameInput" required
-                               class="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                            class="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
                     </div>
                     <div>
-                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">الأقسام *</label>
+                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">الأقسام
+                            *</label>
                         <select id="restaurantCategoryIds" multiple required
-                                class="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500" style="min-height: 80px;">
+                            class="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
+                            style="min-height: 80px;">
                             <!-- Categories will be loaded here -->
                         </select>
-                        <p class="text-[10px] sm:text-xs text-gray-500 mt-1">اضغط Ctrl (أو Cmd على Mac) للاختيار المتعدد - يجب اختيار قسم واحد على الأقل</p>
+                        <p class="text-[10px] sm:text-xs text-gray-500 mt-1">اضغط Ctrl (أو Cmd على Mac) للاختيار المتعدد
+                            - يجب اختيار قسم واحد على الأقل</p>
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-sm font-semibold text-gray-700 mb-2">الوصف</label>
                         <textarea id="restaurantDescriptionInput" rows="3"
-                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"></textarea>
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"></textarea>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">رقم الهاتف</label>
                         <input type="tel" id="restaurantPhoneNumber"
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">العنوان</label>
                         <input type="text" id="restaurantAddressInput"
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">المدينة (قديم)</label>
                         <input type="text" id="restaurantCity"
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">المدن (متعدد) *</label>
                         <select id="restaurantCityIds" multiple
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
                             <option value="">اختر المدن</option>
                         </select>
                         <p class="text-xs text-gray-500 mt-1">اضغط Ctrl (أو Cmd على Mac) لتحديد عدة مدن</p>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">رفع صورة</label>
-                        <input type="file" id="restaurantImageFile" accept="image/*" onchange="handleImageFileChange(this)"
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
-                        <p class="text-xs text-gray-500 mt-1">الحجم الأقصى: 5MB | الصيغ المدعومة: JPG, PNG, GIF, WEBP</p>
+                        <input type="file" id="restaurantImageFile" accept="image/*"
+                            onchange="handleImageFileChange(this)"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                        <p class="text-xs text-gray-500 mt-1">الحجم الأقصى: 5MB | الصيغ المدعومة: JPG, PNG, GIF, WEBP
+                        </p>
                         <!-- Image Preview -->
                         <div id="restaurantImagePreview" class="mt-3 hidden">
-                            <img id="restaurantImagePreviewImg" src="" alt="Preview" class="max-w-full h-32 object-contain rounded-lg border border-gray-300">
-                            <button type="button" onclick="clearImagePreview()" class="mt-2 text-sm text-red-600 hover:text-red-700">
+                            <img id="restaurantImagePreviewImg" src="" alt="Preview"
+                                class="max-w-full h-32 object-contain rounded-lg border border-gray-300">
+                            <button type="button" onclick="clearImagePreview()"
+                                class="mt-2 text-sm text-red-600 hover:text-red-700">
                                 <i class="fas fa-times ml-1"></i>إزالة الصورة
                             </button>
                         </div>
@@ -469,13 +549,14 @@
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">أو رابط الصورة</label>
                         <input type="text" id="restaurantImageUrl" onchange="handleImageUrlChange(this)"
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
-                               placeholder="https://example.com/image.jpg">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
+                            placeholder="https://example.com/image.jpg">
                         <input type="hidden" id="restaurantOriginalImageUrl" value="">
                     </div>
                     <div class="md:col-span-2">
                         <label class="flex items-center space-x-2 space-x-reverse">
-                            <input type="checkbox" id="restaurantIsActive" class="w-4 h-4 text-yellow-600 rounded" checked>
+                            <input type="checkbox" id="restaurantIsActive" class="w-4 h-4 text-yellow-600 rounded"
+                                checked>
                             <span class="text-sm font-semibold text-gray-700">مفعّل</span>
                         </label>
                     </div>
@@ -499,7 +580,8 @@
                     <div id="workingHoursContainer" class="space-y-3">
                         <!-- Working hours will be dynamically added here -->
                     </div>
-                    <button type="button" onclick="addWorkingHoursDay()" class="mt-3 text-sm text-amber-600 hover:text-amber-700 font-semibold flex items-center">
+                    <button type="button" onclick="addWorkingHoursDay()"
+                        class="mt-3 text-sm text-amber-600 hover:text-amber-700 font-semibold flex items-center">
                         <i class="fas fa-plus ml-1"></i>
                         إضافة يوم
                     </button>
@@ -512,7 +594,9 @@
                         موقع المطعم على الخريطة
                     </h4>
                     <p class="text-sm text-gray-600 mb-3">اضغط على الخريطة لتحديد موقع مطعمك</p>
-                    <div id="map" style="width: 100%; height: 400px; border: 1px solid #e5e7eb; border-radius: 8px; z-index: 1;"></div>
+                    <div id="map"
+                        style="width: 100%; height: 400px; border: 1px solid #e5e7eb; border-radius: 8px; z-index: 1;">
+                    </div>
                     <div class="mt-3 space-y-3">
                         <!-- Location Name Display -->
                         <div id="location-name-display" class="p-3 bg-green-50 border-2 border-green-400 rounded-lg">
@@ -520,7 +604,8 @@
                                 <i class="fas fa-check-circle text-green-600 mt-0.5 text-lg"></i>
                                 <div class="flex-1">
                                     <label class="block text-xs font-semibold text-green-700 mb-1">حالة الخريطة:</label>
-                                    <p id="location-name-text" class="text-sm text-green-800 font-bold">✅ الخريطة جاهزة! اضغط على الخريطة لتحديد موقعك</p>
+                                    <p id="location-name-text" class="text-sm text-green-800 font-bold">✅ الخريطة جاهزة!
+                                        اضغط على الخريطة لتحديد موقعك</p>
                                 </div>
                             </div>
                         </div>
@@ -528,14 +613,15 @@
                             <div>
                                 <label class="block text-xs text-gray-600 mb-1">خط العرض (Latitude)</label>
                                 <input type="text" id="restaurantLatitude" readonly
-                                       class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-gray-50">
+                                    class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-gray-50">
                             </div>
                             <div>
                                 <label class="block text-xs text-gray-600 mb-1">خط الطول (Longitude)</label>
                                 <input type="text" id="restaurantLongitude" readonly
-                                       class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-gray-50">
+                                    class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-gray-50">
                             </div>
-                            <button type="button" onclick="getCurrentLocation()" class="mt-6 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition duration-300">
+                            <button type="button" onclick="getCurrentLocation()"
+                                class="mt-6 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition duration-300">
                                 <i class="fas fa-crosshairs ml-1"></i>
                                 موقعي الحالي
                             </button>
@@ -544,10 +630,12 @@
                 </div>
 
                 <div class="flex space-x-3 space-x-reverse pt-4">
-                    <button type="submit" class="flex-1 bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-2 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                    <button type="submit"
+                        class="flex-1 bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-2 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300">
                         حفظ
                     </button>
-                    <button type="button" onclick="closeRestaurantModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg font-semibold transition duration-300">
+                    <button type="button" onclick="closeRestaurantModal()"
+                        class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg font-semibold transition duration-300">
                         إلغاء
                     </button>
                 </div>
@@ -556,7 +644,8 @@
     </div>
 
     <!-- Offer Modal -->
-    <div id="offerModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-2 sm:p-4">
+    <div id="offerModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-2 sm:p-4">
         <div class="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
             <div class="p-4 sm:p-6 border-b border-gray-200 sticky top-0 bg-white z-10">
                 <div class="flex items-center justify-between">
@@ -573,33 +662,34 @@
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">اسم العرض *</label>
                         <input type="text" id="offerName" required
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">تاريخ البدء *</label>
                         <input type="date" id="offerStartDate" required
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">تاريخ الانتهاء *</label>
                         <input type="date" id="offerExpirationDate" required
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-sm font-semibold text-gray-700 mb-2">تفاصيل العرض</label>
                         <textarea id="offerDescription" rows="3"
-                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"></textarea>
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"></textarea>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">رفع صورة</label>
                         <input type="file" id="offerImageFile" accept="image/*"
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
-                        <p class="text-xs text-gray-500 mt-1">الحجم الأقصى: 5MB | الصيغ المدعومة: JPG, PNG, GIF, WEBP</p>
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                        <p class="text-xs text-gray-500 mt-1">الحجم الأقصى: 5MB | الصيغ المدعومة: JPG, PNG, GIF, WEBP
+                        </p>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">أو رابط الصورة</label>
                         <input type="url" id="offerImageUrl"
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
                     </div>
                     <div class="md:col-span-2">
                         <label class="flex items-center space-x-2 space-x-reverse">
@@ -610,10 +700,12 @@
                 </div>
 
                 <div class="flex space-x-3 space-x-reverse pt-4">
-                    <button type="submit" class="flex-1 bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-2 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300">
+                    <button type="submit"
+                        class="flex-1 bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-2 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300">
                         حفظ
                     </button>
-                    <button type="button" onclick="closeOfferModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg font-semibold transition duration-300">
+                    <button type="button" onclick="closeOfferModal()"
+                        class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg font-semibold transition duration-300">
                         إلغاء
                     </button>
                 </div>
@@ -622,7 +714,8 @@
     </div>
 
     <!-- Menu Modal -->
-    <div id="menuModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-2 sm:p-4">
+    <div id="menuModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-2 sm:p-4">
         <div class="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
             <div class="p-4 sm:p-6 border-b border-gray-200 sticky top-0 bg-white z-10">
                 <div class="flex items-center justify-between">
@@ -636,10 +729,12 @@
                 <input type="hidden" id="menuId">
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">صور المنيو (يمكن اختيار عدة صور)</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">صور المنيو (يمكن اختيار عدة
+                            صور)</label>
                         <input type="file" id="menuImages" accept="image/*" multiple
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
-                        <p class="text-xs text-gray-500 mt-1">الحجم الأقصى لكل صورة: 5MB | الصيغ: JPG, PNG, GIF, WEBP</p>
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                        <p class="text-xs text-gray-500 mt-1">الحجم الأقصى لكل صورة: 5MB | الصيغ: JPG, PNG, GIF, WEBP
+                        </p>
                     </div>
                     <div>
                         <label class="flex items-center space-x-2 space-x-reverse">
@@ -650,15 +745,18 @@
                     <div id="menuExistingImages" class="grid grid-cols-2 md:grid-cols-3 gap-3 hidden"></div>
                 </div>
                 <div class="flex space-x-3 space-x-reverse pt-4">
-                    <button type="submit" class="flex-1 bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-2 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300">حفظ</button>
-                    <button type="button" onclick="closeMenuModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg font-semibold transition duration-300">إلغاء</button>
+                    <button type="submit"
+                        class="flex-1 bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-2 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300">حفظ</button>
+                    <button type="button" onclick="closeMenuModal()"
+                        class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg font-semibold transition duration-300">إلغاء</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Post Modal -->
-    <div id="postModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-2 sm:p-4">
+    <div id="postModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-2 sm:p-4">
         <div class="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
             <div class="p-4 sm:p-6 border-b border-gray-200 sticky top-0 bg-white z-10">
                 <div class="flex items-center justify-between">
@@ -674,14 +772,16 @@
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">الوصف (اختياري)</label>
                         <textarea id="postDescription" rows="3"
-                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
-                                  placeholder="اكتب وصفاً للمنشور..."></textarea>
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
+                            placeholder="اكتب وصفاً للمنشور..."></textarea>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">الصور والفيديوهات (يمكن اختيار عدة ملفات)</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">الصور والفيديوهات (يمكن اختيار عدة
+                            ملفات)</label>
                         <input type="file" id="postMedia" accept="image/*,video/*" multiple
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
-                        <p class="text-xs text-gray-500 mt-1">الصور: JPG, PNG, GIF, WEBP (5MB max) | الفيديوهات: MP4, WEBM, OGG, MOV</p>
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                        <p class="text-xs text-gray-500 mt-1">الصور: JPG, PNG, GIF, WEBP (5MB max) | الفيديوهات: MP4,
+                            WEBM, OGG, MOV</p>
                     </div>
                     <div>
                         <label class="flex items-center space-x-2 space-x-reverse">
@@ -692,8 +792,10 @@
                     <div id="postExistingMedia" class="grid grid-cols-2 md:grid-cols-3 gap-3 hidden"></div>
                 </div>
                 <div class="flex space-x-3 space-x-reverse pt-4">
-                    <button type="submit" class="flex-1 bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-2 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300">حفظ</button>
-                    <button type="button" onclick="closePostModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg font-semibold transition duration-300">إلغاء</button>
+                    <button type="submit"
+                        class="flex-1 bg-gradient-to-r from-yellow-600 to-amber-600 text-white py-2 rounded-lg font-semibold hover:from-yellow-700 hover:to-amber-700 transition duration-300">حفظ</button>
+                    <button type="button" onclick="closePostModal()"
+                        class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg font-semibold transition duration-300">إلغاء</button>
                 </div>
             </form>
         </div>
@@ -701,7 +803,7 @@
 
     <!-- JavaScript -->
     <script>
-        const API_BASE_URL = '  https://weenrest-001-site1.jtempurl.com/api';
+        const API_BASE_URL = '  https://localhost:5053/api';
         let currentRestaurant = null;
         let allCategories = [];
         let allCities = [];
@@ -749,7 +851,7 @@
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
-            
+
             // On mobile: sidebar is hidden with translate-x-full (to the right in RTL)
             // Toggling will bring it in (remove translate-x-full) or hide it (add it back)
             sidebar.classList.toggle('translate-x-full');
@@ -762,7 +864,7 @@
                 section.classList.add('hidden');
             });
             document.getElementById(sectionName).classList.remove('hidden');
-            
+
             // Close sidebar on mobile after navigation
             if (window.innerWidth < 768) {
                 toggleSidebar();
@@ -783,7 +885,7 @@
             document.getElementById('pageTitle').textContent = titles[sectionName] || 'لوحة التحكم';
 
             // Highlight active link
-            const activeLink = Array.from(document.querySelectorAll('.sidebar-link')).find(link => 
+            const activeLink = Array.from(document.querySelectorAll('.sidebar-link')).find(link =>
                 link.textContent.includes(titles[sectionName] || '')
             );
             if (activeLink) {
@@ -801,7 +903,7 @@
                     'Authorization': `Bearer ${token}`
                 }
             };
-            
+
             if (body) {
                 options.body = JSON.stringify(body);
             }
@@ -818,7 +920,7 @@
                     'Authorization': `Bearer ${token}`
                 }
             };
-            
+
             options.body = formData;
 
             const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
@@ -842,7 +944,7 @@
                     const user = data.data;
                     document.getElementById('userName').textContent = `${user.firstName} ${user.lastName}`;
                     document.getElementById('userEmail').textContent = user.email;
-                    
+
                     // Fill profile form
                     document.getElementById('profileFirstName').value = user.firstName;
                     document.getElementById('profileLastName').value = user.lastName;
@@ -900,7 +1002,7 @@
         function updateCategorySelect(id = null) {
             const select = document.getElementById('restaurantCategoryIds');
             if (select && allCategories.length > 0) {
-                const selectedValues = id && currentRestaurant && currentRestaurant.categoryIds 
+                const selectedValues = id && currentRestaurant && currentRestaurant.categoryIds
                     ? currentRestaurant.categoryIds.map(id => id.toString())
                     : Array.from(select.selectedOptions).map(opt => opt.value);
                 select.innerHTML = '';
@@ -983,8 +1085,8 @@
             // Display image
             const imgElement = document.getElementById('restaurantImage');
             if (restaurant.imageUrl) {
-                imgElement.src = restaurant.imageUrl.startsWith('http') 
-                    ? restaurant.imageUrl 
+                imgElement.src = restaurant.imageUrl.startsWith('http')
+                    ? restaurant.imageUrl
                     : `${API_BASE_URL.replace('/api', '')}${restaurant.imageUrl}`;
                 imgElement.classList.remove('hidden');
             } else {
@@ -1022,7 +1124,7 @@
             const restaurantName = currentRestaurant?.name || 'غير محدد';
             const categoryNames = (currentRestaurant?.categoryNames && currentRestaurant.categoryNames.length > 0) ? currentRestaurant.categoryNames.join(', ') : 'غير محدد';
             const status = currentRestaurant?.isActive ? 'مفعّل' : 'معطّل';
-            
+
             statsCards.innerHTML = `
                 <div class="bg-gradient-to-r from-yellow-500 to-amber-500 rounded-xl p-4 sm:p-5 md:p-6 text-white card-hover transition duration-300">
                     <div class="flex items-center justify-between gap-3">
@@ -1066,13 +1168,13 @@
             document.getElementById('restaurantModalTitle').textContent = id ? 'تعديل المطعم' : 'إنشاء مطعم';
             document.getElementById('restaurantForm').reset();
             document.getElementById('restaurantId').value = id || '';
-            
+
             // Ensure categories are loaded and update select
             if (allCategories.length === 0) {
                 await loadCategories();
             }
             updateCategorySelect(id);
-            
+
             if (id && currentRestaurant) {
                 // Fill form with current restaurant data
                 document.getElementById('restaurantNameInput').value = currentRestaurant.name;
@@ -1085,13 +1187,13 @@
                 document.getElementById('restaurantOriginalImageUrl').value = imageUrl;
                 document.getElementById('restaurantIsActive').checked = currentRestaurant.isActive;
                 document.getElementById('restaurantHasDelivery').checked = currentRestaurant.hasDelivery || false;
-                
+
                 // Show image preview if exists
                 if (imageUrl) {
                     const preview = document.getElementById('restaurantImagePreview');
                     const previewImg = document.getElementById('restaurantImagePreviewImg');
                     if (preview && previewImg) {
-                        const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase')) || '  https://weenrest-001-site1.jtempurl.com';
+                        const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase')) || '  https://localhost:5053';
                         const resolveImageUrl = (url) => {
                             if (!url || typeof url !== 'string' || url.trim() === '') return null;
                             if (/^https?:\/\//i.test(url)) return url;
@@ -1186,7 +1288,7 @@
             const container = document.getElementById('workingHoursContainer');
             if (!container) return;
             container.innerHTML = '';
-            
+
             dayNamesEn.forEach(day => {
                 addWorkingHoursDay(day, dayNames[day], '', '', false);
             });
@@ -1234,8 +1336,8 @@
             const isClosedCheckbox = dayElement.querySelector('.is-closed-checkbox');
             const startTimeInput = dayElement.querySelector('.start-time');
             const endTimeInput = dayElement.querySelector('.end-time');
-            
-            isClosedCheckbox.addEventListener('change', function() {
+
+            isClosedCheckbox.addEventListener('change', function () {
                 const disabled = this.checked;
                 startTimeInput.disabled = disabled;
                 endTimeInput.disabled = disabled;
@@ -1270,7 +1372,7 @@
 
             const days = [];
             const dayElements = container.querySelectorAll('.working-hours-day');
-            
+
             dayElements.forEach(dayEl => {
                 const daySelect = dayEl.querySelector('.day-select');
                 const isClosedCheckbox = dayEl.querySelector('.is-closed-checkbox');
@@ -1304,7 +1406,7 @@
             const previewImg = document.getElementById('restaurantImagePreviewImg');
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = function (e) {
                     previewImg.src = e.target.result;
                     preview.classList.remove('hidden');
                 };
@@ -1327,7 +1429,7 @@
                 // If URL is cleared, show original image if exists
                 const originalUrl = document.getElementById('restaurantOriginalImageUrl').value;
                 if (originalUrl) {
-                    const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase')) || '  https://weenrest-001-site1.jtempurl.com';
+                    const API_BASE = (typeof localStorage !== 'undefined' && localStorage.getItem('apiBase')) || '  https://localhost:5053';
                     const resolveImageUrl = (url) => {
                         if (!url || typeof url !== 'string' || url.trim() === '') return null;
                         if (/^https?:\/\//i.test(url)) return url;
@@ -1364,7 +1466,7 @@
             // Get selected category IDs
             const categorySelect = document.getElementById('restaurantCategoryIds');
             const selectedCategoryIds = Array.from(categorySelect.selectedOptions).map(option => parseInt(option.value));
-            
+
             if (selectedCategoryIds.length === 0) {
                 showToast('يجب اختيار قسم واحد على الأقل', 'error');
                 return;
@@ -1372,33 +1474,33 @@
 
             // Always use FormData for consistency
             const formData = new FormData();
-            
+
             formData.append('Name', document.getElementById('restaurantNameInput').value);
             // Add CategoryIds as array
             selectedCategoryIds.forEach((categoryId, index) => {
                 formData.append(`CategoryIds[${index}]`, categoryId);
             });
-            
+
             const description = document.getElementById('restaurantDescriptionInput').value;
             if (description && description.trim()) {
                 formData.append('Description', description);
             }
-            
+
             const phoneNumber = document.getElementById('restaurantPhoneNumber').value;
             if (phoneNumber && phoneNumber.trim()) {
                 formData.append('PhoneNumber', phoneNumber);
             }
-            
+
             const address = document.getElementById('restaurantAddressInput').value;
             if (address && address.trim()) {
                 formData.append('Address', address);
             }
-            
+
             const city = document.getElementById('restaurantCity').value;
             if (city && city.trim()) {
                 formData.append('City', city);
             }
-            
+
             // Handle image: only send if changed
             if (imageFile) {
                 // New file uploaded
@@ -1411,7 +1513,7 @@
                 formData.append('ImageUrl', '');
             }
             // If neither file nor URL changed, don't send ImageUrl (backend will keep old one)
-            
+
             formData.append('IsActive', document.getElementById('restaurantIsActive').checked ? 'true' : 'false');
             formData.append('HasDelivery', document.getElementById('restaurantHasDelivery').checked ? 'true' : 'false');
 
@@ -1493,7 +1595,7 @@
                     offers.forEach(o => {
                         const card = document.createElement('div');
                         card.className = 'bg-white border border-gray-200 rounded-lg p-3 sm:p-4 shadow-sm';
-                        const imgTag = o.imageUrl ? `<img src="${o.imageUrl.startsWith('http') ? o.imageUrl : API_BASE_URL.replace('/api','') + o.imageUrl}" alt="${o.name}" class="w-full h-32 sm:h-40 object-contain rounded mb-2 sm:mb-3">` : '';
+                        const imgTag = o.imageUrl ? `<img src="${o.imageUrl.startsWith('http') ? o.imageUrl : API_BASE_URL.replace('/api', '') + o.imageUrl}" alt="${o.name}" class="w-full h-32 sm:h-40 object-contain rounded mb-2 sm:mb-3">` : '';
                         card.innerHTML = `
                             ${imgTag}
                             <h4 class="text-base sm:text-lg font-bold text-gray-800 mb-1 truncate">${o.name}</h4>
@@ -1780,9 +1882,9 @@
                     container.classList.remove('hidden');
                     container.innerHTML = p.media.map(m => `
                         <div class="border rounded p-2 flex flex-col items-center gap-2">
-                            ${m.mediaType === 'video' 
-                                ? `<video src="${resolveImageUrl(m.mediaUrl)}" class="w-full h-24 object-cover rounded" muted></video>`
-                                : `<img src="${resolveImageUrl(m.mediaUrl)}" class="w-full h-24 object-cover rounded">`}
+                            ${m.mediaType === 'video'
+                            ? `<video src="${resolveImageUrl(m.mediaUrl)}" class="w-full h-24 object-cover rounded" muted></video>`
+                            : `<img src="${resolveImageUrl(m.mediaUrl)}" class="w-full h-24 object-cover rounded">`}
                             <label class="text-xs flex items-center gap-2"><input type="checkbox" value="${m.id}" class="removePostMedia"> إزالة</label>
                         </div>
                     `).join('');
@@ -2035,7 +2137,7 @@
         function updateCoordinates(lat, lng) {
             document.getElementById('restaurantLatitude').value = lat.toFixed(6);
             document.getElementById('restaurantLongitude').value = lng.toFixed(6);
-            
+
             // Get location name using reverse geocoding (Nominatim - OpenStreetMap)
             getLocationName(lat, lng);
         }
@@ -2044,18 +2146,18 @@
             console.log('getLocationName called with:', lat, lng);
             const locationNameDisplay = document.getElementById('location-name-display');
             const locationNameText = document.getElementById('location-name-text');
-            
+
             if (!locationNameDisplay || !locationNameText) {
                 console.error('Location name elements not found!');
                 return;
             }
-            
+
             // Show loading state - FORCE SHOW
             locationNameDisplay.className = 'p-3 bg-blue-50 border-2 border-blue-400 rounded-lg';
             locationNameText.innerHTML = '⏳ <strong>جاري جلب اسم المكان...</strong>';
             locationNameDisplay.style.display = 'block';
             console.log('Showing loading state for location name');
-            
+
             try {
                 // Use Nominatim (OpenStreetMap) for reverse geocoding - مجاني تماماً
                 const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=ar`, {
@@ -2063,20 +2165,20 @@
                         'User-Agent': 'WeenRest App' // Required by Nominatim
                     }
                 });
-                
+
                 if (!response.ok) throw new Error('فشل في جلب اسم المكان');
-                
+
                 const data = await response.json();
-                
+
                 if (data && data.display_name) {
                     // Extract a more readable address
                     let address = data.display_name;
-                    
+
                     // Try to get a shorter, more relevant address
                     if (data.address) {
                         const addr = data.address;
                         const parts = [];
-                        
+
                         // Build address from most specific to least specific
                         if (addr.road || addr.pedestrian) parts.push(addr.road || addr.pedestrian);
                         if (addr.neighbourhood || addr.suburb || addr.quarter) {
@@ -2087,17 +2189,17 @@
                         }
                         if (addr.state || addr.region) parts.push(addr.state || addr.region);
                         if (addr.country) parts.push(addr.country);
-                        
+
                         if (parts.length > 0) {
                             address = parts.join('، ');
                         }
                     }
-                    
+
                     // Show success with address - FORCE SHOW
                     locationNameDisplay.className = 'p-3 bg-green-50 border-2 border-green-400 rounded-lg';
                     locationNameText.innerHTML = `✅ <strong>اسم المكان:</strong> ${address}`;
                     locationNameDisplay.style.display = 'block';
-                    
+
                     // Also show in console for debugging
                     console.log('Location name found:', address);
                     console.log('Full address data:', data);
@@ -2156,5 +2258,5 @@
     <script src="js/push-notifications.js"></script>
     <script src="js/in-app-notifications.js"></script>
 </body>
-</html>
 
+</html>
