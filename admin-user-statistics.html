@@ -195,9 +195,6 @@
                                         المستخدم</th>
                                     <th
                                         class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        البريد الإلكتروني</th>
-                                    <th
-                                        class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         إجمالي التفاعلات</th>
                                     <th
                                         class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -401,9 +398,9 @@
                 };
 
                 const roleNames = {
-                    'admin': 'أدمن',
-                    'stakeholder': 'صاحب مطعم',
-                    'user': 'مستخدم'
+                    'admin': 'أ',
+                    'stakeholder': 'ص',
+                    'user': 'م'
                 };
 
                 const lastActivity = user.lastActivityDate
@@ -420,20 +417,20 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="flex items-center space-x-3 space-x-reverse">
-                            <div class="flex-shrink-0 h-10 w-10">
+                            <div class="flex-shrink-0 h-10 w-10 relative">
                                 <div class="h-10 w-10 rounded-full bg-gradient-to-r from-yellow-600 to-amber-600 flex items-center justify-center">
                                     <span class="text-white font-semibold">${user.firstName.charAt(0)}${user.lastName.charAt(0)}</span>
+                                </div>
+                                <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold border-2 border-white ${roleColors[user.role] || 'bg-gray-100 text-gray-800'}">
+                                    ${roleNames[user.role] || '?'}
                                 </div>
                             </div>
                             <div>
                                 <div class="text-sm font-medium text-gray-900">${user.firstName} ${user.lastName}</div>
-                                <div class="text-xs text-gray-500">
-                                    <span class="px-2 py-0.5 rounded-full text-xs font-semibold ${roleColors[user.role] || 'bg-gray-100 text-gray-800'}">${roleNames[user.role] || user.role}</span>
-                                </div>
+                                <div class="text-xs text-gray-500">${user.email}</div>
                             </div>
                         </div>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${user.email}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">${user.totalActivities}</span>
                     </td>
