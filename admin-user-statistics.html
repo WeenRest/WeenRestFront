@@ -15,6 +15,28 @@
         body {
             font-family: 'Cairo', sans-serif;
         }
+
+        /* Mobile sidebar */
+        #sidebarOverlay {
+            transition: opacity 0.3s ease;
+        }
+
+        @media (max-width: 767px) {
+            #sidebar {
+                position: fixed;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 100;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                width: 260px;
+            }
+
+            #sidebar.open {
+                transform: translateX(0);
+            }
+        }
     </style>
 </head>
 
@@ -27,21 +49,30 @@
         </div>
     </div>
 
+    <!-- Sidebar Overlay (mobile) -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-[99] hidden" onclick="toggleSidebar()"></div>
+
     <div class="flex h-screen overflow-hidden">
         <!-- Sidebar -->
-        <aside class="w-64 bg-gradient-to-b from-gray-900 to-black text-white shadow-2xl">
+        <aside id="sidebar" class="w-64 bg-gradient-to-b from-gray-900 to-black text-white shadow-2xl hidden md:flex md:flex-col md:flex-shrink-0">
             <div class="flex flex-col h-full">
                 <!-- Logo -->
                 <div class="p-6 border-b border-gray-700">
-                    <div class="flex items-center space-x-3 space-x-reverse">
-                        <div
-                            class="w-12 h-12 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
-                            <i class="fas fa-utensils text-white text-xl"></i>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3 space-x-reverse">
+                            <div
+                                class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-yellow-600 to-amber-600 rounded-full flex items-center justify-center">
+                                <i class="fas fa-utensils text-white text-lg sm:text-xl"></i>
+                            </div>
+                            <div>
+                                <h1 class="text-lg sm:text-xl font-bold">WeenRest</h1>
+                                <p class="text-xs text-gray-400">لوحة التحكم</p>
+                            </div>
                         </div>
-                        <div>
-                            <h1 class="text-xl font-bold">WeenRest</h1>
-                            <p class="text-xs text-gray-400">لوحة التحكم</p>
-                        </div>
+                        <!-- Close button (mobile only) -->
+                        <button class="md:hidden text-gray-400 hover:text-white text-xl" onclick="toggleSidebar()">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -100,11 +131,23 @@
 
         <!-- Main Content -->
         <main class="flex-1 overflow-y-auto">
-            <div class="p-8">
-                <!-- Header -->
-                <div class="mb-8">
-                    <h1 class="text-3xl font-bold text-gray-800 mb-2">إحصائيات المستخدمين الأكثر تفاعلاً</h1>
-                    <p class="text-gray-600">عرض المستخدمين الأكثر تفاعلاً مع الموقع بناءً على زيارات الصفحات والإجراءات
+            <!-- Top Header -->
+            <header class="bg-white shadow-sm border-b border-gray-200">
+                <div class="flex items-center px-4 sm:px-6 py-4 gap-3">
+                    <!-- Hamburger (mobile only) -->
+                    <button class="md:hidden text-gray-700 hover:text-yellow-600 text-xl flex-shrink-0" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-bold text-gray-800">إحصائيات التفاعل</h1>
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-4 sm:p-8">
+                <!-- Header Details -->
+                <div class="mb-6 sm:mb-8">
+                    <p class="text-sm sm:text-base text-gray-600">عرض المستخدمين الأكثر تفاعلاً مع الموقع بناءً على زيارات الصفحات والإجراءات
                     </p>
                 </div>
 
@@ -248,6 +291,15 @@
         document.addEventListener('DOMContentLoaded', () => {
             // Check authentication
             const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Show page content explicitly just in case
+            const mainContent = document.querySelector('main');
+            if(mainContent) mainContent.style.display = 'block';
+
             const userData = localStorage.getItem('user');
             if (!token || !userData) {
                 window.location.href = 'login.html';
@@ -281,6 +333,26 @@
             // Setup filter handler
             document.getElementById('periodFilter').addEventListener('change', loadMostActiveUsers);
         });
+
+        // Sidebar functions
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+                overlay.classList.add('hidden');
+            } else {
+                // Ensure hidden classes from md breakpoint aren't overriding
+                sidebar.classList.remove('hidden');
+                sidebar.classList.add('flex', 'flex-col');
+                // Small timeout to allow display property to apply before transform transition
+                setTimeout(() => {
+                    sidebar.classList.add('open');
+                    overlay.classList.remove('hidden');
+                }, 10);
+            }
+        }
 
         // API Call Helper
         async function apiCall(endpoint, method = 'GET', body = null) {
